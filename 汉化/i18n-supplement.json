@@ -1,0 +1,36 @@
+{
+  "_meta": "本机补翻层:上游新增、constansino 汉化版尚未覆盖的条目。与 i18n-borrowed.json(借用层)分开维护,来源清晰。apply-i18n.ps1 会合并两层。",
+  "tweaks": {
+    "WPFTweaksDeliveryOptimization": {
+      "Content": "传递优化 - 禁用",
+      "Description": "阻止 Windows 占用你的带宽,向互联网或局域网中的其他电脑上传更新。"
+    },
+    "WPFTweaksDisableBitLocker": {
+      "Content": "BitLocker - 禁用",
+      "Description": "禁用 BitLocker 磁盘加密。"
+    },
+    "WPFTweaksRemoveHomeAndGallery": {
+      "Content": "文件资源管理器 主文件夹与图库 - 禁用",
+      "Description": "从资源管理器移除“主文件夹”和“图库”,并将“此电脑”设为默认打开位置。"
+    },
+    "WPFTweaksWindowsAI": {
+      "Content": "Windows AI - 禁用",
+      "Description": "移除或禁用所有 AI 功能与组件(如 Copilot、Recall)。"
+    },
+    "WPFTweaksRightClickMenu": {
+      "Description": "恢复在文件资源管理器中右键时的经典右键菜单,替换 Windows 11 的简化版菜单。"
+    },
+    "WPFToggleBatteryPercentage": {
+      "Content": "系统托盘电池百分比",
+      "Description": "在系统托盘电池图标旁显示数字形式的电池百分比。"
+    },
+    "WPFToggleGameMode": {
+      "Content": "游戏模式",
+      "Description": "开启后 Windows 通过为游戏分配系统资源,优先保证游戏性能。"
+    },
+    "WPFToggleLongPaths": {
+      "Content": "启用长路径",
+      "Description": "开启后资源管理器支持长度超过 260 个字符的文件路径。"
+    }
+  }
+}

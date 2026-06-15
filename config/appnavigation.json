@@ -1,84 +1,84 @@
 {
     "WPFInstall": {
-        "Content": "Install/Upgrade Applications",
-        "Category": "____Actions",
+        "Content": "安装/升级应用",
+        "Category": "____操作",
         "Type": "Button",
         "Order": "1",
-        "Description": "Install or upgrade the selected applications"
+        "Description": "安装或升级选中的应用"
     },
     "WPFUninstall": {
-        "Content": "Uninstall Applications",
-        "Category": "____Actions",
+        "Content": "卸载应用",
+        "Category": "____操作",
         "Type": "Button",
         "Order": "2",
-        "Description": "Uninstall the selected applications"
+        "Description": "卸载选中的应用"
     },
     "WPFInstallUpgrade": {
-        "Content": "Upgrade all Applications",
-        "Category": "____Actions",
+        "Content": "升级全部应用",
+        "Category": "____操作",
         "Type": "Button",
         "Order": "3",
-        "Description": "Upgrade all applications to the latest version"
+        "Description": "将所有应用升级到最新版本"
     },
     "WingetRadioButton": {
         "Content": "WinGet",
-        "Category": "__Package Manager",
+        "Category": "__包管理器",
         "Type": "RadioButton",
         "GroupName": "PackageManagerGroup",
         "Checked": true,
         "Order": "1",
-        "Description": "Use WinGet for package management"
+        "Description": "使用 WinGet 进行包管理"
     },
     "ChocoRadioButton": {
         "Content": "Chocolatey",
-        "Category": "__Package Manager",
+        "Category": "__包管理器",
         "Type": "RadioButton",
         "GroupName": "PackageManagerGroup",
         "Checked": false,
         "Order": "2",
-        "Description": "Use Chocolatey for package management"
+        "Description": "使用 Chocolatey 进行包管理"
     },
     "WPFCollapseAllCategories": {
-        "Content": "Collapse All Categories",
-        "Category": "__Selection",
+        "Content": "折叠全部分类",
+        "Category": "__选择",
         "Type": "Button",
         "Order": "1",
-        "Description": "Collapse all application categories"
+        "Description": "折叠所有应用分类"
     },
     "WPFExpandAllCategories": {
-        "Content": "Expand All Categories",
-        "Category": "__Selection",
+        "Content": "展开全部分类",
+        "Category": "__选择",
         "Type": "Button",
         "Order": "2",
-        "Description": "Expand all application categories"
+        "Description": "展开所有应用分类"
     },
     "WPFClearInstallSelection": {
-        "Content": "Clear Selection",
-        "Category": "__Selection",
+        "Content": "清除选择",
+        "Category": "__选择",
         "Type": "Button",
         "Order": "3",
-        "Description": "Clear the selection of applications"
+        "Description": "清除已选应用"
     },
     "WPFGetInstalled": {
-        "Content": "Show Installed Apps",
-        "Category": "__Selection",
+        "Content": "显示已装应用",
+        "Category": "__选择",
         "Type": "Button",
         "Order": "4",
-        "Description": "Show installed applications"
+        "Description": "显示已安装的应用"
     },
     "WPFselectedAppsButton": {
-        "Content": "Selected Apps: 0",
-        "Category": "__Selection",
+        "Content": "已选应用: 0",
+        "Category": "__选择",
         "Type": "Button",
         "Order": "5",
-        "Description": "Show the selected applications"
+        "Description": "显示已选中的应用"
     },
     "WPFToggleFOSSHighlight": {
-        "Content": "Highlight FOSS",
-        "Category": "__Selection",
+        "Content": "高亮开源(FOSS)",
+        "Category": "__选择",
         "Type": "Toggle",
         "Checked": true,
         "Order": "6",
-        "Description": "Toggle the green highlight for FOSS applications"
+        "Description": "切换开源(FOSS)应用的绿色高亮"
     }
 }

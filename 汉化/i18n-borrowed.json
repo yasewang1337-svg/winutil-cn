@@ -1,0 +1,350 @@
+{
+  "feature": {
+    "WPFFeaturesdotnet": {
+      "Content": "安装/启用 .NET Framework（2/3/4）",
+      "Description": "启用/安装 Windows 的 .NET Framework 功能组件（常用于运行旧软件/开发环境）。"
+    },
+    "WPFFixesNTPPool": {
+      "Content": "配置 NTP 时间服务器",
+      "Description": "将 Windows 默认时间服务器（time.windows.com）替换为 pool.ntp.org，以提高校时准确性和稳定性。"
+    },
+    "WPFFeatureshyperv": {
+      "Content": "启用 Hyper‑V 虚拟化",
+      "Description": "启用 Hyper‑V 及其管理工具，用于创建与管理虚拟机（需要硬件虚拟化支持）。"
+    },
+    "WPFFeatureslegacymedia": {
+      "Content": "启用旧媒体组件（WMP/DirectPlay）",
+      "Description": "启用旧版媒体相关组件（Windows Media Player、DirectPlay 等），用于兼容老游戏/老播放器。"
+    },
+    "WPFFeaturewsl": {
+      "Content": "启用 WSL（Linux 子系统）",
+      "Description": "启用 WSL，让你在 Windows 上运行 Linux 发行版（开发/命令行工具常用）。"
+    },
+    "WPFFeaturenfs": {
+      "Content": "启用 NFS（网络文件系统）",
+      "Description": "启用 NFS 客户端/相关组件，用于挂载 NFS 共享（多见于 NAS/Unix/Linux 环境）。"
+    },
+    "WPFFeatureRegBackup": {
+      "Content": "启用每日注册表备份任务（00:30）",
+      "Description": "创建/启用每日注册表自动备份计划任务（默认 00:30），便于系统故障时回滚。"
+    },
+    "WPFFeatureEnableLegacyRecovery": {
+      "Content": "启用传统 F8 启动恢复菜单",
+      "Description": "启用传统“按 F8 进入高级启动选项”的恢复菜单（对排障更方便）。"
+    },
+    "WPFFeatureDisableLegacyRecovery": {
+      "Content": "禁用传统 F8 启动恢复菜单",
+      "Description": "关闭传统 F8 恢复菜单，恢复为默认快速启动行为。"
+    },
+    "WPFFeaturesSandbox": {
+      "Content": "启用 Windows Sandbox（沙盒）",
+      "Description": "启用 Windows 沙盒：一次性、隔离的临时系统环境，适合测试不可信程序（退出即清空）。"
+    },
+    "WPFFeatureInstall": {
+      "Content": "安装/启用所选功能"
+    },
+    "WPFPanelAutologin": {
+      "Content": "设置自动登录"
+    },
+    "WPFFixesUpdate": {
+      "Content": "重置 Windows 更新组件"
+    },
+    "WPFFixesNetwork": {
+      "Content": "重置网络设置"
+    },
+    "WPFPanelDISM": {
+      "Content": "系统损坏扫描/修复（SFC/DISM）"
+    },
+    "WPFFixesWinget": {
+      "Content": "重新安装/修复 WinGet"
+    },
+    "WPFPanelControl": {
+      "Content": "控制面板"
+    },
+    "WPFPanelComputer": {
+      "Content": "计算机管理"
+    },
+    "WPFPanelNetwork": {
+      "Content": "网络连接"
+    },
+    "WPFPanelPower": {
+      "Content": "电源选项"
+    },
+    "WPFPanelPrinter": {
+      "Content": "打印机设置"
+    },
+    "WPFPanelRegion": {
+      "Content": "区域设置"
+    },
+    "WPFPanelRestore": {
+      "Content": "系统还原（恢复）"
+    },
+    "WPFPanelSound": {
+      "Content": "声音设置"
+    },
+    "WPFPanelSystem": {
+      "Content": "系统属性"
+    },
+    "WPFPanelTimedate": {
+      "Content": "日期和时间"
+    },
+    "WPFWinUtilInstallPSProfile": {
+      "Content": "安装 CTT PowerShell 配置文件"
+    },
+    "WPFWinUtilUninstallPSProfile": {
+      "Content": "卸载 CTT PowerShell 配置文件"
+    },
+    "WPFWinUtilSSHServer": {
+      "Content": "启用 OpenSSH Server"
+    }
+  },
+  "tweaks": {
+    "WPFTweaksActivity": {
+      "Content": "禁用活动历史记录",
+      "Description": "关闭 Windows 活动历史（时间线），减少对最近打开文件、剪贴板/运行历史等的记录与同步。"
+    },
+    "WPFTweaksHiber": {
+      "Content": "禁用休眠",
+      "Description": "关闭休眠功能并释放 hiberfil.sys 以节省磁盘空间。台式机通常不需要；笔记本若依赖休眠可不要选。"
+    },
+    "WPFTweaksWidget": {
+      "Content": "移除小组件",
+      "Description": "移除任务栏左下角的小组件及相关组件。"
+    },
+    "WPFTweaksRevertStartMenu": {
+      "Content": "恢复旧版开始菜单布局",
+      "Description": "把 25H2 新版开始菜单恢复为逐步推送前的旧布局。"
+    },
+    "WPFTweaksDisableStoreSearch": {
+      "Content": "禁用 Microsoft Store 搜索结果",
+      "Description": "在开始菜单搜索应用时，不再显示 Microsoft Store 推荐结果。"
+    },
+    "WPFTweaksLocation": {
+      "Content": "禁用定位服务",
+      "Description": "关闭定位相关权限/服务，阻止系统与应用获取你的地理位置。"
+    },
+    "WPFTweaksServices": {
+      "Content": "将部分服务设为手动启动",
+      "Description": "把一批不常用的系统服务改为“手动启动/按需启动”，减少后台常驻；如某些功能需要会在使用时自动启动。"
+    },
+    "WPFTweaksBraveDebloat": {
+      "Content": "Brave 浏览器精简",
+      "Description": "对 Brave 做“降打扰”设置：减少推广/遥测/弹窗等（不影响基础浏览）。"
+    },
+    "WPFTweaksDisableWarningForUnsignedRdp": {
+      "Content": "禁用未签名 RDP 文件警告",
+      "Description": "关闭新版 Windows 10/11 在启动未签名 RDP 文件时显示的安全警告。仅在你信任这些 RDP 文件来源时使用。"
+    },
+    "WPFTweaksEdgeDebloat": {
+      "Content": "Edge 浏览器精简",
+      "Description": "对 Edge 做“降打扰”设置：减少遥测、推荐、弹窗等（不卸载 Edge）。"
+    },
+    "WPFTweaksConsumerFeatures": {
+      "Content": "禁用“消费者体验/推荐应用”",
+      "Description": "阻止 Windows 自动安装推荐应用/游戏等“消费者内容”，减少系统自带推广。"
+    },
+    "WPFTweaksTelemetry": {
+      "Content": "禁用遥测",
+      "Description": "关闭 Microsoft 遥测与部分相关数据收集。"
+    },
+    "WPFTweaksRemoveEdge": {
+      "Content": "卸载 Microsoft Edge",
+      "Description": "解除 Edge 的卸载限制后，调用其卸载程序移除 Edge。"
+    },
+    "WPFTweaksUTC": {
+      "Content": "时间改为 UTC（双系统）",
+      "Description": "把系统时钟按 UTC 存储，适合与 Linux 双系统共用硬件时钟，避免来回切换导致时间错乱。"
+    },
+    "WPFTweaksRemoveOneDrive": {
+      "Content": "卸载 OneDrive",
+      "Description": "先保护 OneDrive 用户文件不被误删，再调用其卸载程序移除 OneDrive，最后恢复权限。"
+    },
+    "WPFTweaksRemoveHome": {
+      "Content": "从资源管理器移除“主页”",
+      "Description": "从资源管理器侧边栏移除“主页/快速访问”等入口，界面更清爽。"
+    },
+    "WPFTweaksRemoveGallery": {
+      "Content": "从资源管理器移除“图库”",
+      "Description": "从资源管理器移除“图库（Gallery）”入口（Win11 新增项）。"
+    },
+    "WPFTweaksDisplay": {
+      "Content": "显示效果优先性能",
+      "Description": "关闭部分视觉特效（动画、透明等）以提升响应速度，适合老机器或性能优先。"
+    },
+    "WPFTweaksXboxRemoval": {
+      "Content": "移除 Xbox 与游戏相关组件",
+      "Description": "移除 Xbox 服务、Xbox 应用、Game Bar 及相关身份验证组件。"
+    },
+    "WPFTweaksDeBloat": {
+      "Content": "移除所有微软商店应用（不推荐）",
+      "Description": "卸载/移除多数微软商店(UWP)应用。可能导致开始菜单、照片、计算器等缺失；一般不建议。"
+    },
+    "WPFTweaksRestorePoint": {
+      "Content": "创建系统还原点",
+      "Description": "在执行优化前创建系统还原点，便于出问题时回滚（推荐先勾）。"
+    },
+    "WPFTweaksEndTaskOnTaskbar": {
+      "Content": "右键任务栏启用“结束任务”",
+      "Description": "在任务栏程序右键菜单里增加“结束任务”选项，方便一键强退卡死程序。"
+    },
+    "WPFTweaksPowershell7Tele": {
+      "Content": "禁用 PowerShell 7 遥测",
+      "Description": "设置环境变量禁用 PowerShell 7 遥测数据上报。"
+    },
+    "WPFTweaksStorage": {
+      "Content": "关闭存储感知",
+      "Description": "关闭“存储感知”（自动清理临时文件/回收站等），避免系统自动删文件。"
+    },
+    "WPFTweaksRemoveCopilot": {
+      "Content": "禁用 Microsoft Copilot",
+      "Description": "关闭/隐藏系统内的 Copilot 入口（不同版本 Windows 行为可能略有差异）。"
+    },
+    "WPFTweaksWPBT": {
+      "Content": "禁用 WPBT（平台二进制表）",
+      "Description": "阻止系统执行 OEM 写入的 WPBT 内容，降低厂商预装/持久化程序带来的风险（高级选项）。"
+    },
+    "WPFTweaksRazerBlock": {
+      "Content": "阻止 Razer 软件安装",
+      "Description": "阻止 Razer 相关软件/驱动的自动安装（硬件通常仍可用）。注意：也可能影响部分第三方驱动安装流程。"
+    },
+    "WPFTweaksDisableNotifications": {
+      "Content": "禁用通知中心/日历（全部通知）",
+      "Description": "禁用通知中心与日历弹窗（会关闭大部分系统通知）。"
+    },
+    "WPFTweaksBlockAdobeNet": {
+      "Content": "屏蔽 Adobe 联网（激活/遥测）",
+      "Description": "通过 hosts 阻断部分 Adobe 激活/遥测域名，减少弹窗与联网请求（可能影响正版激活/更新，慎用）。"
+    },
+    "WPFTweaksRightClickMenu": {
+      "Content": "恢复经典右键菜单"
+    },
+    "WPFTweaksDiskCleanup": {
+      "Content": "运行磁盘清理",
+      "Description": "运行系统磁盘清理并清理旧组件/更新缓存，释放空间（可能需要较长时间）。"
+    },
+    "WPFTweaksDeleteTempFiles": {
+      "Content": "删除临时文件",
+      "Description": "删除用户临时目录与系统临时目录中的文件，用于快速释放空间（可能删掉某些软件的临时缓存）。"
+    },
+    "WPFTweaksIPv46": {
+      "Content": "优先使用 IPv4（降低 IPv6 优先级）",
+      "Description": "不完全禁用 IPv6，而是让系统优先走 IPv4；在 IPv6 配置不完整的网络里可能更稳定。"
+    },
+    "WPFTweaksTeredo": {
+      "Content": "禁用 Teredo",
+      "Description": "关闭 Teredo（IPv6 隧道）。可能改善延迟/安全，但可能影响部分 Xbox/联机 NAT 场景。"
+    },
+    "WPFTweaksDisableIPv6": {
+      "Content": "禁用 IPv6",
+      "Description": "禁用 IPv6 协议栈。可能影响部分网络/内网环境；不确定就别选。"
+    },
+    "WPFTweaksDisableBGapps": {
+      "Content": "禁止商店应用后台运行",
+      "Description": "禁止商店应用在后台运行，减少后台耗电/占用（可能影响通知/后台同步）。"
+    },
+    "WPFTweaksDisableFSO": {
+      "Content": "禁用全屏优化",
+      "Description": "禁用全屏优化（有时可减少某些游戏的输入延迟/兼容问题，但也可能影响色彩管理等）。"
+    },
+    "WPFToggleDisableCrossDeviceResume": {
+      "Content": "跨设备继续（Cross‑Device Resume）",
+      "Description": "控制 Windows 的“跨设备继续”功能（在电脑与手机/其他设备间继续活动）。"
+    },
+    "WPFToggleDetailedBSoD": {
+      "Content": "详细蓝屏信息",
+      "Description": "蓝屏时显示更详细的信息（对排障更友好）。"
+    },
+    "WPFToggleDarkMode": {
+      "Content": "Windows 深色模式",
+      "Description": "切换系统与应用深色/浅色主题。"
+    },
+    "WPFToggleShowExt": {
+      "Content": "显示文件扩展名",
+      "Description": "在资源管理器中显示文件扩展名（推荐，防止伪装文件）。"
+    },
+    "WPFToggleHiddenFiles": {
+      "Content": "显示隐藏文件",
+      "Description": "在资源管理器中显示隐藏文件。"
+    },
+    "WPFToggleVerboseLogon": {
+      "Content": "登录时显示详细状态信息",
+      "Description": "登录/关机时显示更详细的系统状态消息，便于排障。"
+    },
+    "WPFToggleNewOutlook": {
+      "Content": "新版 Outlook",
+      "Description": "控制 Office/Outlook 是否使用“新版 Outlook”与相关切换入口（偏向保持旧版体验）。"
+    },
+    "WPFToggleScrollbars": {
+      "Content": "始终显示滚动条",
+      "Description": "开启后滚动条会始终可见；关闭后 Windows 会在不使用时自动隐藏滚动条。"
+    },
+    "WPFToggleMultiplaneOverlay": {
+      "Content": "禁用 MPO（多平面叠加）",
+      "Description": "禁用 MPO（多平面叠加）。某些显卡/驱动下可缓解闪屏/黑屏/画面撕裂；但可能略增耗电。"
+    },
+    "WPFToggleMouseAcceleration": {
+      "Content": "鼠标加速",
+      "Description": "开关鼠标加速（关闭后鼠标更线性，适合游戏）。"
+    },
+    "WPFToggleNumLock": {
+      "Content": "开机自动开启 NumLock",
+      "Description": "控制开机后 NumLock 是否默认开启。"
+    },
+    "WPFToggleStandbyFix": {
+      "Content": "现代待机修复",
+      "Description": "在 S0 睡眠期间禁用网络连接，减少现代笔记本待机发热或偷跑电。"
+    },
+    "WPFToggleS3Sleep": {
+      "Content": "S3 睡眠（传统睡眠）",
+      "Description": "切换到传统 S3 睡眠（若硬件/BIOS 支持）。有助于解决某些“睡眠唤醒异常”。"
+    },
+    "WPFToggleHideSettingsHome": {
+      "Content": "移除“设置”首页",
+      "Description": "在 Windows 11 中移除“设置”应用的首页（Home）入口/内容。"
+    },
+    "WPFToggleBingSearch": {
+      "Content": "开始菜单搜索 Bing 网页结果",
+      "Description": "控制开始菜单搜索是否包含 Bing 网页结果（关掉更隐私、也更干净）。"
+    },
+    "WPFToggleLoginBlur": {
+      "Content": "登录界面亚克力模糊",
+      "Description": "控制 Windows 10/11 登录界面背景的亚克力模糊效果。关闭后登录背景会更清晰。"
+    },
+    "WPFToggleStartMenuRecommendations": {
+      "Content": "开始菜单显示“推荐”",
+      "Description": "控制开始菜单是否显示“推荐”区域内容。"
+    },
+    "WPFToggleStickyKeys": {
+      "Content": "粘滞键",
+      "Description": "开关粘滞键（连续按 Shift 触发的辅助功能）。"
+    },
+    "WPFToggleTaskbarAlignment": {
+      "Content": "任务栏图标居中",
+      "Description": "切换任务栏图标居中/靠左（Win11）。"
+    },
+    "WPFToggleTaskbarSearch": {
+      "Content": "任务栏搜索按钮",
+      "Description": "显示/隐藏任务栏上的搜索按钮/搜索框。"
+    },
+    "WPFToggleTaskView": {
+      "Content": "任务栏任务视图按钮",
+      "Description": "显示/隐藏任务栏上的“任务视图”按钮。"
+    },
+    "WPFOOSUbutton": {
+      "Content": "运行 O&O ShutUp10++（隐私工具）"
+    },
+    "WPFchangedns": {
+      "Content": "DNS（快速设置）"
+    },
+    "WPFAddUltPerf": {
+      "Content": "添加并启用“卓越性能”电源计划"
+    },
+    "WPFRemoveUltPerf": {
+      "Content": "移除“卓越性能”电源计划"
+    },
+    "WPFTweaksDisableExplorerAutoDiscovery": {
+      "Content": "禁用资源管理器自动识别文件夹类型",
+      "Description": "关闭资源管理器对文件夹“自动套模板”（图片/音乐/视频等）判断，减少卡顿或模板乱跳。"
+    }
+  }
+}
