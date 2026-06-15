@@ -203,7 +203,7 @@ function Invoke-WPFFixesUpdate {
 
     $ButtonType = [System.Windows.MessageBoxButton]::OK
     $MessageboxTitle = "Reset Windows Update "
-    $Messageboxbody = ("Stock settings loaded.`n Please reboot your computer")
+    $Messageboxbody = ("已加载默认设置。`n 请重启电脑")
     $MessageIcon = [System.Windows.MessageBoxImage]::Information
 
     [System.Windows.MessageBox]::Show($Messageboxbody, $MessageboxTitle, $ButtonType, $MessageIcon)

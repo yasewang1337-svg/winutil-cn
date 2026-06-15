@@ -41,7 +41,7 @@ function Invoke-WinUtilISOMountAndVerify {
     $isoPath = $sync["WPFWin11ISOPath"].Text
 
     if ([string]::IsNullOrWhiteSpace($isoPath) -or $isoPath -eq "No ISO selected...") {
-        [System.Windows.MessageBox]::Show("Please select an ISO file first.", "No ISO Selected", "OK", "Warning")
+        [System.Windows.MessageBox]::Show("请先选择一个 ISO 文件。", "未选择 ISO", "OK", "Warning")
         return
     }
 
@@ -67,8 +67,8 @@ function Invoke-WinUtilISOMountAndVerify {
             Dismount-DiskImage -ImagePath $isoPath
             Write-Win11ISOLog "ERROR: install.wim/install.esd not found - not a valid Windows ISO."
             [System.Windows.MessageBox]::Show(
-                "This does not appear to be a valid Windows ISO.`n`ninstall.wim / install.esd was not found.",
-                "Invalid ISO", "OK", "Error")
+                "这似乎不是有效的 Windows ISO。`n`n未找到 install.wim / install.esd。",
+                "无效的 ISO", "OK", "错误")
             Set-WinUtilProgressBar -Label "" -Percent 0
             return
         }
@@ -82,8 +82,8 @@ function Invoke-WinUtilISOMountAndVerify {
             Dismount-DiskImage -ImagePath $isoPath
             Write-Win11ISOLog "ERROR: No 'Windows 11' edition found in the image."
             [System.Windows.MessageBox]::Show(
-                "No Windows 11 edition was found in this ISO.`n`nOnly official Windows 11 ISOs are supported.",
-                "Not a Windows 11 ISO", "OK", "Error")
+                "在此 ISO 中未找到 Windows 11 版本。`n`n仅支持官方 Windows 11 ISO。",
+                "不是 Windows 11 ISO", "OK", "错误")
             Set-WinUtilProgressBar -Label "" -Percent 0
             return
         }
@@ -118,8 +118,8 @@ function Invoke-WinUtilISOMountAndVerify {
     } catch {
         Write-Win11ISOLog "ERROR during mount/verify: $_"
         [System.Windows.MessageBox]::Show(
-            "An error occurred while mounting or verifying the ISO:`n`n$_",
-            "Error", "OK", "Error")
+            "挂载或校验 ISO 时发生错误:`n`n$_",
+            "错误", "OK", "错误")
     } finally {
         Start-Sleep -Milliseconds 800
         Set-WinUtilProgressBar -Label "" -Percent 0
@@ -133,8 +133,8 @@ function Invoke-WinUtilISOModify {
 
     if (-not $isoPath) {
         [System.Windows.MessageBox]::Show(
-            "No verified ISO found. Please complete Steps 1 and 2 first.",
-            "Not Ready", "OK", "Warning")
+            "未找到已校验的 ISO。请先完成步骤 1 和 2。",
+            "尚未就绪", "OK", "Warning")
         return
     }
 
@@ -391,8 +391,8 @@ function Invoke-WinUtilISOModify {
 
             $sync["WPFWin11ISOStatusLog"].Dispatcher.Invoke([action]{
                 [System.Windows.MessageBox]::Show(
-                    "An error occurred during install.wim modification:`n`n$_",
-                    "Modification Error", "OK", "Error")
+                    "修改 install.wim 时发生错误:`n`n$_",
+                    "修改错误", "OK", "错误")
             })
         } finally {
             Start-Sleep -Milliseconds 800
@@ -444,8 +444,8 @@ function Invoke-WinUtilISOCheckExistingWork {
     Write-Win11ISOLog "Click 'Clean & Reset' if you want to start over with a new ISO."
 
     [System.Windows.MessageBox]::Show(
-        "A previous WinUtil ISO working directory was found:`n`n$($existingWorkDir.FullName)`n`n(Last modified: $modified)`n`nStep 4 (output options) has been restored so you can save the already-modified image.`n`nClick 'Clean & Reset' in Step 4 if you want to start over.",
-        "Existing Work Found", "OK", "Info")
+        "找到了上一次 WinUtil ISO 的工作目录:`n`n$($existingWorkDir.FullName)`n`n(最后修改时间:$modified)`n`n已恢复步骤 4(输出选项),以便你保存已修改好的镜像。`n`n如果想重新开始,请点击步骤 4 中的 'Clean & Reset'。",
+        "发现已有工作内容", "OK", "Info")
 }
 
 function Invoke-WinUtilISOCleanAndReset {
@@ -453,8 +453,8 @@ function Invoke-WinUtilISOCleanAndReset {
 
     if ($workDir -and (Test-Path $workDir)) {
         $confirm = [System.Windows.MessageBox]::Show(
-            "This will delete the temporary working directory:`n`n$workDir`n`nAnd reset the interface back to the start.`n`nContinue?",
-            "Clean & Reset", "YesNo", "Warning")
+            "这将删除临时工作目录:`n`n$workDir`n`n并将界面重置回起始状态。`n`n是否继续?",
+            "清理并重置", "YesNo", "Warning")
         if ($confirm -ne "Yes") { return }
     }
 
@@ -598,8 +598,8 @@ function Invoke-WinUtilISOExport {
 
     if (-not $contentsDir -or -not (Test-Path $contentsDir)) {
         [System.Windows.MessageBox]::Show(
-            "No modified ISO content found.  Please complete Steps 1-3 first.",
-            "Not Ready", "OK", "Warning")
+            "未找到修改后的 ISO 内容。请先完成步骤 1-3。",
+            "尚未就绪", "OK", "Warning")
         return
     }
 
@@ -643,8 +643,8 @@ function Invoke-WinUtilISOExport {
         if (-not $oscdimg) {
             Write-Win11ISOLog "oscdimg.exe still not found after install attempt."
             [System.Windows.MessageBox]::Show(
-                "oscdimg.exe could not be found or installed automatically.`n`nPlease install it manually:`n  winget install -e --id Microsoft.OSCDIMG`n`nOr install the Windows ADK from:`nhttps://learn.microsoft.com/windows-hardware/get-started/adk-install",
-                "oscdimg Not Found", "OK", "Warning")
+                "无法自动找到或安装 oscdimg.exe。`n`n请手动安装:`n  winget install -e --id Microsoft.OSCDIMG`n`n或从以下地址安装 Windows ADK:`nhttps://learn.microsoft.com/windows-hardware/get-started/adk-install",
+                "未找到 oscdimg", "OK", "Warning")
             return
         }
         Write-Win11ISOLog "oscdimg.exe installed successfully."
@@ -716,20 +716,20 @@ function Invoke-WinUtilISOExport {
                 SetProgress "ISO exported" 100
                 Write-Win11ISOLog "ISO exported successfully: $outputISO"
                 $sync["WPFWin11ISOStatusLog"].Dispatcher.Invoke([action]{
-                    [System.Windows.MessageBox]::Show("ISO exported successfully!`n`n$outputISO", "Export Complete", "OK", "Info")
+                    [System.Windows.MessageBox]::Show("ISO 导出成功!`n`n$outputISO", "导出完成", "OK", "Info")
                 })
             } else {
                 Write-Win11ISOLog "oscdimg exited with code $($proc.ExitCode)."
                 $sync["WPFWin11ISOStatusLog"].Dispatcher.Invoke([action]{
                     [System.Windows.MessageBox]::Show(
-                        "oscdimg exited with code $($proc.ExitCode).`nCheck the status log for details.",
-                        "Export Error", "OK", "Error")
+                        "oscdimg 退出,代码为 $($proc.ExitCode)。`n请查看状态日志了解详情。",
+                        "导出错误", "OK", "错误")
                 })
             }
         } catch {
             Write-Win11ISOLog "ERROR during ISO export: $_"
             $sync["WPFWin11ISOStatusLog"].Dispatcher.Invoke([action]{
-                [System.Windows.MessageBox]::Show("ISO export failed:`n`n$_", "Error", "OK", "Error")
+                [System.Windows.MessageBox]::Show("ISO 导出失败:`n`n$_", "错误", "OK", "错误")
             })
         } finally {
             Start-Sleep -Milliseconds 800

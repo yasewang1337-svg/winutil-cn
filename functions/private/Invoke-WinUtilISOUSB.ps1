@@ -26,7 +26,7 @@ function Invoke-WinUtilISOWriteUSB {
     $usbDisks    = $sync["Win11ISOUSBDisks"]
 
     if (-not $contentsDir -or -not (Test-Path $contentsDir)) {
-        [System.Windows.MessageBox]::Show("No modified ISO content found. Please complete Steps 1-3 first.", "Not Ready", "OK", "Warning")
+        [System.Windows.MessageBox]::Show("未找到修改后的 ISO 内容。请先完成步骤 1-3。", "尚未就绪", "OK", "Warning")
         return
     }
 
@@ -44,7 +44,7 @@ function Invoke-WinUtilISOWriteUSB {
     }
 
     if (-not $targetDisk) {
-        [System.Windows.MessageBox]::Show("Please select a USB drive from the dropdown.", "No Drive Selected", "OK", "Warning")
+        [System.Windows.MessageBox]::Show("请从下拉列表中选择一个 U 盘。", "未选择驱动器", "OK", "Warning")
         return
     }
 
@@ -52,8 +52,8 @@ function Invoke-WinUtilISOWriteUSB {
     $sizeGB     = [math]::Round($targetDisk.Size / 1GB, 1)
 
     $confirm = [System.Windows.MessageBox]::Show(
-        "ALL data on Disk $diskNum ($($targetDisk.FriendlyName), $sizeGB GB) will be PERMANENTLY ERASED.`n`nAre you sure you want to continue?",
-        "Confirm USB Erase", "YesNo", "Warning")
+        "磁盘 $diskNum($($targetDisk.FriendlyName),$sizeGB GB)上的所有数据将被永久擦除。`n`n确定要继续吗?",
+        "确认擦除 U 盘", "YesNo", "Warning")
 
     if ($confirm -ne "Yes") {
         Write-Win11ISOLog "USB write cancelled by user."
@@ -245,13 +245,13 @@ function Invoke-WinUtilISOWriteUSB {
 
             $sync["WPFWin11ISOStatusLog"].Dispatcher.Invoke([action]{
                 [System.Windows.MessageBox]::Show(
-                    "USB drive created successfully!`n`nYou can now boot from this drive to install Windows 11.",
-                    "USB Ready", "OK", "Info")
+                    "U 盘创建成功!`n`n现在可以从该 U 盘启动来安装 Windows 11。",
+                    "U 盘已就绪", "OK", "Info")
             })
         } catch {
             Log "ERROR during USB write: $_"
             $sync["WPFWin11ISOStatusLog"].Dispatcher.Invoke([action]{
-                [System.Windows.MessageBox]::Show("USB write failed:`n`n$_", "USB Write Error", "OK", "Error")
+                [System.Windows.MessageBox]::Show("U 盘写入失败:`n`n$_", "U 盘写入错误", "OK", "Error")
             })
         } finally {
             Start-Sleep -Milliseconds 800

@@ -7,7 +7,7 @@ function Invoke-WPFundoall {
     #>
 
     if($sync.ProcessRunning) {
-        $msg = "[Invoke-WPFundoall] Install process is currently running."
+        $msg = "[Invoke-WPFundoall] 当前有进程正在运行。"
         [System.Windows.MessageBox]::Show($msg, "Winutil", [System.Windows.MessageBoxButton]::OK, [System.Windows.MessageBoxImage]::Warning)
         return
     }
@@ -15,7 +15,7 @@ function Invoke-WPFundoall {
     $tweaks = $sync.selectedTweaks
 
     if ($tweaks.count -eq 0) {
-        $msg = "Please check the tweaks you wish to undo."
+        $msg = "请勾选你要撤销的优化项。"
         [System.Windows.MessageBox]::Show($msg, "Winutil", [System.Windows.MessageBoxButton]::OK, [System.Windows.MessageBoxImage]::Warning)
         return
     }

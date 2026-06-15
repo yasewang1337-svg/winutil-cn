@@ -33,7 +33,7 @@
         $selectedAppRemoveButton.Content = [string]([char]0xE711)
         $selectedAppRemoveButton.HorizontalAlignment = "Center"
         $selectedAppRemoveButton.Tag = $key
-        $selectedAppRemoveButton.ToolTip = "Remove the App from Selection"
+        $selectedAppRemoveButton.ToolTip = "从所选项中移除该应用"
         $selectedAppRemoveButton.SetResourceReference([Windows.Controls.Control]::ForegroundProperty, "MainForegroundColor")
         $selectedAppRemoveButton.SetResourceReference([Windows.Controls.Control]::StyleProperty, "HoverButtonStyle")
 

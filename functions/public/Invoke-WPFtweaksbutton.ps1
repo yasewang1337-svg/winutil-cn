@@ -7,7 +7,7 @@ function Invoke-WPFtweaksbutton {
   #>
 
   if($sync.ProcessRunning) {
-    $msg = "[Invoke-WPFtweaksbutton] Install process is currently running."
+    $msg = "[Invoke-WPFtweaksbutton] 当前有进程正在运行。"
     [System.Windows.MessageBox]::Show($msg, "Winutil", [System.Windows.MessageBoxButton]::OK, [System.Windows.MessageBoxImage]::Warning)
     return
   }
@@ -24,7 +24,7 @@ function Invoke-WPFtweaksbutton {
   $completedSteps = 0
 
   if ($tweaks.count -eq 0 -and $dnsProvider -eq "Default") {
-    $msg = "Please check the tweaks you wish to perform."
+    $msg = "请勾选你要执行的优化项。"
     [System.Windows.MessageBox]::Show($msg, "Winutil", [System.Windows.MessageBoxButton]::OK, [System.Windows.MessageBoxImage]::Warning)
     return
   }

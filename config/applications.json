@@ -1,4 +1,13 @@
 {
+    "dockerdesktop": {
+        "category": "开发工具",
+        "choco": "docker-desktop",
+        "content": "Docker Desktop",
+        "description": "在 Windows 上构建、运行和管理容器的桌面应用,集成 Docker 引擎、CLI 与 Kubernetes。",
+        "link": "https://www.docker.com/products/docker-desktop/",
+        "winget": "Docker.DockerDesktop",
+        "foss": false
+    },
     "1password": {
         "category": "实用工具",
         "choco": "1password",

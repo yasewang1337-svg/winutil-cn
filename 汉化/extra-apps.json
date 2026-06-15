@@ -1,0 +1,12 @@
+{
+  "_meta": "你的专属软件层:winutil 上游未收录、但你要的工具。apply-extra-apps.ps1 会把这些注入 applications.json(已存在的 key 自动跳过)。category 用已汉化的中文分类名;winget/choco 填官方包 ID。",
+  "dockerdesktop": {
+    "category": "开发工具",
+    "choco": "docker-desktop",
+    "content": "Docker Desktop",
+    "description": "在 Windows 上构建、运行和管理容器的桌面应用,集成 Docker 引擎、CLI 与 Kubernetes。",
+    "link": "https://www.docker.com/products/docker-desktop/",
+    "winget": "Docker.DockerDesktop",
+    "foss": false
+  }
+}
