@@ -1,36 +1,36 @@
 ---
-title: Updates
+title: 更新
 weight: 6
 prev: /userguide/features/
 next: /userguide/automation/
 ---
 
-Winutil provides three update modes so you can choose how aggressively Windows Update is managed on your system:
+Winutil 提供三种更新模式，让你自行决定系统上的 Windows 更新要被管得多严：
 
-Changing modes adjusts system-wide Windows Update behavior. After switching modes, give Windows a moment to apply the policy and plan for a restart if the new state does not appear immediately.
+切换模式会调整系统级的 Windows 更新行为。切换后，请给 Windows 一点时间来套用策略；如果新状态没有立即出现，请做好重启的准备。
 
-{{< image src="images/updates-tab-new" alt="Updates tab in Winutil" >}}
+{{< image src="images/updates-tab-new" alt="Winutil 中的更新标签页" >}}
 
-- **Default (Out of the Box) Settings**: Restores standard Windows Update behavior
-- **Security (Recommended) Settings**: Prioritizes stability while still receiving security updates
-- **Disable ALL Updates**: Turns off Windows Update entirely and should only be used with extreme caution
+- **Default（Out of the Box）Settings（默认/开箱设置）**：恢复标准的 Windows 更新行为
+- **Security（Recommended）Settings（安全/推荐设置）**：优先保证稳定性，同时仍接收安全更新
+- **Disable ALL Updates（禁用全部更新）**：彻底关闭 Windows 更新，只应在极度谨慎的情况下使用
 
-### Default (Out of Box) Settings
+### 默认（开箱）设置
 
-- **What it does**: Restores the default Windows Update configuration.
-- **Best for**: Systems where you want Windows to manage updates normally.
-- **Notes**: This removes custom update settings previously applied by Winutil. If update errors continue, use the reset option in the **Config** tab to restore Microsoft Update services to their default state.
+- **它做什么**：恢复默认的 Windows 更新配置。
+- **适合谁**：希望让 Windows 正常管理更新的系统。
+- **说明**：这会移除之前由 Winutil 套用的自定义更新设置。如果更新错误仍然存在，请在 **Config（配置）** 标签页里使用重置选项，把 Microsoft Update 服务恢复到默认状态。
 
-### Security (Recommended) Settings
+### 安全（推荐）设置
 
-- **What it does**: Applies a more conservative update strategy designed for most users.
-- **Feature updates**: Delayed by **365 days** to reduce the chance of disruption from major Windows changes.
-- **Security updates**: Delayed by **4 days** to allow time for early issues to surface while still keeping the system protected.
-- **Why use it**: This mode offers the best balance between security and stability, which is why it is the recommended option for most PCs.
+- **它做什么**：套用一套更保守、面向大多数用户设计的更新策略。
+- **功能更新**：延迟 **365 天**，以降低 Windows 重大改动带来干扰的概率。
+- **安全更新**：延迟 **4 天**，既给早期问题浮现留出时间，又能保持系统受保护。
+- **为什么用它**：这个模式在安全与稳定之间取得了最佳平衡，因此是大多数电脑的推荐选项。
 
-### Disable ALL Updates (NOT RECOMMENDED!)
+### 禁用全部更新（不推荐！）
 
-- **What it does**: Disables all Windows updates.
-- **Best for**: Highly controlled or special-purpose systems where updates must remain off temporarily.
-- **Warning**: This leaves the system without security patches and significantly increases security risk.
-- **Recommendation**: Avoid this mode unless you fully understand the tradeoffs and have a specific reason to use it.
+- **它做什么**：禁用所有 Windows 更新。
+- **适合谁**：高度受控或特殊用途、必须暂时保持更新关闭的系统。
+- **警告**：这会让系统得不到安全补丁，显著增加安全风险。
+- **建议**：除非你完全理解其中的取舍、并有明确理由，否则请避免使用这个模式。

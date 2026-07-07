@@ -1,5 +1,5 @@
 ---
-title: Welcome to Winutil Documentation!
+title: 欢迎使用 Winutil 文档！
 toc: false
 width: full
 ---
@@ -10,14 +10,16 @@ width: full
   <a href="https://discord.gg/RUbZUZyByQ"><img src="https://dcbadge.limes.pink/api/server/https://discord.gg/RUbZUZyByQ" alt="Discord Community Server" style="height: 28px; width: auto; min-width: 10px; object-fit: contain; margin: 0;"></a>
 </div>
 
-Welcome to the official documentation for Winutil, your go-to utility for optimizing and managing your Windows environment. Whether you’re an IT professional, power user, or regular user, Winutil provides a comprehensive set of tools to enhance your Windows experience.
+欢迎来到 Winutil 官方文档——它是你优化和管理 Windows 环境的得力助手。无论你是 IT 专业人士、高级玩家还是普通用户，Winutil 都提供了一整套工具，让你的 Windows 使用体验更上一层楼。
 
-{{< image src="images/Title-Screen" alt="Winutil title screen" >}}
+> 💙 能为中国开发者提供更好的帮助，是我最开心的事情。这个中文版会一直维护下去，未来会更好。
 
-## Running the latest release of Winutil
+{{< image src="images/Title-Screen" alt="Winutil 标题界面" >}}
 
-* You will first need to start a PowerShell terminal **as Admin**.
-* Now you can run the following command:
+## 运行最新版 Winutil
+
+* 首先，你需要**以管理员身份**启动一个 PowerShell 终端。
+* 然后运行下面这条命令：
 
 ```
 irm "https://christitus.com/win" | iex
@@ -25,4 +27,4 @@ irm "https://christitus.com/win" | iex
 
 
 > [!IMPORTANT]
-> Winutil is updated frequently as of the time of writing. Consequently, features and functionalities may evolve, and the documentation may not always reflect the most current images or information.
+> 截至本文撰写时，Winutil 更新非常频繁。因此，功能特性可能会持续演进，文档中的截图或信息未必总能反映最新状态。

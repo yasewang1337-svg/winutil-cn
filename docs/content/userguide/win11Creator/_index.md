@@ -1,147 +1,147 @@
 ---
-title: Win11 Creator
+title: Win11 创建器
 weight: 8
 prev: /userguide/automation/
 ---
 
-## Using Winutil's Win11 Creator
+## 使用 Winutil 的 Win11 创建器
 
-Winutil includes a built-in **Win11 Creator** tool that lets you take an official Windows 11 ISO and produce a customized, debloated version. The resulting image can remove telemetry, bypass hardware requirement checks, and enable local account setup out of the box. You can export the result as a new ISO file or write it directly to a USB drive.
+Winutil 内置了一个 **Win11 创建器（Win11 Creator）** 工具，让你能拿一份官方 Windows 11 ISO，产出一个自定义、已瘦身的版本。生成的镜像可以移除遥测、绕过硬件要求检查，并开箱即用地启用本地账户设置。你可以把结果导出为一个新的 ISO 文件，或直接写入 U 盘。
 
-{{< image src="images/win11creator-tab-new" alt="Win11 Creator tab in Winutil" >}}
+{{< image src="images/win11creator-tab-new" alt="Winutil 中的 Win11 创建器标签页" >}}
 
 > [!IMPORTANT]
-> You need an **official Windows 11 ISO** from [Microsoft's website](https://www.microsoft.com/en-us/software-download/windows11) before starting. Custom, modified, or non-official ISOs are not supported. The process uses ~10–15 GB of temporary disk space, so make sure you have room.
+> 开始之前，你需要一份来自[微软官网](https://www.microsoft.com/en-us/software-download/windows11)的**官方 Windows 11 ISO**。不支持自定义、修改过或非官方的 ISO。整个过程会占用约 10–15 GB 的临时磁盘空间，请确保有足够空间。
 
 > [!NOTE]
-> This workflow is intended for fresh Windows installs, not in-place upgrades of an existing installation.
+> 此流程面向全新安装 Windows，而非对现有安装进行就地升级。
 
 ---
 
-### Step 1 — Select Your Official Windows 11 ISO
+### 第 1 步 —— 选择你的官方 Windows 11 ISO
 
-1. Open Winutil and go to the **Win11 Creator** tab.
-2. Click **Browse** and select your **official Windows 11 ISO file** from Microsoft (must be 4 GB or larger). Custom or modified ISOs are not supported.
-3. The file path and size will appear on screen once selected.
+1. 打开 Winutil，进入 **Win11 Creator（Win11 创建器）** 标签页。
+2. 点击 **Browse（浏览）**，选择你来自微软的**官方 Windows 11 ISO 文件**（必须 4 GB 或更大）。不支持自定义或修改过的 ISO。
+3. 选择后，文件路径和大小会显示在屏幕上。
 
 ---
 
-### Step 2 — Mount & Verify
+### 第 2 步 —— 挂载并校验
 
-1. Click **Mount & Verify ISO**.
-2. Winutil mounts the ISO, checks for a valid `install.wim` or `install.esd`, and reads the available editions (Home, Pro, Enterprise, etc.).
-3. Once verified, select your desired **edition** from the dropdown — Pro is selected by default if available.
+1. 点击 **Mount & Verify ISO（挂载并校验 ISO）**。
+2. Winutil 会挂载该 ISO，检查是否存在有效的 `install.wim` 或 `install.esd`，并读取可用的版本（家庭版、专业版、企业版等）。
+3. 校验通过后，从下拉菜单中选择你想要的**版本**——如果可用，默认会选中专业版（Pro）。
 
 > [!NOTE]
-> This step takes around 10–30 seconds depending on your drive speed.
+> 这一步大约需要 10–30 秒，取决于你的硬盘速度。
 
 ---
 
-### Step 3 — Run the Modification
+### 第 3 步 —— 运行修改
 
-Click **Run Windows ISO Modification and Creator** to start the customization process. Winutil will:
+点击 **Run Windows ISO Modification and Creator（运行 Windows ISO 修改与创建）** 以开始自定义流程。Winutil 会：
 
-**App & Component Removal:**
-- **Remove 40+ bloat apps** — Clipchamp, Teams, Copilot, Dev Home, new Outlook, Bing apps, Solitaire, and more
-- **Delete OneDrive setup** from the image
+**应用与组件移除：**
+- **移除 40 多个捆绑应用** —— Clipchamp、Teams、Copilot、Dev Home、新版 Outlook、Bing 系应用、纸牌，等等
+- 从镜像中**删除 OneDrive 安装程序**
 
-**System Customization:**
-- **Bypass hardware checks** — removes TPM, Secure Boot, CPU, RAM, and storage requirement enforcement so the ISO installs on unsupported hardware
-- **Enable local account setup** — injects an `autounattend.xml` that skips the Microsoft account screen during OOBE
-- **Disable BitLocker and device encryption** — removes startup overhead
-- **Disable Chat icon** — removes chat taskbar button
-- **Strip unused editions** — keeps only your selected edition, saving 1–2 GB per removed edition
-- **Clean the component store** — runs DISM cleanup to reclaim another 300–800 MB
+**系统自定义：**
+- **绕过硬件检查** —— 移除对 TPM、安全启动、CPU、内存和存储要求的强制，使该 ISO 能安装到不受支持的硬件上
+- **启用本地账户设置** —— 注入一份 `autounattend.xml`，在 OOBE（开箱体验）期间跳过微软账户界面
+- **禁用 BitLocker 和设备加密** —— 移除开机时的额外开销
+- **禁用聊天图标** —— 移除任务栏上的聊天按钮
+- **剔除未用的版本** —— 只保留你选中的版本，每移除一个版本可节省 1–2 GB
+- **清理组件存储** —— 运行 DISM 清理，再回收 300–800 MB
 
-**Privacy & Telemetry Tweaks:**
-- **Disable telemetry** — advertising ID, tailored experiences, input personalization, speech online privacy
-- **Disable cloud content features** — app suggestions, Microsoft Store recommendations
-- **Remove telemetry scheduled tasks** — CEIP, Appraiser, WaaSMedic, and others
-- **Disable OneDrive folder backup** — prevents automatic backups to cloud
-- **Prevent DevHome and Outlook post-setup installation**
-- **Prevent Teams installation** — blocks auto-install after OOBE
-- **Prevent new Outlook Mail app installation**
-- **Disable Windows Update during OOBE** — re-enabled automatically on first login
-- **Disable Copilot and search box suggestions**
+**隐私与遥测优化：**
+- **禁用遥测** —— 广告 ID、量身定制的体验、输入个性化、语音在线隐私
+- **禁用云内容功能** —— 应用建议、Microsoft Store 推荐
+- **移除遥测计划任务** —— CEIP、Appraiser、WaaSMedic 等
+- **禁用 OneDrive 文件夹备份** —— 阻止自动备份到云端
+- **阻止 DevHome 和 Outlook 在安装后被安装**
+- **阻止 Teams 安装** —— 屏蔽 OOBE 之后的自动安装
+- **阻止新版 Outlook 邮件应用安装**
+- **在 OOBE 期间禁用 Windows 更新** —— 首次登录时自动重新启用
+- **禁用 Copilot 和搜索框建议**
 
-**Optional: Driver Injection**
-- If enabled, it injects all drivers from your current system into the install.wim and boot.wim — useful for offline installations on machines with missing drivers. This is an optional checkbox in Step 3.
+**可选：驱动注入**
+- 如果启用，它会把你当前系统里的所有驱动注入到 install.wim 和 boot.wim ——对于在缺少驱动的机器上进行离线安装很有用。这是第 3 步中的一个可选复选框。
 
-A live log shows progress as each step completes. This stage usually takes **10–30 minutes** depending on disk speed. The WIM dismount near the end is the slowest part, so do not close Winutil while it is running.
+一个实时日志会随着每一步的完成展示进度。这个阶段通常需要 **10–30 分钟**，取决于磁盘速度。接近尾声的 WIM 卸载是最慢的部分，所以运行期间不要关闭 Winutil。
 
 ---
 
-### Step 4 — Export Your Result
+### 第 4 步 —— 导出你的成果
 
-Once the modification is complete, choose how to save your image:
+修改完成后，选择如何保存你的镜像：
 
 {{< tabs >}}
 
-  {{< tab name="Save as ISO" selected=true >}}
-  1. Click **Save as an ISO File**.
-  2. Choose a save location (defaults to your Desktop as `Win11_Modified_yyyyMMdd.iso`).
-  3. Winutil builds a dual BIOS/UEFI bootable ISO using `oscdimg.exe`.
+  {{< tab name="另存为 ISO" selected=true >}}
+  1. 点击 **Save as an ISO File（保存为 ISO 文件）**。
+  2. 选择一个保存位置（默认是你的桌面，文件名为 `Win11_Modified_yyyyMMdd.iso`）。
+  3. Winutil 使用 `oscdimg.exe` 构建一个 BIOS/UEFI 双启动的可引导 ISO。
 
   > [!NOTE]
-  > `oscdimg.exe` (part of the Windows ADK) is required. If it's not found, Winutil will attempt to install it automatically via winget. If that fails, install it manually: `winget install -e --id Microsoft.OSCDIMG`
+  > 需要 `oscdimg.exe`（Windows ADK 的一部分）。如果找不到，Winutil 会尝试通过 winget 自动安装它。若失败，请手动安装：`winget install -e --id Microsoft.OSCDIMG`
 
 
   {{< /tab >}}
 
-  {{< tab name="Write to USB" >}}
-  1. Click **Write Directly to a USB Drive**.
-  2. Select your USB drive from the dropdown (click **Refresh** if it doesn't appear).
-  3. Click **Erase & Write to USB** and confirm the warning — **all data on the drive will be permanently erased**.
-  4. Winutil formats the drive as GPT with a 512 MB EFI partition and copies the modified Windows files.
+  {{< tab name="写入 U 盘" >}}
+  1. 点击 **Write Directly to a USB Drive（直接写入 U 盘）**。
+  2. 从下拉菜单中选择你的 U 盘（如果没出现，点击 **Refresh（刷新）**）。
+  3. 点击 **Erase & Write to USB（擦除并写入 U 盘）** 并确认警告——**该 U 盘上的所有数据都将被永久擦除**。
+  4. Winutil 会把 U 盘格式化为 GPT，带一个 512 MB 的 EFI 分区，并复制修改后的 Windows 文件。
 
   > [!WARNING]
-  > Double-check you have selected the correct drive before confirming. This operation cannot be undone.
+  > 确认前，请再三核对你选的是正确的 U 盘。此操作无法撤销。
 
-  **Minimum USB size:** 8 GB recommended. Writing takes 10–20 minutes.
+  **U 盘最小容量：** 建议 8 GB。写入需要 10–20 分钟。
   {{< /tab >}}
 
 {{< /tabs >}}
 
 ---
 
-### Step 5 — Clean Up (Optional)
+### 第 5 步 —— 清理（可选）
 
-Click **Clean & Reset** to delete the temporary working directory (~10–15 GB) and return the tool to its initial state, ready for a new ISO. You will be asked to confirm before anything is deleted.
-
----
-
-### What the Modified ISO Does Differently
-
-When you install Windows 11 from your modified ISO:
-
-- **No Microsoft account required** — create a local account directly during setup
-- **No hardware checks** — installs on machines without TPM 2.0, Secure Boot, or supported CPUs
-- **Dark mode enabled by default**
-- **Empty taskbar and Start Menu** — no pinned apps, Chat icon removed
-- **Windows Update disabled during OOBE** — automatically re-enabled on first login to prevent setup interruptions
-- **BitLocker disabled** — removes startup overhead on first boot
+点击 **Clean & Reset（清理并重置）**，删除临时工作目录（约 10–15 GB），并把工具恢复到初始状态，准备处理新的 ISO。删除任何东西之前，都会先请你确认。
 
 ---
 
-### Troubleshooting
+### 修改后的 ISO 有何不同
 
-| Problem | Fix |
+当你用修改后的 ISO 安装 Windows 11 时：
+
+- **无需微软账户** —— 在安装过程中直接创建本地账户
+- **无硬件检查** —— 可安装到没有 TPM 2.0、安全启动或受支持 CPU 的机器上
+- **默认启用深色模式**
+- **空的任务栏和开始菜单** —— 没有固定的应用，聊天图标已移除
+- **OOBE 期间禁用 Windows 更新** —— 首次登录时自动重新启用，避免打断安装
+- **禁用 BitLocker** —— 移除首次启动时的额外开销
+
+---
+
+### 故障排查
+
+| 问题 | 解决办法 |
 |---------|-----|
-| "install.wim not found" | Not a valid Windows 11 ISO — download a fresh one from Microsoft |
-| "oscdimg.exe not found" | Run `winget install -e --id Microsoft.OSCDIMG` then retry |
-| USB drive not showing up | Plug it in, wait a few seconds, then click **Refresh** |
-| Modification seems stuck | The WIM dismount step is slow — wait at least 10 minutes before assuming it's frozen |
-| "Access Denied" error | Make sure Winutil is running as Administrator |
+| "install.wim not found"（找不到 install.wim） | 不是有效的 Windows 11 ISO —— 从微软重新下载一份 |
+| "oscdimg.exe not found"（找不到 oscdimg.exe） | 运行 `winget install -e --id Microsoft.OSCDIMG` 后重试 |
+| U 盘没出现 | 插好它，等几秒，然后点击 **Refresh（刷新）** |
+| 修改似乎卡住了 | WIM 卸载这一步很慢——至少等 10 分钟，再判断它是否真的卡死 |
+| "Access Denied"（拒绝访问）错误 | 确认 Winutil 是以管理员身份运行的 |
 
 ---
 
-## Additional Resources
+## 相关资源
 
-- Download official Windows 11 media from [Microsoft](https://www.microsoft.com/en-us/software-download/windows11).
-- If you prefer to write a finished ISO with another tool, common choices include [Rufus](https://rufus.ie/) or [Ventoy](https://www.ventoy.net/).
-
-> [!NOTE]
-> Always download Windows ISOs from official Microsoft sources or trusted tools like Rufus/UUP Dump to avoid tampered images.
+- 从[微软](https://www.microsoft.com/en-us/software-download/windows11)下载官方 Windows 11 安装介质。
+- 如果你更喜欢用别的工具来写入成品 ISO，常见选择包括 [Rufus](https://rufus.ie/) 或 [Ventoy](https://www.ventoy.net/)。
 
 > [!NOTE]
-> Newer Windows 11 ISOs may not boot correctly on older versions of Ventoy — make sure Ventoy is up to date before use. If issues persist after updating, this is a Ventoy compatibility limitation outside of Winutil's control.
+> 始终从微软官方来源，或 Rufus/UUP Dump 这类可信工具下载 Windows ISO，以避免被篡改的镜像。
+
+> [!NOTE]
+> 较新的 Windows 11 ISO 在旧版本的 Ventoy 上可能无法正确启动——使用前请确保 Ventoy 已更新到最新。如果更新后问题依旧，这属于 Ventoy 的兼容性限制，超出了 Winutil 的控制范围。

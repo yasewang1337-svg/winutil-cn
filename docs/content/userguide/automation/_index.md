@@ -1,44 +1,44 @@
 ---
-title: Automation
+title: 自动化
 weight: 7
 prev: /userguide/updates/
 next: /userguide/win11creator/
 ---
 
-Use Automation to run Winutil from an exported configuration file.
+用「自动化（Automation）」功能，你可以基于一份导出的配置文件来运行 Winutil。
 
-Winutil supports predefined presets that apply common configurations automatically:
+Winutil 支持预定义的预设，可自动套用常见配置：
 
-- `Standard`
-- `Minimal`
-- `Advanced`
+- `Standard`（标准）
+- `Minimal`（精简）
+- `Advanced`（高级）
 
-Example:
+示例：
 
 ```powershell
 & ([ScriptBlock]::Create((irm "https://christitus.com/win"))) -Preset Standard
 ```
 
-To view exactly what each preset does, see:
+想看每个预设具体做了什么，请见：
 https://github.com/ChrisTitusTech/winutil/blob/main/config/preset.json
 
-To create you're own config file:
+创建你自己的配置文件：
 
-1. Open Winutil.
-2. Click the gear icon in the top-right corner.
-3. Choose **Export**.
-4. Save the exported JSON file.
+1. 打开 Winutil。
+2. 点击右上角的齿轮图标。
+3. 选择 **Export（导出）**。
+4. 保存导出的 JSON 文件。
 
-Once you have exported a config, launch Winutil with it using this command:
+导出配置后，用下面这条命令带着它启动 Winutil：
 ```powershell
 & ([ScriptBlock]::Create((irm "https://christitus.com/win"))) -Config "C:\Path\To\Config.json"
 ```
 
-This is useful for:
+这在以下场景很有用：
 
-- Applying the same Winutil configuration across multiple Windows 11 PCs
-- Reusing a known-good baseline after reinstalling Windows
-- Standardizing deployments for labs, workstations, or personal setups
+- 在多台 Windows 11 电脑上套用同一份 Winutil 配置
+- 重装 Windows 后，复用一份已知可靠的基线配置
+- 为实验室、工作站或个人环境标准化部署
 
 > [!NOTE]
-> Run the command in an elevated PowerShell session so Winutil can apply system-level changes.
+> 请在提升权限的 PowerShell 会话中运行该命令，这样 Winutil 才能进行系统级改动。

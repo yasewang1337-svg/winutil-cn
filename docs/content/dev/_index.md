@@ -1,52 +1,52 @@
 ---
-title: Developer Reference
+title: 开发者参考
 weight: 3
 toc: false
 ---
 
 > [!NOTE]
-> This section contains technical documentation for developers. For end-user documentation, see the [User Guide](../userguide/).
+> 本节包含面向开发者的技术文档。如需面向最终用户的文档，请见[用户指南](../userguide/)。
 
-## Architecture
+## 架构
 
-- [Architecture & Design](architecture/) - Code structure, data flow, and how Winutil works internally
+- [架构与设计](architecture/) —— 代码结构、数据流，以及 Winutil 内部的工作原理
 
-## Tweaks
+## 优化项（Tweaks）
 
-### Essential Tweaks
+### 基础优化项
 
 {{< autolinks section="dev/tweaks/essential-tweaks" >}}
 
-### Advanced Tweaks (CAUTION)
+### 高级优化项（谨慎使用）
 
 {{< autolinks section="dev/tweaks/z--advanced-tweaks---caution" >}}
 
-### Customize Preferences
+### 个性化偏好
 
 {{< autolinks section="dev/tweaks/customize-preferences" >}}
 
-### Performance Plans
+### 性能计划
 
 {{< autolinks section="dev/tweaks/performance-plans" >}}
 
-## Features
+## 功能（Features）
 
-### Fixes
+### 修复
 
 {{< autolinks section="dev/features/fixes" >}}
 
-### Legacy Windows Panels
+### 传统 Windows 面板
 
 {{< autolinks section="dev/features/legacy-windows-panels" >}}
 
-### Features
+### 功能
 
 {{< autolinks section="dev/features/features" >}}
 
-### Remote Access
+### 远程访问
 
 {{< autolinks section="dev/features/remote-access" >}}
 
-### Powershell Profile Powershell 7+ Only
+### PowerShell 配置文件（仅 PowerShell 7+）
 
 {{< autolinks section="dev/features/powershell-profile-powershell-7--only" >}}

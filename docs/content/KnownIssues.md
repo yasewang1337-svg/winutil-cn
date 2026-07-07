@@ -1,32 +1,32 @@
 ---
-title: Known Issues
+title: 已知问题
 toc: true
 ---
 
-### Download not working
+### 下载不成功
 
-If you run WinUtil and get an error like:
+如果你运行 WinUtil 时遇到类似这样的报错：
 
 `< : The term '<' is not recognized as the name of a cmdlet, function, script file, or operable program.`
 
-try using a **VPN** and if that doesn't work than report the issue to https://github.com/ChrisTitusTech/winutil/issues
+请尝试使用 **VPN**；如果还是不行，就把问题反馈到 https://github.com/ChrisTitusTech/winutil/issues
 
-### Script Won't Run
+### 脚本无法运行
 
-If you run WinUtil and get the error:
+如果你运行 WinUtil 时遇到这个报错：
 
 `"WinUtil is unable to run on your system. PowerShell execution is restricted by security policies"`
 
-this means that your PowerShell session is in **Constrained Language Mode**, which prevents WinUtil from running.
+这说明你的 PowerShell 会话处于**受限语言模式（Constrained Language Mode）**，它会阻止 WinUtil 运行。
 
-### Ultimate Performance Plan Not Working
+### 卓越性能电源计划不生效
 
-The Ultimate Performance power plan may not work on some laptops who do not fully support this power plan.
+「卓越性能（Ultimate Performance）」电源计划在某些不完全支持它的笔记本上可能无法生效。
 
-In these cases, the power plan may fail to apply, This is expected behavior on unsupported hardware.
+这种情况下电源计划会套用失败，这是不受支持硬件上的正常表现。
 
-### Revet start menu tweak not working
+### 恢复旧版开始菜单的优化项失效
 
-Revet start menu tweak stops working starting with **Windows 11 update KB5089573** (released in May 2026).
+从 **Windows 11 更新 KB5089573**（2026 年 5 月发布）开始，恢复旧版开始菜单的优化项不再起作用。
 
-In this update, Microsoft completely removed the old Start Menu code from Windows so we aren't able to bring it back
+在这次更新中，微软已经把旧版开始菜单的代码从 Windows 里彻底移除，所以我们没办法再把它找回来。

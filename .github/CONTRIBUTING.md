@@ -1,24 +1,24 @@
-## Contributing Code
+## 贡献代码
 
-### Before You Start
+### 动手之前
 
-- Keep each pull request focused on a single feature or fix.
-- Avoid unnecessary formatting changes or large unrelated edits.
-- Document what changed and why in your PR description.
+- 每个 Pull Request 只聚焦于单个功能或修复。
+- 避免不必要的格式改动，或与本次改动无关的大段编辑。
+- 在 PR 描述中说明你改了什么、为什么这么改。
 
 ---
 
-## Basic Git Workflow
+## 基础 Git 工作流
 
-### 1. Fork the Repository
+### 1. Fork 本仓库
 
-Go to the ChrisTitusTech/winutil repository on GitHub and click the Fork button in the top right corner.
+打开 GitHub 上的 ChrisTitusTech/winutil 仓库，点击右上角的 Fork 按钮。
 
 <img width="171" height="50" alt="{650A4723-F38A-44A4-9820-D232BC87C8A0}" src="https://github.com/user-attachments/assets/a214f27c-2fee-444a-920f-d87b14f5896f" />
 
 ---
 
-### 2. Clone Your Fork
+### 2. 克隆你的 Fork
 
 ```powershell
 git clone https://github.com/YOUR_USERNAME/winutil.git
@@ -27,17 +27,17 @@ cd winutil
 
 ---
 
-### 3. Create a Branch
+### 3. 创建分支
 
-Never work directly on `main`.
+永远不要直接在 `main` 分支上工作。
 
-Create a branch related to your change:
+创建一个与你的改动相关的分支：
 
 ```powershell
 git checkout -b feature-name
 ```
 
-Example:
+示例：
 
 ```powershell
 git checkout -b add-firefox-tweak
@@ -45,73 +45,73 @@ git checkout -b add-firefox-tweak
 
 ---
 
-### 4. Edit the Code
+### 4. 修改代码
 
-Open the project in your preferred text editor and make your changes.
+用你顺手的文本编辑器打开项目，进行修改。
 
-Keep changes small and focused.
+改动要小而聚焦。
 
 ---
 
-### 5. Test Your Changes
+### 5. 测试你的改动
 
-Open Pwsh (Not Powershell) as Administrator.
+以管理员身份打开 Pwsh（注意：是 Pwsh，不是 Powershell）。
 
-Go to the project folder:
+进入项目文件夹：
 
 ```powershell
 cd path\to\winutil
 ```
 
-Run:
+运行：
 
 ```powershell
 .\Compile.ps1 -Run
 ```
 
-Verify:
+确认：
 
-- WinUtil launches correctly
-- Your feature works
-- Nothing else breaks
+- WinUtil 能正常启动
+- 你的功能能正常工作
+- 没有弄坏其他东西
 
-If something fails, fix it before committing.
+如果哪里出错，先修好再提交。
 
 ---
 
-### 6. Review Your Changes
+### 6. 检查你的改动
 
-Check what changed:
+看看改了哪些内容：
 
 ```powershell
 git status
 ```
 
-Review the diff:
+查看差异：
 
 ```powershell
 git diff
 ```
 
-Make sure you did not accidentally modify unrelated files.
+确认你没有不小心改到无关的文件。
 
 ---
 
-### 7. Commit Your Changes
+### 7. 提交你的改动
 
-Stage files:
+暂存文件：
 
 ```powershell
 git add .
 ```
 
-Commit them:
+提交：
 
 ```powershell
 git commit -m "Add feature description"
 ```
 
-Example:
+示例：
 
 ```powershell
 git commit -m "Add Firefox package tweak"
@@ -119,13 +119,13 @@ git commit -m "Add Firefox package tweak"
 
 ---
 
-### 8. Push Your Branch
+### 8. 推送你的分支
 
 ```powershell
 git push origin branch-name
 ```
 
-Example:
+示例：
 
 ```powershell
 git push origin add-firefox-tweak
@@ -133,17 +133,17 @@ git push origin add-firefox-tweak
 
 ---
 
-### 9. Open a Pull Request
+### 9. 发起 Pull Request
 
-Go to your fork on GitHub.
+打开 GitHub 上你的 Fork。
 
-GitHub will show a button to create a pull request.
+GitHub 会显示一个创建 Pull Request 的按钮。
 <img width="1009" height="71" alt="{C8C6A3CC-79D4-44FD-A54C-4C5717F12730}" src="https://github.com/user-attachments/assets/0419d193-d4e7-47c0-87cf-b986742201a0" />
 
-Before submitting:
+提交之前：
 
-- Explain what changed
-- Explain why you changed it
-- Make sure unrelated files are not included
+- 说明你改了什么
+- 说明你为什么改
+- 确认没有把无关文件一起提交进来
 
-Once submitted, maintainers will review your PR.
+提交之后，维护者会审阅你的 PR。
