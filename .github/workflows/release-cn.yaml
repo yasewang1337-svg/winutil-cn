@@ -41,6 +41,35 @@ jobs:
           Write-Host "产出 winutil-cn.ps1 —— $size 字节"
           if ($size -lt 500000) { throw "产物过小（$size 字节），疑似构建不完整" }
 
+      - name: 构建自包含 EXE 启动器
+        shell: pwsh
+        run: |
+          & "./tools/launcher/build.ps1" -ScriptPath "winutil-cn.ps1" -OutFile "WinUtil-CN.exe"
+          if (-not (Test-Path WinUtil-CN.exe)) { throw "EXE 构建失败" }
+
+      - name: Defender 自检（仅在检出真实威胁时中断）
+        shell: pwsh
+        run: |
+          $exe = (Resolve-Path WinUtil-CN.exe).Path
+          $status = Get-MpComputerStatus -ErrorAction SilentlyContinue
+          Write-Host "Defender 实时防护: $($status.RealTimeProtectionEnabled)"
+          $mp = Get-ChildItem "$env:ProgramData\Microsoft\Windows Defender\Platform\*\MpCmdRun.exe" -ErrorAction SilentlyContinue |
+                Sort-Object LastWriteTime -Descending | Select-Object -First 1
+          if (-not $mp) { $mp = Get-Item "$env:ProgramFiles\Windows Defender\MpCmdRun.exe" -ErrorAction SilentlyContinue }
+          if ($mp) {
+            & $mp.FullName -Scan -ScanType 3 -File $exe -DisableRemediation
+            Write-Host "MpCmdRun 退出码: $LASTEXITCODE"
+          } else {
+            Write-Warning "未找到 MpCmdRun，跳过扫描"
+          }
+          $hit = Get-MpThreatDetection -ErrorAction SilentlyContinue | Where-Object { $_.Resources -match 'WinUtil-CN' }
+          if ($hit) {
+            $hit | Format-List
+            throw "❌ Defender 检出威胁，中断发布——请勿分发被标记的产物。"
+          }
+          Write-Host "✅ Defender 未检出威胁（或扫描器不可用）。SHA256:"
+          (Get-FileHash $exe -Algorithm SHA256).Hash
+
       - name: 生成版本号
         id: ver
         shell: pwsh
@@ -55,15 +84,25 @@ jobs:
           $repo = "${{ github.repository }}"
           $sha  = "${{ github.sha }}"
           $tag  = "${{ steps.ver.outputs.tag }}"
+          $exeSha = (Get-FileHash WinUtil-CN.exe -Algorithm SHA256).Hash
           $notes = @"
           WinUtil 中文汉化版 · 自动构建（$tag）
 
-          一键运行（以管理员身份打开 PowerShell / 终端后粘贴）：
+          ## 两种用法
+
+          **① 一键命令**（以管理员身份打开 PowerShell / 终端后粘贴）：
 
               irm https://github.com/$repo/releases/latest/download/winutil-cn.ps1 | iex
 
+          **② 下载 EXE 双击运行**：见下方 `WinUtil-CN.exe`（离线自包含，双击弹 UAC 后启动）。
+
+          ## 说明
+
           - 基于上游 ChrisTitusTech/winutil 最新代码 + 本仓库汉化层自动构建
-          - 产物 winutil-cn.ps1 为 UTF-8 with BOM，兼容 PowerShell 5.1 中文显示
+          - winutil-cn.ps1 为 UTF-8 with BOM，兼容 PowerShell 5.1 中文显示
+          - WinUtil-CN.exe 为离线自包含启动器，已过 CI 的 Defender 自检
+          - EXE 未做代码签名，个别杀软可能误报；可用 [VirusTotal](https://www.virustotal.com/gui/search/$exeSha) 核验哈希
+          - EXE SHA256：``$exeSha``
           - 构建自提交 $sha
           "@
           Set-Content -Path notes.md -Value $notes -Encoding utf8
@@ -73,7 +112,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "${{ steps.ver.outputs.tag }}" winutil-cn.ps1 `
+          gh release create "${{ steps.ver.outputs.tag }}" winutil-cn.ps1 WinUtil-CN.exe `
             --title "中文版 ${{ steps.ver.outputs.tag }}" `
             --notes-file notes.md `
             --latest
