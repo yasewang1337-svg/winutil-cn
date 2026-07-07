@@ -1,0 +1,79 @@
+name: 构建并发布中文版
+
+# 汉化构建流水线：跑 汉化/run-all.ps1 产出 winutil-cn.ps1，发到 Release。
+# 触发后，一键命令即可用：
+#   irm https://github.com/<owner>/<repo>/releases/latest/download/winutil-cn.ps1 | iex
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'config/**'
+      - 'functions/**'
+      - 'xaml/**'
+      - 'scripts/**'
+      - 'Compile.ps1'
+      - '汉化/**'
+      - '.github/workflows/release-cn.yaml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-cn
+  cancel-in-progress: true
+
+jobs:
+  build-release:
+    runs-on: windows-latest
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 汉化 + 编译
+        shell: pwsh
+        run: |
+          & "./汉化/run-all.ps1"
+          if (-not (Test-Path winutil.ps1)) { throw "构建失败：未生成 winutil.ps1" }
+          Copy-Item winutil.ps1 winutil-cn.ps1 -Force
+          $size = (Get-Item winutil-cn.ps1).Length
+          Write-Host "产出 winutil-cn.ps1 —— $size 字节"
+          if ($size -lt 500000) { throw "产物过小（$size 字节），疑似构建不完整" }
+
+      - name: 生成版本号
+        id: ver
+        shell: pwsh
+        run: |
+          $tag = "cn-$(Get-Date -Format 'yyyy.MM.dd')-${{ github.run_number }}"
+          "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          Write-Host "版本标签：$tag"
+
+      - name: 撰写发布说明
+        shell: pwsh
+        run: |
+          $repo = "${{ github.repository }}"
+          $sha  = "${{ github.sha }}"
+          $tag  = "${{ steps.ver.outputs.tag }}"
+          $notes = @"
+          WinUtil 中文汉化版 · 自动构建（$tag）
+
+          一键运行（以管理员身份打开 PowerShell / 终端后粘贴）：
+
+              irm https://github.com/$repo/releases/latest/download/winutil-cn.ps1 | iex
+
+          - 基于上游 ChrisTitusTech/winutil 最新代码 + 本仓库汉化层自动构建
+          - 产物 winutil-cn.ps1 为 UTF-8 with BOM，兼容 PowerShell 5.1 中文显示
+          - 构建自提交 $sha
+          "@
+          Set-Content -Path notes.md -Value $notes -Encoding utf8
+
+      - name: 发布 Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.ver.outputs.tag }}" winutil-cn.ps1 `
+            --title "中文版 ${{ steps.ver.outputs.tag }}" `
+            --notes-file notes.md `
+            --latest
