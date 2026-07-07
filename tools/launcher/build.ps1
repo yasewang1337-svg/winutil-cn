@@ -26,6 +26,8 @@ if (-not $OutFile)    { $OutFile    = Join-Path $repoRoot 'WinUtil-CN.exe' }
 if (-not (Test-Path $ScriptPath)) {
     throw "找不到要嵌入的脚本：$ScriptPath（请先构建 winutil-cn.ps1）"
 }
+# 解析成绝对路径：否则 MSBuild 会把相对路径当成相对于 .csproj 目录，导致嵌入资源找不到。
+$ScriptPath = (Resolve-Path $ScriptPath).Path
 if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) {
     throw '未找到 dotnet SDK（编译启动器需要 .NET SDK）'
 }
