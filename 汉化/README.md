@@ -59,7 +59,7 @@ pwsh -File 汉化\run-all.ps1
 
 ## 来源与许可
 
-- 上游:[ChrisTitusTech/winutil](https://github.com/ChrisTitusTech/winutil)(GPL-3.0)
-- 借用层翻译:[constansino/WinUtil_CN](https://github.com/constansino/WinUtil_CN)(GPL-3.0)
+- 上游:[ChrisTitusTech/winutil](https://github.com/ChrisTitusTech/winutil)(MIT)
+- 借用层翻译:[constansino/WinUtil_CN](https://github.com/constansino/WinUtil_CN)(仓库未声明许可)
 
-本汉化层同为 GPL-3.0。非官方,运行涉及系统级修改,请先备份。
+本汉化层沿用上游的 MIT 许可。非官方,运行涉及系统级修改,请先备份。
