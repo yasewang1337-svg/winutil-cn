@@ -1,5 +1,5 @@
 {
-  "_meta": "你的专属软件层:winutil 上游未收录、但你要的工具。apply-extra-apps.ps1 会把这些注入 applications.json(已存在的 key 自动跳过)。category 用已汉化的中文分类名;winget/choco 填官方包 ID。",
+  "_meta": "你的专属软件层:winutil 上游未收录、但中国用户需要的工具。apply-extra-apps.ps1 会把这些注入 applications.json(已存在的 key 自动跳过)。category 用已汉化的中文分类名;winget/choco 填官方包 ID(均已 winget search 核实)。",
   "dockerdesktop": {
     "category": "开发工具",
     "choco": "docker-desktop",
@@ -7,6 +7,174 @@
     "description": "在 Windows 上构建、运行和管理容器的桌面应用,集成 Docker 引擎、CLI 与 Kubernetes。",
     "link": "https://www.docker.com/products/docker-desktop/",
     "winget": "Docker.DockerDesktop",
+    "foss": false
+  },
+  "wechat": {
+    "category": "通讯",
+    "content": "微信",
+    "description": "腾讯出品的即时通讯软件,支持聊天、朋友圈、公众号、小程序与微信支付。",
+    "link": "https://weixin.qq.com/",
+    "winget": "Tencent.WeChat",
+    "foss": false
+  },
+  "tencentqq": {
+    "category": "通讯",
+    "content": "QQ",
+    "description": "腾讯经典即时通讯软件(NT 新版),支持聊天、群组、文件传输、空间与在线状态。",
+    "link": "https://im.qq.com/",
+    "winget": "Tencent.QQ.NT",
+    "foss": false
+  },
+  "wecom": {
+    "category": "通讯",
+    "content": "企业微信",
+    "description": "腾讯面向企业的办公通讯平台,支持内部通讯录、审批、日程与微信客户互通。",
+    "link": "https://work.weixin.qq.com/",
+    "winget": "Tencent.WeCom",
+    "foss": false
+  },
+  "dingtalk": {
+    "category": "通讯",
+    "content": "钉钉",
+    "description": "阿里巴巴出品的企业办公协作平台,支持考勤、审批、视频会议与文档协作(大陆版)。",
+    "link": "https://www.dingtalk.com/",
+    "winget": "Alibaba.DingTalk.Mainland",
+    "foss": false
+  },
+  "feishu": {
+    "category": "通讯",
+    "content": "飞书",
+    "description": "字节跳动出品的一体化协作平台,融合即时通讯、文档、多维表格、会议与日历。",
+    "link": "https://www.feishu.cn/",
+    "winget": "ByteDance.Feishu",
+    "foss": false
+  },
+  "tencentmeeting": {
+    "category": "通讯",
+    "content": "腾讯会议",
+    "description": "腾讯出品的云视频会议工具,支持多人会议、屏幕共享、录制与美颜。",
+    "link": "https://meeting.tencent.com/",
+    "winget": "Tencent.TencentMeeting",
+    "foss": false
+  },
+  "neteasecloudmusic": {
+    "category": "多媒体工具",
+    "content": "网易云音乐",
+    "description": "网易出品的音乐平台,以歌单、乐评与个性化推荐见长,支持无损音质与云盘。",
+    "link": "https://music.163.com/",
+    "winget": "NetEase.CloudMusic",
+    "foss": false
+  },
+  "bilibili": {
+    "category": "多媒体工具",
+    "content": "哔哩哔哩",
+    "description": "国内知名的视频弹幕网站客户端,涵盖动画、游戏、知识、生活等多元内容。",
+    "link": "https://www.bilibili.com/",
+    "winget": "Bilibili.Bilibili",
+    "foss": false
+  },
+  "iqiyi": {
+    "category": "多媒体工具",
+    "content": "爱奇艺",
+    "description": "综合视频平台,提供电影、电视剧、综艺、动漫等在线点播。",
+    "link": "https://www.iqiyi.com/",
+    "winget": "iQIYI.iQIYI",
+    "foss": false
+  },
+  "tencentvideo": {
+    "category": "多媒体工具",
+    "content": "腾讯视频",
+    "description": "腾讯出品的视频平台,提供影视剧、综艺、体育与自制内容点播。",
+    "link": "https://v.qq.com/",
+    "winget": "Tencent.TencentVideo",
+    "foss": false
+  },
+  "thunder": {
+    "category": "多媒体工具",
+    "content": "迅雷",
+    "description": "国内主流的下载工具,支持多资源加速、离线云下载与 BT/磁力链接。",
+    "link": "https://www.xunlei.com/",
+    "winget": "Thunder.Thunder",
+    "foss": false
+  },
+  "quark": {
+    "category": "浏览器",
+    "content": "夸克浏览器",
+    "description": "阿里巴巴出品的极简浏览器,主打 AI 搜索、网盘与文档扫描,界面清爽无广告。",
+    "link": "https://quark.sm.cn/",
+    "winget": "Alibaba.Quark",
+    "foss": false
+  },
+  "wpsoffice": {
+    "category": "专业工具",
+    "content": "WPS Office",
+    "description": "金山出品的国产办公套件,兼容 Word/Excel/PPT 格式,体积小、含云文档(大陆版)。",
+    "link": "https://www.wps.cn/",
+    "winget": "Kingsoft.WPSOffice.CN",
+    "foss": false
+  },
+  "xmind": {
+    "category": "专业工具",
+    "content": "Xmind",
+    "description": "跨平台思维导图与头脑风暴工具,支持多种结构、演示模式与丰富主题。",
+    "link": "https://www.xmind.cn/",
+    "winget": "Xmind.Xmind",
+    "foss": false
+  },
+  "sogouinput": {
+    "category": "实用工具",
+    "content": "搜狗输入法",
+    "description": "国内主流的拼音/五笔输入法,词库丰富、联想智能,支持自定义皮肤。",
+    "link": "https://pinyin.sogou.com/",
+    "winget": "Sogou.SogouInput",
+    "foss": false
+  },
+  "utools": {
+    "category": "实用工具",
+    "content": "uTools",
+    "description": "国产效率启动器,通过插件实现搜索、翻译、剪贴板、图床等一站式快捷操作。",
+    "link": "https://www.u.tools/",
+    "winget": "Yuanli.uTools",
+    "foss": false
+  },
+  "snipaste": {
+    "category": "实用工具",
+    "content": "Snipaste",
+    "description": "强大的截图与贴图工具,支持像素级取色、标注,以及将截图钉在屏幕上。",
+    "link": "https://www.snipaste.com/",
+    "winget": "liule.Snipaste",
+    "foss": false
+  },
+  "todesk": {
+    "category": "实用工具",
+    "content": "ToDesk",
+    "description": "国产远程桌面工具,支持远程控制、文件传输与多端互联,个人使用免费。",
+    "link": "https://www.todesk.com/",
+    "winget": "Youqu.ToDesk",
+    "foss": false
+  },
+  "picgo": {
+    "category": "实用工具",
+    "content": "PicGo",
+    "description": "开源图床上传工具,支持七牛、腾讯云、GitHub 等多种图床,方便 Markdown 写作。",
+    "link": "https://molunerfinn.com/PicGo/",
+    "winget": "PicGo.PicGo",
+    "foss": true
+  },
+  "baidunetdisk": {
+    "category": "实用工具",
+    "content": "百度网盘",
+    "description": "国内使用最广的云存储服务客户端,支持大文件上传、备份与在线预览。",
+    "link": "https://pan.baidu.com/",
+    "winget": "Baidu.BaiduNetdisk",
+    "foss": false
+  },
+  "quarkclouddrive": {
+    "category": "实用工具",
+    "content": "夸克网盘",
+    "description": "阿里巴巴出品的云盘,主打高速下载不限速、在线播放与文档管理。",
+    "link": "https://pan.quark.cn/",
+    "winget": "Alibaba.QuarkCloudDrive",
     "foss": false
   }
 }
