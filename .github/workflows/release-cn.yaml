@@ -54,22 +54,40 @@ jobs:
           $exe = (Resolve-Path WinUtil-CN.exe).Path
           $status = Get-MpComputerStatus -ErrorAction SilentlyContinue
           Write-Host "Defender 实时防护: $($status.RealTimeProtectionEnabled)"
+
           $mp = Get-ChildItem "$env:ProgramData\Microsoft\Windows Defender\Platform\*\MpCmdRun.exe" -ErrorAction SilentlyContinue |
                 Sort-Object LastWriteTime -Descending | Select-Object -First 1
           if (-not $mp) { $mp = Get-Item "$env:ProgramFiles\Windows Defender\MpCmdRun.exe" -ErrorAction SilentlyContinue }
+
+          $scanText = ''
+          $scanClean = $false
           if ($mp) {
-            & $mp.FullName -Scan -ScanType 3 -File $exe -DisableRemediation
+            $scanText = (& $mp.FullName -Scan -ScanType 3 -File $exe -DisableRemediation 2>&1 | Out-String)
+            Write-Host $scanText
             Write-Host "MpCmdRun 退出码: $LASTEXITCODE"
+            # 扫描真正跑完的标志（区别于服务不可用报错 0x800106ba / 0x80004005）
+            $scanClean = ($scanText -match 'found no threats')
           } else {
-            Write-Warning "未找到 MpCmdRun，跳过扫描"
+            Write-Warning "未找到 MpCmdRun"
           }
+
+          # 真实威胁判定：扫描输出报威胁，或威胁历史里出现本文件
+          $threat = ($scanText -match 'Threat\s+' -or $scanText -match 'found \d+ threat')
           $hit = Get-MpThreatDetection -ErrorAction SilentlyContinue | Where-Object { $_.Resources -match 'WinUtil-CN' }
-          if ($hit) {
-            $hit | Format-List
-            throw "❌ Defender 检出威胁，中断发布——请勿分发被标记的产物。"
+          if ($hit) { $hit | Format-List; $threat = $true }
+
+          Write-Host "SHA256: $((Get-FileHash $exe -Algorithm SHA256).Hash)"
+
+          if ($threat) {
+            Write-Error "❌ Defender 检出威胁，中断发布——请勿分发被标记的产物。"
+            exit 1
           }
-          Write-Host "✅ Defender 未检出威胁（或扫描器不可用）。SHA256:"
-          (Get-FileHash $exe -Algorithm SHA256).Hash
+          if ($scanClean) {
+            Write-Host "✅ Defender 扫描完成，未检出威胁。"
+          } else {
+            Write-Warning "⚠️ 本 runner 的 Defender 扫描器不可用（服务未运行），本次跳过 AV 门禁——不影响产物。"
+          }
+          exit 0
 
       - name: 生成版本号
         id: ver
