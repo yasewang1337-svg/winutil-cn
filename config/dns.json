@@ -46,5 +46,29 @@
         "Secondary": "94.140.15.16",
         "Primary6": "2a10:50c0::bad1:ff",
         "Secondary6": "2a10:50c0::bad2:ff"
+    },
+    "AliDNS":{
+        "Primary": "223.5.5.5",
+        "Secondary": "223.6.6.6",
+        "Primary6": "2400:3200::1",
+        "Secondary6": "2400:3200:baba::1"
+    },
+    "DNSPod":{
+        "Primary": "119.29.29.29",
+        "Secondary": "182.254.116.116",
+        "Primary6": "",
+        "Secondary6": ""
+    },
+    "DNS114":{
+        "Primary": "114.114.114.114",
+        "Secondary": "114.114.115.115",
+        "Primary6": "",
+        "Secondary6": ""
+    },
+    "BaiduDNS":{
+        "Primary": "180.76.76.76",
+        "Secondary": "180.76.76.76",
+        "Primary6": "2400:da00::6666",
+        "Secondary6": "2400:da00::6666"
     }
 }

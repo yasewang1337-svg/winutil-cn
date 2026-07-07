@@ -289,6 +289,31 @@ function Invoke-WPFUIElements {
                             }
                         })
 
+                        # 通用「联动下拉」：本框选中值 → 按 config 数据映射重填目标下拉框(数据驱动,不硬编码)
+                        # tweaks.json 里给组合框加 LinkedCombo(目标名) + LinkedData(config 名) 即可启用,可复用于 DNS/软件源/镜像等
+                        if ($entryInfo.LinkedCombo -and $entryInfo.LinkedData) {
+                            $linkedName = [string]$entryInfo.LinkedCombo
+                            $linkedData = [string]$entryInfo.LinkedData
+                            $comboBox.Add_SelectionChanged({
+                                $region = $this.SelectedItem.Content
+                                $target = $sync[$linkedName]
+                                $map = $sync.configs.$linkedData
+                                if ($target -and $map -and $map.$region) {
+                                    $target.Items.Clear()
+                                    foreach ($it in ($map.$region -split " ")) {
+                                        $ci = New-Object Windows.Controls.ComboBoxItem
+                                        $ci.Content = $it
+                                        $ci.SetResourceReference([Windows.Controls.Control]::FontSizeProperty, "ButtonFontSize")
+                                        $target.Items.Add($ci) | Out-Null
+                                    }
+                                    if ($target.Items.Count -gt 0) {
+                                        $target.SelectedIndex = 0
+                                        $target.Text = $target.Items[0].Content
+                                    }
+                                }
+                            }.GetNewClosure())
+                        }
+
                         $sync[$entryInfo.Name] = $comboBox
                     }
 

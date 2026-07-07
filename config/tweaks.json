@@ -1870,6 +1870,15 @@
     "Type": "Button",
     "link": "https://winutil.christitus.com/dev/tweaks/z--advanced-tweaks---caution/oosubutton"
   },
+  "WPFDNSRegion": {
+    "Content": "DNS 区域模式",
+    "category": "z__高级优化 - 谨慎",
+    "panel": "1",
+    "Type": "Combobox",
+    "ComboItems": "国际 国内",
+    "LinkedCombo": "WPFchangedns",
+    "LinkedData": "regiondns"
+  },
   "WPFchangedns": {
     "Content": "DNS（快速设置）",
     "category": "z__高级优化 - 谨慎",

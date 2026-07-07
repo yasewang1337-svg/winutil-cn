@@ -23,7 +23,10 @@ function Set-WinUtilDNS {
                 Set-DnsClientServerAddress -InterfaceIndex $Adapter.ifIndex -ResetServerAddresses
             } else {
                 Set-DnsClientServerAddress -InterfaceIndex $Adapter.ifIndex -ServerAddresses ("$($sync.configs.dns.$DNSProvider.Primary)", "$($sync.configs.dns.$DNSProvider.Secondary)")
-                Set-DnsClientServerAddress -InterfaceIndex $Adapter.ifIndex -ServerAddresses ("$($sync.configs.dns.$DNSProvider.Primary6)", "$($sync.configs.dns.$DNSProvider.Secondary6)")
+                # 仅当该 DNS 提供了 IPv6 地址时才设置(部分国内 DNS 如 114/DNSPod 无 IPv6,避免空地址报错)
+                if ($sync.configs.dns.$DNSProvider.Primary6) {
+                    Set-DnsClientServerAddress -InterfaceIndex $Adapter.ifIndex -ServerAddresses ("$($sync.configs.dns.$DNSProvider.Primary6)", "$($sync.configs.dns.$DNSProvider.Secondary6)")
+                }
             }
         }
     } catch {
