@@ -1,4 +1,10 @@
-# Chris Titus Tech's Windows Utility（中文汉化版）
+<div align="center">
+  <img src="docs/assets/images/holha-logo.svg" alt="Holha1337 — WinUtil 中文汉化 · 首席维护者" width="760">
+</div>
+
+<h1 align="center">Chris Titus Tech's Windows Utility（中文汉化版）</h1>
+
+<p align="center"><b>汉化作者 · 首席维护者：<a href="https://github.com/yasewang1337-svg">Holha1337</a></b></p>
 
 [![Version](https://img.shields.io/github/v/release/ChrisTitusTech/winutil?color=%230567ff&label=Latest%20Release&style=for-the-badge)](https://github.com/ChrisTitusTech/winutil/releases/latest)
 ![Downloads](https://img.shields.io/github/downloads/ChrisTitusTech/winutil/winutil.ps1?label=Total%20Downloads&style=for-the-badge)
@@ -85,8 +91,19 @@ https://github.com/ChrisTitusTech/winutil/blob/main/config/preset.json
 
 ---
 
-## 贡献者
+## 汉化作者
+
+<div align="center">
+  <a href="https://github.com/yasewang1337-svg">
+    <img src="https://github.com/yasewang1337-svg.png" width="120" alt="Holha1337" style="border-radius:50%">
+  </a>
+  <h3>Holha1337</h3>
+  <p><b>WinUtil 中文汉化 · 首席维护者</b></p>
+  <p>能为中国开发者提供更好的帮助，是我最开心的事情。未来会更好。💙</p>
+</div>
+
+## 上游贡献者
 
 [![Contributors](https://contrib.rocks/image?repo=ChrisTitusTech/winutil)](https://github.com/ChrisTitusTech/winutil/graphs/contributors)
 
-感谢每一位为本项目付出时间与精力的贡献者。继续加油 🍻
+感谢每一位为上游项目付出时间与精力的贡献者。继续加油 🍻
