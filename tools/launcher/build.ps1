@@ -3,8 +3,8 @@
     编译 WinUtil-CN 自包含启动器：把 winutil-cn.ps1 作为嵌入资源打进单个 EXE。
 
 .DESCRIPTION
-    使用 Windows 自带的 .NET Framework C# 编译器（csc.exe），产物不依赖任何额外运行时——
-    .NET Framework 4.x 在所有 Windows 10/11 上均预装。CI 与本地均可调用。
+    用现代 .NET SDK（Roslyn，LangVersion=latest）编译，目标 net48——
+    .NET Framework 4.x 在所有 Windows 10/11 上预装，产物无需安装任何运行时。CI 与本地均可调用。
 
 .PARAMETER ScriptPath
     要嵌入的脚本（默认取仓库根的构建产物 winutil-cn.ps1）。
@@ -26,23 +26,22 @@ if (-not $OutFile)    { $OutFile    = Join-Path $repoRoot 'WinUtil-CN.exe' }
 if (-not (Test-Path $ScriptPath)) {
     throw "找不到要嵌入的脚本：$ScriptPath（请先构建 winutil-cn.ps1）"
 }
+if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) {
+    throw '未找到 dotnet SDK（编译启动器需要 .NET SDK）'
+}
 
-$csc = @(
-    "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319\csc.exe",
-    "$env:WINDIR\Microsoft.NET\Framework\v4.0.30319\csc.exe"
-) | Where-Object { Test-Path $_ } | Select-Object -First 1
-if (-not $csc) { throw '未找到 .NET Framework C# 编译器 csc.exe' }
+$proj   = Join-Path $PSScriptRoot 'WinUtilCN.Launcher.csproj'
+$outDir = Join-Path $PSScriptRoot 'bin\Release'
 
-$src      = Join-Path $PSScriptRoot 'Launcher.cs'
-$manifest = Join-Path $PSScriptRoot 'app.manifest'
+Write-Host ("编译器: dotnet {0} (Roslyn / 最新 C#)" -f (dotnet --version))
+dotnet build $proj -c Release --nologo -v minimal `
+    "-p:ScriptPath=$ScriptPath" `
+    "-p:OutDir=$outDir\"
+if ($LASTEXITCODE -ne 0) { throw "dotnet build 失败（退出码 $LASTEXITCODE）" }
 
-# /resource:<文件>,<逻辑名> —— 逻辑名须与 Launcher.cs 里 ScriptResource 常量一致。
-& $csc /nologo /target:exe /platform:anycpu /optimize+ `
-    "/win32manifest:$manifest" `
-    "/resource:$ScriptPath,WinUtilCN.winutil-cn.ps1" `
-    "/out:$OutFile" `
-    $src
-if ($LASTEXITCODE -ne 0) { throw "csc 编译失败（退出码 $LASTEXITCODE）" }
+$built = Join-Path $outDir 'WinUtil-CN.exe'
+if (-not (Test-Path $built)) { throw "未在 $outDir 找到 WinUtil-CN.exe" }
+Copy-Item $built $OutFile -Force
 
 $item = Get-Item $OutFile
 $sha  = (Get-FileHash $OutFile -Algorithm SHA256).Hash

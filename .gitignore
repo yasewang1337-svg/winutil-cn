@@ -9,6 +9,8 @@ binary/
 # winutil-cn 构建产物（由发布流水线生成，不入库）
 winutil-cn.ps1
 WinUtil-CN.exe
+tools/launcher/bin/
+tools/launcher/obj/
 
 # general software/os specific
 desktop.ini

@@ -15,6 +15,7 @@ on:
       - 'scripts/**'
       - 'Compile.ps1'
       - '汉化/**'
+      - 'tools/launcher/**'
       - '.github/workflows/release-cn.yaml'
 
 permissions:

@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    WinUtil-CN 启动器工程
+    · 用现代 .NET SDK 的 Roslyn 编译器（LangVersion=latest → 最新 C#）
+    · 目标 net48：全 Windows 10/11 预装，用户零安装运行时（这是选它而非 .NET 9/10 的唯一理由）
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>WinUtil-CN</AssemblyName>
+    <RootNamespace>WinUtilCN</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Deterministic>true</Deterministic>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+
+    <!-- 程序集元数据：未签名 EXE 带完整元数据更利于杀软信任判定 -->
+    <Product>WinUtil-CN</Product>
+    <AssemblyTitle>WinUtil 中文汉化版启动器</AssemblyTitle>
+    <Company>Holha1337</Company>
+    <Description>WinUtil 中文汉化版 · 离线自包含启动器</Description>
+    <Copyright>MIT · https://github.com/yasewang1337-svg/winutil-cn</Copyright>
+    <Version>1.0.0</Version>
+
+    <!-- 待嵌入的脚本路径，默认取仓库根构建产物，可用 -p:ScriptPath=... 覆盖 -->
+    <ScriptPath Condition="'$(ScriptPath)' == ''">$(MSBuildProjectDirectory)\..\..\winutil-cn.ps1</ScriptPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="$(ScriptPath)" LogicalName="WinUtilCN.winutil-cn.ps1" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 让任意装了 SDK 的机器都能编 net48，无需预装 .NET Framework 目标包 -->
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>
