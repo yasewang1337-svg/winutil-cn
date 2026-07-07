@@ -38,25 +38,30 @@
 
 > **必须以管理员身份运行**，因为它会对系统进行全局修改。
 
-### 方式一：构建并运行中文版（推荐）
+### 方式一：一键运行中文版（推荐）
+
+以管理员身份打开 PowerShell / 终端，粘贴运行——自动拉取最新中文版：
+
+```powershell
+irm https://github.com/yasewang1337-svg/winutil-cn/releases/latest/download/winutil-cn.ps1 | iex
+```
+
+> 首次启动较慢（winget 初始化 + 加载约 190 个应用）。界面显示 `Responding=False` 是**正在加载**、不是卡死，耐心等一会儿。
+
+### 方式二：本地构建（开发 / 自定义）
+
+想改翻译或自己编译，clone 后跑汉化流程：
 
 ```powershell
 git clone https://github.com/yasewang1337-svg/winutil-cn.git
 cd winutil-cn
 pwsh -File 汉化\run-all.ps1        # 重新汉化 + 编译，产出中文版 winutil.ps1
-```
-
-以管理员身份启动产出的中文版：
-
-```powershell
 Start-Process pwsh -Verb RunAs -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File .\winutil.ps1'
 ```
 
-> 首次启动较慢（winget 初始化 + 加载约 190 个应用）。界面显示 `Responding=False` 是**正在加载**、不是卡死，耐心等一会儿。
+### 方式三：英文原版（上游托管）
 
-### 方式二：英文原版（上游托管、一键运行）
-
-如果你只想跑英文原版，无需构建：
+只想跑英文原版、无需中文：
 
 ```powershell
 irm https://christitus.com/win | iex        # 稳定版
