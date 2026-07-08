@@ -45,12 +45,12 @@
     <!-- 柔和外发光(命令行整体) -->
     <g filter="url(#soft)" opacity="0.85">
       <polyline points="52,116 100,152 52,188" fill="none" stroke="url(#cyan)" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
-      <text x="156" y="188" text-anchor="middle" font-family="Consolas,'Courier New',monospace" font-size="122" font-weight="800" fill="url(#hg)">H</text>
+      <path d="M131,106 L142,106 L142,137 L170,137 L170,106 L181,106 L192,117 L192,179 L181,190 L170,190 L170,157 L142,157 L142,190 L131,190 L120,179 L120,117 Z" fill="url(#hg)"/>
       <rect x="196" y="172" width="38" height="15" rx="4" fill="#4dffe0"/>
     </g>
     <!-- 清晰主体叠加(锐利) -->
     <polyline points="52,116 100,152 52,188" fill="none" stroke="url(#cyan)" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="156" y="188" text-anchor="middle" font-family="Consolas,'Courier New',monospace" font-size="122" font-weight="800" fill="url(#hg)">H</text>
+    <path d="M131,106 L142,106 L142,137 L170,137 L170,106 L181,106 L192,117 L192,179 L181,190 L170,190 L170,157 L142,157 L142,190 L131,190 L120,179 L120,117 Z" fill="url(#hg)"/>
     <rect x="196" y="172" width="38" height="15" rx="4" fill="#4dffe0"/>
 
     <!-- 暗角聚焦 -->
