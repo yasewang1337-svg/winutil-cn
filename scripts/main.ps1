@@ -1,24 +1,24 @@
-Write-Host @"
-    CCCCCCCCCCCCCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
- CCC::::::::::::CT:::::::::::::::::::::TT:::::::::::::::::::::T
-CC:::::::::::::::CT:::::::::::::::::::::TT:::::::::::::::::::::T
-C:::::CCCCCCCC::::CT:::::TT:::::::TT:::::TT:::::TT:::::::TT:::::T
-C:::::C       CCCCCCTTTTTT  T:::::T  TTTTTTTTTTTT  T:::::T  TTTTTT
-C:::::C                     T:::::T                T:::::T
-C:::::C                     T:::::T                T:::::T
-C:::::C                     T:::::T                T:::::T
-C:::::C                     T:::::T                T:::::T
-C:::::C                     T:::::T                T:::::T
-C:::::C                     T:::::T                T:::::T
-C:::::C       CCCCCC        T:::::T                T:::::T
-C:::::CCCCCCCC::::C      TT:::::::TT            TT:::::::TT
-CC:::::::::::::::C       T:::::::::T            T:::::::::T
-CCC::::::::::::C         T:::::::::T            T:::::::::T
-  CCCCCCCCCCCCC          TTTTTTTTTTT            TTTTTTTTTTT
-
-====Chris Titus Tech=====
-=====Windows Toolbox=====
-"@
+# ═══ Holha1337 · WinUtil 中文汉化版 · 炫酷启动横幅 ═══
+try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 } catch {}
+$holhaBanner = @(
+    "█   █   █████   █       █   █    █████",
+    "█   █   █   █   █       █   █    █   █",
+    "█████   █   █   █       █████    █████",
+    "█   █   █   █   █       █   █    █   █",
+    "█   █   █████   █████   █   █    █   █"
+)
+$holhaColors = @("Cyan","Cyan","Blue","Magenta","Magenta")
+Write-Host ""
+for ($__i = 0; $__i -lt $holhaBanner.Count; $__i++) {
+    Write-Host ("     " + $holhaBanner[$__i]) -ForegroundColor $holhaColors[$__i]
+    Start-Sleep -Milliseconds 55
+}
+Write-Host ""
+$holhaTag = "     >> WinUtil 中文汉化版 · 1337 暗黑霓虹 <<"
+foreach ($__c in $holhaTag.ToCharArray()) { Write-Host $__c -NoNewline -ForegroundColor Cyan; Start-Sleep -Milliseconds 10 }
+Write-Host ""
+Write-Host "     首席维护 · Holha1337 · github.com/yasewang1337-svg" -ForegroundColor DarkCyan
+Write-Host ""
 
 # Create enums
 Add-Type @"
@@ -436,12 +436,12 @@ $sync["Form"].Add_Loaded({
 })
 
 $NavLogoPanel = $sync["Form"].FindName("NavLogoPanel")
-$NavLogoPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size 40)) | Out-Null
+$NavLogoPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size 46)) | Out-Null
 # Holha1337 品牌字(霓虹渐变 + 辉光),置于徽记右侧
 $brandText = New-Object Windows.Controls.TextBlock
 $brandText.Text = "Holha1337"
 $brandText.FontFamily = "Consolas"
-$brandText.FontSize = 20
+$brandText.FontSize = 22
 $brandText.FontWeight = "Bold"
 $brandText.VerticalAlignment = "Center"
 $brandText.Margin = "8,0,0,0"

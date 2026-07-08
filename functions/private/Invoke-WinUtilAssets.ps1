@@ -38,6 +38,13 @@ function Invoke-WinUtilAssets {
           $hexGlow.Color = [Windows.Media.ColorConverter]::ConvertFromString("#38F9D7")
           $hexGlow.BlurRadius = 16; $hexGlow.ShadowDepth = 0; $hexGlow.Opacity = 0.9
           $hex.Effect = $hexGlow
+          # 辉光呼吸脉冲动效(BlurRadius 10<->24 循环,营造霓虹脉动感)
+          $hexPulse = New-Object Windows.Media.Animation.DoubleAnimation
+          $hexPulse.From = 10; $hexPulse.To = 24
+          $hexPulse.Duration = New-Object Windows.Duration([TimeSpan]::FromSeconds(1.3))
+          $hexPulse.AutoReverse = $true
+          $hexPulse.RepeatBehavior = [Windows.Media.Animation.RepeatBehavior]::Forever
+          $hexGlow.BeginAnimation([Windows.Media.Effects.DropShadowEffect]::BlurRadiusProperty, $hexPulse)
 
           $letterH = New-Object Windows.Controls.TextBlock
           $letterH.Text = "H"; $letterH.FontFamily = "Consolas"; $letterH.FontSize = 62; $letterH.FontWeight = "Bold"

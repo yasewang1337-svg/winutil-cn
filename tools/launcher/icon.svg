@@ -1,48 +1,35 @@
 <svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
+    <clipPath id="sq"><rect x="8" y="8" width="240" height="240" rx="30"/></clipPath>
     <linearGradient id="bg" x1="0" y1="0" x2="256" y2="256" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#0b1120"/>
-      <stop offset="0.55" stop-color="#0d1b2e"/>
-      <stop offset="1" stop-color="#160f36"/>
+      <stop offset="0" stop-color="#0a0f1c"/><stop offset="1" stop-color="#0e0a22"/>
     </linearGradient>
-    <linearGradient id="ink" x1="64" y1="52" x2="196" y2="210" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#38f9d7"/>
-      <stop offset="0.5" stop-color="#43a6ff"/>
-      <stop offset="1" stop-color="#c86bff"/>
-    </linearGradient>
-    <linearGradient id="edge" x1="128" y1="30" x2="128" y2="226" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#5cffe6"/>
-      <stop offset="1" stop-color="#b558ff"/>
-    </linearGradient>
-    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur stdDeviation="5" result="b"/>
-      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
   </defs>
 
-  <!-- 暗底圆角方 -->
-  <rect x="8" y="8" width="240" height="240" rx="52" fill="url(#bg)" stroke="#263a5e" stroke-width="2"/>
+  <!-- 底:近黑深色,轻微圆角(比 hexagon 版更硬) -->
+  <rect x="8" y="8" width="240" height="240" rx="30" fill="url(#bg)" stroke="#243356" stroke-width="2"/>
 
-  <!-- 电路网格底纹 -->
-  <g stroke="#1c3050" stroke-width="2" opacity="0.55">
-    <path d="M8 88 H248 M8 168 H248 M88 8 V248 M168 8 V248"/>
+  <g clip-path="url(#sq)">
+    <!-- 扫描线纹理 -->
+    <g stroke="#5cffe6" stroke-width="2" opacity="0.05">
+      <path d="M8 40 H248 M8 64 H248 M8 88 H248 M8 112 H248 M8 136 H248 M8 160 H248 M8 184 H248 M8 208 H248"/>
+    </g>
+    <!-- 故障色带 -->
+    <rect x="8" y="150" width="240" height="10" fill="#38f9d7" opacity="0.10"/>
+    <rect x="8" y="96"  width="240" height="6"  fill="#ff3dcb" opacity="0.10"/>
+
+    <!-- RGB 分离故障 H:青(左偏)+ 品红(右偏)+ 主体(白) -->
+    <text x="122" y="182" text-anchor="middle" font-family="Consolas,'Courier New',monospace" font-size="184" font-weight="800" fill="#38f9d7" opacity="0.9">H</text>
+    <text x="134" y="182" text-anchor="middle" font-family="Consolas,'Courier New',monospace" font-size="184" font-weight="800" fill="#ff3dcb" opacity="0.85">H</text>
+    <text x="128" y="182" text-anchor="middle" font-family="Consolas,'Courier New',monospace" font-size="184" font-weight="800" fill="#eaf6ff">H</text>
+
+    <!-- 故障错位切片:H 中段横向位移一小条 -->
+    <g transform="translate(9,0)">
+      <clipPath id="slice"><rect x="8" y="120" width="240" height="16"/></clipPath>
+      <text x="128" y="182" clip-path="url(#slice)" text-anchor="middle" font-family="Consolas,'Courier New',monospace" font-size="184" font-weight="800" fill="#38f9d7">H</text>
+    </g>
+
+    <!-- 终端光标 accent -->
+    <rect x="196" y="196" width="26" height="10" rx="1" fill="#38f9d7"/>
   </g>
-  <g fill="#38f9d7" opacity="0.6">
-    <circle cx="88" cy="88" r="3.5"/><circle cx="168" cy="168" r="3.5"/>
-    <circle cx="168" cy="88" r="3.5"/><circle cx="88" cy="168" r="3.5"/>
-  </g>
-
-  <!-- 六边形边框 -->
-  <path d="M128 34 L207 79 L207 177 L128 222 L49 177 L49 79 Z"
-        fill="#0e1c33" fill-opacity="0.85" stroke="url(#edge)" stroke-width="7" filter="url(#glow)"/>
-
-  <!-- 主字 H -->
-  <text x="128" y="170" text-anchor="middle"
-        font-family="'Consolas','Courier New',monospace" font-size="128" font-weight="800"
-        fill="url(#ink)" filter="url(#glow)">H</text>
-
-  <!-- 底部 1337 微标 -->
-  <text x="128" y="205" text-anchor="middle"
-        font-family="'Consolas','Courier New',monospace" font-size="26" font-weight="700"
-        letter-spacing="4" fill="#5cffe6" opacity="0.9">1337</text>
 </svg>
