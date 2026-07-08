@@ -1,31 +1,62 @@
 <svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <clipPath id="sq"><rect x="8" y="8" width="240" height="240" rx="30"/></clipPath>
-    <linearGradient id="bg" x1="0" y1="0" x2="256" y2="256" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#0a0f1c"/><stop offset="1" stop-color="#0c0a1e"/>
+    <clipPath id="sq"><rect x="10" y="10" width="236" height="236" rx="52"/></clipPath>
+    <linearGradient id="bg" x1="40" y1="10" x2="220" y2="246" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#111a30"/><stop offset="0.5" stop-color="#0b1122"/><stop offset="1" stop-color="#0a0818"/>
     </linearGradient>
-    <linearGradient id="cyan" x1="40" y1="110" x2="110" y2="185" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#5cffe6"/><stop offset="1" stop-color="#38a9ff"/>
+    <radialGradient id="innerglow" cx="0.5" cy="0.58" r="0.6">
+      <stop offset="0" stop-color="#2b6bff" stop-opacity="0.28"/>
+      <stop offset="0.55" stop-color="#3a2b8f" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#0a0818" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="topbevel" x1="0" y1="10" x2="0" y2="70" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5cffe6" stop-opacity="0.35"/><stop offset="1" stop-color="#5cffe6" stop-opacity="0"/>
     </linearGradient>
-    <linearGradient id="hg" x1="120" y1="100" x2="180" y2="190" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#5cffe6"/><stop offset="0.55" stop-color="#43a6ff"/><stop offset="1" stop-color="#c86bff"/>
+    <linearGradient id="cyan" x1="42" y1="112" x2="104" y2="186" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7dffee"/><stop offset="1" stop-color="#3aa9ff"/>
     </linearGradient>
-    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    <linearGradient id="hg" x1="124" y1="104" x2="182" y2="192" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7dffee"/><stop offset="0.55" stop-color="#4aa8ff"/><stop offset="1" stop-color="#c86bff"/>
+    </linearGradient>
+    <filter id="soft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
+    <radialGradient id="vig" cx="0.5" cy="0.5" r="0.72">
+      <stop offset="0.6" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="0.35"/>
+    </radialGradient>
   </defs>
 
-  <rect x="8" y="8" width="240" height="240" rx="30" fill="url(#bg)" stroke="#243356" stroke-width="2"/>
+  <rect x="10" y="10" width="236" height="236" rx="52" fill="url(#bg)"/>
 
   <g clip-path="url(#sq)">
-    <g stroke="#5cffe6" stroke-width="2" opacity="0.05"><path d="M8 96 H248 M8 120 H248 M8 144 H248 M8 168 H248 M8 192 H248"/></g>
-    <!-- 终端窗口三点 + 标题栏 -->
-    <circle cx="44" cy="44" r="7" fill="#38f9d7"/><circle cx="68" cy="44" r="7" fill="#43a6ff"/><circle cx="92" cy="44" r="7" fill="#c86bff"/>
-    <line x1="8" y1="66" x2="248" y2="66" stroke="#243356" stroke-width="1.5"/>
+    <!-- 内发光晕:命令行处透出光 -->
+    <rect x="10" y="10" width="236" height="236" fill="url(#innerglow)"/>
+    <!-- 极淡扫描线 -->
+    <g stroke="#5cffe6" stroke-width="1.5" opacity="0.035"><path d="M10 100 H246 M10 124 H246 M10 148 H246 M10 172 H246 M10 196 H246"/></g>
+    <!-- 顶部高光斜面 -->
+    <rect x="10" y="10" width="236" height="60" fill="url(#topbevel)" opacity="0.5"/>
 
-    <!-- 命令行: > H _ -->
-    <polyline points="44,112 88,150 44,188" fill="none" stroke="url(#cyan)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
-    <text x="150" y="186" text-anchor="middle" font-family="Consolas,'Courier New',monospace" font-size="128" font-weight="800" fill="url(#hg)" filter="url(#glow)">H</text>
-    <rect x="192" y="170" width="40" height="16" rx="3" fill="#38f9d7" filter="url(#glow)"/>
+    <!-- 终端窗口三点(带柔光) -->
+    <g filter="url(#soft)">
+      <circle cx="48" cy="46" r="6.5" fill="#38f9d7"/><circle cx="72" cy="46" r="6.5" fill="#43a6ff"/><circle cx="96" cy="46" r="6.5" fill="#c86bff"/>
+    </g>
+    <line x1="10" y1="72" x2="246" y2="72" stroke="#5cffe6" stroke-width="1" opacity="0.12"/>
+
+    <!-- 柔和外发光(命令行整体) -->
+    <g filter="url(#soft)" opacity="0.85">
+      <polyline points="52,116 100,152 52,188" fill="none" stroke="url(#cyan)" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="156" y="188" text-anchor="middle" font-family="Consolas,'Courier New',monospace" font-size="122" font-weight="800" fill="url(#hg)">H</text>
+      <rect x="196" y="172" width="38" height="15" rx="4" fill="#4dffe0"/>
+    </g>
+    <!-- 清晰主体叠加(锐利) -->
+    <polyline points="52,116 100,152 52,188" fill="none" stroke="url(#cyan)" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="156" y="188" text-anchor="middle" font-family="Consolas,'Courier New',monospace" font-size="122" font-weight="800" fill="url(#hg)">H</text>
+    <rect x="196" y="172" width="38" height="15" rx="4" fill="#4dffe0"/>
+
+    <!-- 暗角聚焦 -->
+    <rect x="10" y="10" width="236" height="236" fill="url(#vig)"/>
   </g>
+  <!-- 精致描边:外深内浅双层 -->
+  <rect x="10" y="10" width="236" height="236" rx="52" fill="none" stroke="#0a0f1c" stroke-width="3"/>
+  <rect x="11.5" y="11.5" width="233" height="233" rx="50.5" fill="none" stroke="#3a5680" stroke-width="1.5" opacity="0.7"/>
 </svg>
