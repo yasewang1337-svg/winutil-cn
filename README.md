@@ -98,6 +98,7 @@ irm https://christitus.com/windev | iex     # 开发版
 已随本仓库一并汉化，可直接在 GitHub 上阅读：
 
 - [快速上手](docs/content/userguide/getting-started/_index.md) —— 启动方式与首批操作
+- [**软件组合推荐**](docs/content/userguide/recommendations/_index.md) —— 按 国内/国际 × 场景 策展的一键装机清单
 - [用户指南](docs/content/userguide/_index.md) —— 应用 / 优化项 / 功能 / 更新 / 自动化 / Win11 创建器
 - [常见问题（FAQ）](docs/content/faq.md)
 - [已知问题](docs/content/KnownIssues.md)

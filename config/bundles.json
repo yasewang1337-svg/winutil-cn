@@ -1,0 +1,47 @@
+{
+    "_meta": "应用组合推荐(策展式一键装机):按 地区(国内/国际) × 场景 分组。apps 用完整 WPFInstall<key>,可直接喂给 Update-WinUtilSelections 一键勾选。数据驱动,加组合只改本文件。",
+    "国内": {
+        "日常办公": {
+            "desc": "国内主流办公通讯全家桶:聊天、协作、文档、输入法一步到位。",
+            "apps": ["WPFInstallwechat", "WPFInstalltencentqq", "WPFInstallwpsoffice", "WPFInstalldingtalk", "WPFInstallfeishu", "WPFInstalltencentmeeting", "WPFInstallsogouinput"]
+        },
+        "影音娱乐": {
+            "desc": "听歌、追剧、看视频、下载,国内平台一网打尽。",
+            "apps": ["WPFInstallneteasecloudmusic", "WPFInstallbilibili", "WPFInstalliqiyi", "WPFInstalltencentvideo", "WPFInstallthunder"]
+        },
+        "网盘与远程": {
+            "desc": "云存储 + 远程控制 + 极简浏览器,居家办公/传文件常用。",
+            "apps": ["WPFInstallbaidunetdisk", "WPFInstallquarkclouddrive", "WPFInstalltodesk", "WPFInstallquark"]
+        },
+        "效率创作": {
+            "desc": "启动器、截图贴图、图床、思维导图,提升日常效率。",
+            "apps": ["WPFInstallutools", "WPFInstallsnipaste", "WPFInstallpicgo", "WPFInstallxmind"]
+        }
+    },
+    "国际": {
+        "开发环境": {
+            "desc": "编辑器 + 版本控制 + 运行时 + 容器,开箱即用的开发工作站。",
+            "apps": ["WPFInstallvscode", "WPFInstallgit", "WPFInstallnodejs", "WPFInstallpython3", "WPFInstalldockerdesktop"]
+        },
+        "浏览器矩阵": {
+            "desc": "主流与注重隐私的浏览器,按需选用。",
+            "apps": ["WPFInstallchrome", "WPFInstallfirefox", "WPFInstallbrave", "WPFInstalledge"]
+        },
+        "影音媒体": {
+            "desc": "全能播放器、录屏、截图、音频处理与解码包。",
+            "apps": ["WPFInstallvlc", "WPFInstallobs", "WPFInstallsharex", "WPFInstallklite", "WPFInstallaudacity"]
+        },
+        "通讯协作": {
+            "desc": "国际主流即时通讯与会议工具。",
+            "apps": ["WPFInstalldiscord", "WPFInstalltelegram", "WPFInstallslack", "WPFInstallzoom", "WPFInstallsignal"]
+        },
+        "系统必备": {
+            "desc": "压缩、文件管理、文本编辑、下载、启动盘制作,重装必备。",
+            "apps": ["WPFInstall7zip", "WPFInstallfiles", "WPFInstallnotepadplus", "WPFInstallqbittorrent", "WPFInstallrufus"]
+        },
+        "隐私安全": {
+            "desc": "密码管理、加密通讯、注重隐私的浏览器。",
+            "apps": ["WPFInstallbitwarden", "WPFInstallprotonpass", "WPFInstallsignal", "WPFInstalllibrewolf", "WPFInstallmullvadbrowser"]
+        }
+    }
+}
