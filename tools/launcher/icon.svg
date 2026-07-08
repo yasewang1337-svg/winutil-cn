@@ -1,0 +1,48 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="256" y2="256" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0b1120"/>
+      <stop offset="0.55" stop-color="#0d1b2e"/>
+      <stop offset="1" stop-color="#160f36"/>
+    </linearGradient>
+    <linearGradient id="ink" x1="64" y1="52" x2="196" y2="210" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#38f9d7"/>
+      <stop offset="0.5" stop-color="#43a6ff"/>
+      <stop offset="1" stop-color="#c86bff"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="128" y1="30" x2="128" y2="226" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5cffe6"/>
+      <stop offset="1" stop-color="#b558ff"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- 暗底圆角方 -->
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="url(#bg)" stroke="#263a5e" stroke-width="2"/>
+
+  <!-- 电路网格底纹 -->
+  <g stroke="#1c3050" stroke-width="2" opacity="0.55">
+    <path d="M8 88 H248 M8 168 H248 M88 8 V248 M168 8 V248"/>
+  </g>
+  <g fill="#38f9d7" opacity="0.6">
+    <circle cx="88" cy="88" r="3.5"/><circle cx="168" cy="168" r="3.5"/>
+    <circle cx="168" cy="88" r="3.5"/><circle cx="88" cy="168" r="3.5"/>
+  </g>
+
+  <!-- 六边形边框 -->
+  <path d="M128 34 L207 79 L207 177 L128 222 L49 177 L49 79 Z"
+        fill="#0e1c33" fill-opacity="0.85" stroke="url(#edge)" stroke-width="7" filter="url(#glow)"/>
+
+  <!-- 主字 H -->
+  <text x="128" y="170" text-anchor="middle"
+        font-family="'Consolas','Courier New',monospace" font-size="128" font-weight="800"
+        fill="url(#ink)" filter="url(#glow)">H</text>
+
+  <!-- 底部 1337 微标 -->
+  <text x="128" y="205" text-anchor="middle"
+        font-family="'Consolas','Courier New',monospace" font-size="26" font-weight="700"
+        letter-spacing="4" fill="#5cffe6" opacity="0.9">1337</text>
+</svg>
