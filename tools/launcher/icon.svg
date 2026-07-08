@@ -2,34 +2,30 @@
   <defs>
     <clipPath id="sq"><rect x="8" y="8" width="240" height="240" rx="30"/></clipPath>
     <linearGradient id="bg" x1="0" y1="0" x2="256" y2="256" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#0a0f1c"/><stop offset="1" stop-color="#0e0a22"/>
+      <stop offset="0" stop-color="#0a0f1c"/><stop offset="1" stop-color="#0c0a1e"/>
     </linearGradient>
+    <linearGradient id="cyan" x1="40" y1="110" x2="110" y2="185" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5cffe6"/><stop offset="1" stop-color="#38a9ff"/>
+    </linearGradient>
+    <linearGradient id="hg" x1="120" y1="100" x2="180" y2="190" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5cffe6"/><stop offset="0.55" stop-color="#43a6ff"/><stop offset="1" stop-color="#c86bff"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
   </defs>
 
-  <!-- 底:近黑深色,轻微圆角(比 hexagon 版更硬) -->
   <rect x="8" y="8" width="240" height="240" rx="30" fill="url(#bg)" stroke="#243356" stroke-width="2"/>
 
   <g clip-path="url(#sq)">
-    <!-- 扫描线纹理 -->
-    <g stroke="#5cffe6" stroke-width="2" opacity="0.05">
-      <path d="M8 40 H248 M8 64 H248 M8 88 H248 M8 112 H248 M8 136 H248 M8 160 H248 M8 184 H248 M8 208 H248"/>
-    </g>
-    <!-- 故障色带 -->
-    <rect x="8" y="150" width="240" height="10" fill="#38f9d7" opacity="0.10"/>
-    <rect x="8" y="96"  width="240" height="6"  fill="#ff3dcb" opacity="0.10"/>
+    <g stroke="#5cffe6" stroke-width="2" opacity="0.05"><path d="M8 96 H248 M8 120 H248 M8 144 H248 M8 168 H248 M8 192 H248"/></g>
+    <!-- 终端窗口三点 + 标题栏 -->
+    <circle cx="44" cy="44" r="7" fill="#38f9d7"/><circle cx="68" cy="44" r="7" fill="#43a6ff"/><circle cx="92" cy="44" r="7" fill="#c86bff"/>
+    <line x1="8" y1="66" x2="248" y2="66" stroke="#243356" stroke-width="1.5"/>
 
-    <!-- RGB 分离故障 H:青(左偏)+ 品红(右偏)+ 主体(白) -->
-    <text x="122" y="182" text-anchor="middle" font-family="Consolas,'Courier New',monospace" font-size="184" font-weight="800" fill="#38f9d7" opacity="0.9">H</text>
-    <text x="134" y="182" text-anchor="middle" font-family="Consolas,'Courier New',monospace" font-size="184" font-weight="800" fill="#ff3dcb" opacity="0.85">H</text>
-    <text x="128" y="182" text-anchor="middle" font-family="Consolas,'Courier New',monospace" font-size="184" font-weight="800" fill="#eaf6ff">H</text>
-
-    <!-- 故障错位切片:H 中段横向位移一小条 -->
-    <g transform="translate(9,0)">
-      <clipPath id="slice"><rect x="8" y="120" width="240" height="16"/></clipPath>
-      <text x="128" y="182" clip-path="url(#slice)" text-anchor="middle" font-family="Consolas,'Courier New',monospace" font-size="184" font-weight="800" fill="#38f9d7">H</text>
-    </g>
-
-    <!-- 终端光标 accent -->
-    <rect x="196" y="196" width="26" height="10" rx="1" fill="#38f9d7"/>
+    <!-- 命令行: > H _ -->
+    <polyline points="44,112 88,150 44,188" fill="none" stroke="url(#cyan)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+    <text x="150" y="186" text-anchor="middle" font-family="Consolas,'Courier New',monospace" font-size="128" font-weight="800" fill="url(#hg)" filter="url(#glow)">H</text>
+    <rect x="192" y="170" width="40" height="16" rx="3" fill="#38f9d7" filter="url(#glow)"/>
   </g>
 </svg>
