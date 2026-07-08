@@ -55,6 +55,7 @@ function Invoke-WPFButton {
         "WPFAdvanced" {Invoke-WPFPresets "Advanced" -checkboxfilterpattern "WPFTweak*"}
         "WPFClearTweaksSelection" {Invoke-WPFPresets -imported $true -checkboxfilterpattern "WPFTweak*"}
         "WPFClearInstallSelection" {Invoke-WPFPresets -imported $true -checkboxfilterpattern "WPFInstall*"}
+        "WPFBundle*" {Invoke-WPFBundle ($Button -replace '^WPFBundle','')}
         "WPFtweaksbutton" {Invoke-WPFtweaksbutton}
         "WPFOOSUbutton" {Invoke-WPFOOSU}
         "WPFAddUltPerf" {Invoke-WPFUltimatePerformance -Enable}

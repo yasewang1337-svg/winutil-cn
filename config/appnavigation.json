@@ -80,5 +80,75 @@
         "Checked": true,
         "Order": "6",
         "Description": "切换开源(FOSS)应用的绿色高亮"
+    },
+    "WPFBundlecn_office": {
+        "Content": "国内·日常办公",
+        "Category": "___组合推荐",
+        "Type": "Button",
+        "Order": "1",
+        "Description": "一键勾选:微信/QQ/WPS/钉钉/飞书/腾讯会议/搜狗输入法"
+    },
+    "WPFBundlecn_media": {
+        "Content": "国内·影音娱乐",
+        "Category": "___组合推荐",
+        "Type": "Button",
+        "Order": "2",
+        "Description": "一键勾选:网易云/哔哩哔哩/爱奇艺/腾讯视频/迅雷"
+    },
+    "WPFBundlecn_cloud": {
+        "Content": "国内·网盘与远程",
+        "Category": "___组合推荐",
+        "Type": "Button",
+        "Order": "3",
+        "Description": "一键勾选:百度网盘/夸克网盘/ToDesk/夸克浏览器"
+    },
+    "WPFBundlecn_create": {
+        "Content": "国内·效率创作",
+        "Category": "___组合推荐",
+        "Type": "Button",
+        "Order": "4",
+        "Description": "一键勾选:uTools/Snipaste/PicGo/Xmind"
+    },
+    "WPFBundleintl_dev": {
+        "Content": "国际·开发环境",
+        "Category": "___组合推荐",
+        "Type": "Button",
+        "Order": "5",
+        "Description": "一键勾选:VSCode/Git/Node.js/Python/Docker"
+    },
+    "WPFBundleintl_browser": {
+        "Content": "国际·浏览器矩阵",
+        "Category": "___组合推荐",
+        "Type": "Button",
+        "Order": "6",
+        "Description": "一键勾选:Chrome/Firefox/Brave/Edge"
+    },
+    "WPFBundleintl_media": {
+        "Content": "国际·影音媒体",
+        "Category": "___组合推荐",
+        "Type": "Button",
+        "Order": "7",
+        "Description": "一键勾选:VLC/OBS/ShareX/K-Lite/Audacity"
+    },
+    "WPFBundleintl_comm": {
+        "Content": "国际·通讯协作",
+        "Category": "___组合推荐",
+        "Type": "Button",
+        "Order": "8",
+        "Description": "一键勾选:Discord/Telegram/Slack/Zoom/Signal"
+    },
+    "WPFBundleintl_system": {
+        "Content": "国际·系统必备",
+        "Category": "___组合推荐",
+        "Type": "Button",
+        "Order": "9",
+        "Description": "一键勾选:7-Zip/Files/Notepad++/qBittorrent/Rufus"
+    },
+    "WPFBundleintl_privacy": {
+        "Content": "国际·隐私安全",
+        "Category": "___组合推荐",
+        "Type": "Button",
+        "Order": "10",
+        "Description": "一键勾选:Bitwarden/Proton Pass/Signal/LibreWolf/Mullvad"
     }
 }
