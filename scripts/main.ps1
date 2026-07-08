@@ -19,6 +19,8 @@ foreach ($__c in $holhaTag.ToCharArray()) { Write-Host $__c -NoNewline -Foregrou
 Write-Host ""
 Write-Host "     首席维护 · Holha1337 · github.com/yasewang1337-svg" -ForegroundColor DarkCyan
 Write-Host ""
+# 品牌化控制台窗口标题(替代默认的临时脚本路径)
+try { $Host.UI.RawUI.WindowTitle = "Holha1337 · WinUtil 中文汉化版" } catch {}
 
 # Create enums
 Add-Type @"

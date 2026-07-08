@@ -45,7 +45,9 @@ jobs:
       - name: 构建自包含 EXE 启动器
         shell: pwsh
         run: |
-          & "./tools/launcher/build.ps1" -ScriptPath "winutil-cn.ps1" -OutFile "WinUtil-CN.exe"
+          # 版本号与发布号联动(年.月.日.构建号),写进 EXE 元数据
+          $exeVer = "$(Get-Date -Format 'yyyy.M.d').${{ github.run_number }}"
+          & "./tools/launcher/build.ps1" -ScriptPath "winutil-cn.ps1" -OutFile "WinUtil-CN.exe" -Version $exeVer
           if (-not (Test-Path WinUtil-CN.exe)) { throw "EXE 构建失败" }
 
       - name: Defender 自检（仅在检出真实威胁时中断）

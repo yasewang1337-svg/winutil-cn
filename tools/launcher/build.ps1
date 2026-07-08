@@ -15,7 +15,8 @@
 [CmdletBinding()]
 param(
     [string]$ScriptPath,
-    [string]$OutFile
+    [string]$OutFile,
+    [string]$Version
 )
 $ErrorActionPreference = 'Stop'
 
@@ -35,10 +36,16 @@ if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) {
 $proj   = Join-Path $PSScriptRoot 'WinUtilCN.Launcher.csproj'
 $outDir = Join-Path $PSScriptRoot 'bin\Release'
 
+$verArgs = @()
+if ($Version) {
+    $verArgs = @("-p:Version=$Version", "-p:InformationalVersion=$Version · Holha1337 中文汉化版")
+    Write-Host "版本: $Version"
+}
 Write-Host ("编译器: dotnet {0} (Roslyn / 最新 C#)" -f (dotnet --version))
 dotnet build $proj -c Release --nologo -v minimal `
     "-p:ScriptPath=$ScriptPath" `
-    "-p:OutDir=$outDir\"
+    "-p:OutDir=$outDir\" `
+    @verArgs
 if ($LASTEXITCODE -ne 0) { throw "dotnet build 失败（退出码 $LASTEXITCODE）" }
 
 $built = Join-Path $outDir 'WinUtil-CN.exe'

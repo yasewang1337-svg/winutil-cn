@@ -18,14 +18,20 @@
     <Deterministic>true</Deterministic>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <!-- 不把 git 提交哈希追加到产品版本，保持版本号干净 -->
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 
-    <!-- 程序集元数据：未签名 EXE 带完整元数据更利于杀软信任判定 -->
-    <Product>WinUtil-CN</Product>
-    <AssemblyTitle>WinUtil 中文汉化版启动器</AssemblyTitle>
+    <!-- 程序集元数据：右键属性→详细信息 / UAC 弹窗 显示的品牌信息(完整元数据也利于杀软信任) -->
+    <!-- AssemblyTitle → Win32 FileDescription：UAC 弹窗与任务管理器显示此名，故用干净的产品名 -->
+    <AssemblyTitle>WinUtil 中文汉化版</AssemblyTitle>
+    <Product>WinUtil 中文汉化版</Product>
     <Company>Holha1337</Company>
-    <Description>WinUtil 中文汉化版 · 离线自包含启动器</Description>
-    <Copyright>MIT · https://github.com/yasewang1337-svg/winutil-cn</Copyright>
-    <Version>1.0.0</Version>
+    <Description>一键装机 · 系统优化 · 隐私保护 · 更新管理 —— ChrisTitusTech/winutil 中文本地化。离线自包含，双击即用。</Description>
+    <Copyright>© 2026 Holha1337 · MIT License</Copyright>
+    <Trademark>Holha1337 · github.com/yasewang1337-svg/winutil-cn</Trademark>
+    <!-- 版本可由 CI 传入(与发布号联动)；本地默认 1.0.0 -->
+    <Version Condition="'$(Version)' == ''">1.0.0</Version>
+    <InformationalVersion Condition="'$(InformationalVersion)' == ''">$(Version) · Holha1337 中文汉化版</InformationalVersion>
 
     <!-- 待嵌入的脚本路径，默认取仓库根构建产物，可用 -p:ScriptPath=... 覆盖 -->
     <ScriptPath Condition="'$(ScriptPath)' == ''">$(MSBuildProjectDirectory)\..\..\winutil-cn.ps1</ScriptPath>
