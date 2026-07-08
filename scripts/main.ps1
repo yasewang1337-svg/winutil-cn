@@ -436,7 +436,26 @@ $sync["Form"].Add_Loaded({
 })
 
 $NavLogoPanel = $sync["Form"].FindName("NavLogoPanel")
-$NavLogoPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size 25)) | Out-Null
+$NavLogoPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size 40)) | Out-Null
+# Holha1337 品牌字(霓虹渐变 + 辉光),置于徽记右侧
+$brandText = New-Object Windows.Controls.TextBlock
+$brandText.Text = "Holha1337"
+$brandText.FontFamily = "Consolas"
+$brandText.FontSize = 20
+$brandText.FontWeight = "Bold"
+$brandText.VerticalAlignment = "Center"
+$brandText.Margin = "8,0,0,0"
+$brandGrad = New-Object Windows.Media.LinearGradientBrush
+$brandGrad.StartPoint = "0,0"; $brandGrad.EndPoint = "1,0"
+$brandGrad.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#38F9D7"), 0)))
+$brandGrad.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#43A6FF"), 0.5)))
+$brandGrad.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#C86BFF"), 1)))
+$brandText.Foreground = $brandGrad
+$brandGlow = New-Object Windows.Media.Effects.DropShadowEffect
+$brandGlow.Color = [Windows.Media.ColorConverter]::ConvertFromString("#43A6FF")
+$brandGlow.BlurRadius = 12; $brandGlow.ShadowDepth = 0; $brandGlow.Opacity = 0.7
+$brandText.Effect = $brandGlow
+$NavLogoPanel.Children.Add($brandText) | Out-Null
 
 
 if (Test-Path "$winutildir\logo.ico") {
