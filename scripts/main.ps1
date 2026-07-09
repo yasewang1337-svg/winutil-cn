@@ -61,6 +61,22 @@ Write-Host ""
 # 品牌化控制台窗口标题(替代默认的临时脚本路径)
 try { $Host.UI.RawUI.WindowTitle = "Holha1337 · WinUtil 中文汉化版" } catch {}
 
+# 启动兜底:主线程加载若崩溃,写日志并停住让用户看清错误(而非窗口一闪即逝)
+trap {
+    try {
+        $__log = Join-Path $env:TEMP 'winutil-cn-error.log'
+        "[$([DateTime]::Now)] $($_.Exception.Message)`r`n$($_.ScriptStackTrace)`r`n" | Out-File -FilePath $__log -Append -Encoding utf8
+        Write-Host ""
+        Write-Host "  [WinUtil-CN] 启动出错了:" -ForegroundColor Red
+        Write-Host "  $($_.Exception.Message)" -ForegroundColor Yellow
+        Write-Host "  常见原因: 未以管理员身份运行 / 杀毒软件拦截 / 网络问题" -ForegroundColor DarkGray
+        Write-Host "  详细日志已保存到: $__log" -ForegroundColor DarkGray
+        Write-Host "  按回车键退出(把上面的错误发给作者可帮助排查)..." -ForegroundColor DarkGray
+        [void][System.Console]::ReadLine()
+    } catch {}
+    break
+}
+
 # Create enums
 Add-Type @"
 public enum PackageManagers
