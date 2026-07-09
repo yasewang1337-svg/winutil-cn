@@ -1,22 +1,61 @@
-# ═══ HOLHA1337 · ASCII 启动横幅 ═══
+# ═══ HOLHA1337 · 真彩(24-bit)霓虹渐变启动横幅 ═══
+$__e = [char]27
 try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 } catch {}
+# 非 Windows Terminal(经 EXE 进 conhost 等)时兜底开启 VT/ANSI 真彩
+$__vt = $true
+if (-not $env:WT_SESSION) {
+    if (-not ('HolhaVT.Con' -as [type])) {
+        try {
+            Add-Type -Namespace HolhaVT -Name Con -MemberDefinition @'
+[System.Runtime.InteropServices.DllImport("kernel32.dll")] public static extern bool GetConsoleMode(System.IntPtr h, out int m);
+[System.Runtime.InteropServices.DllImport("kernel32.dll")] public static extern bool SetConsoleMode(System.IntPtr h, int m);
+[System.Runtime.InteropServices.DllImport("kernel32.dll")] public static extern System.IntPtr GetStdHandle(int n);
+'@ -ErrorAction Stop
+        } catch {}
+    }
+    if ('HolhaVT.Con' -as [type]) {
+        try {
+            $__h = [HolhaVT.Con]::GetStdHandle(-11); $__m = 0
+            [void][HolhaVT.Con]::GetConsoleMode($__h, [ref]$__m)
+            $__vt = [HolhaVT.Con]::SetConsoleMode($__h, $__m -bor 4)  # ENABLE_VIRTUAL_TERMINAL_PROCESSING
+        } catch { $__vt = $false }
+    } else { $__vt = $false }
+}
 $holhaBanner = @(
-    '@@@  @@@   @@@@@@   @@@       @@@  @@@   @@@@@@     @@@  @@@@@@   @@@@@@   @@@@@@@@',
-    '@@@  @@@  @@@@@@@@  @@@       @@@  @@@  @@@@@@@@   @@@@  @@@@@@@  @@@@@@@  @@@@@@@@',
-    '@@!  @@@  @@!  @@@  @@!       @@!  @@@  @@!  @@@  @@@!!      @@@      @@@       @@!',
-    '!@!  @!@  !@!  @!@  !@!       !@!  @!@  !@!  @!@    !@!      @!@      @!@      !@!',
-    '@!@!@!@!  @!@  !@!  @!!       @!@!@!@!  @!@!@!@!    @!@  @!@!!@   @!@!!@      @!!',
-    '!!!@!!!!  !@!  !!!  !!!       !!!@!!!!  !!!@!!!!    !@!  !!@!@!   !!@!@!     !!!',
-    '!!:  !!!  !!:  !!!  !!:       !!:  !!!  !!:  !!!    !!:      !!:      !!:   !!:',
-    ':!:  !:!  :!:  !:!   :!:      :!:  !:!  :!:  !:!    :!:      :!:      :!:  :!:',
-    '::   :::  ::::: ::   :: ::::  ::   :::  ::   :::    :::  :: ::::  :: ::::   ::',
-    ' :   : :   : :  :   : :: : :   :   : :   :   : :     ::   : : :    : : :   : :'
+    '██╗  ██╗ ██████╗ ██╗     ██╗  ██╗ █████╗  ██╗██████╗ ██████╗ ███████╗',
+    '██║  ██║██╔═══██╗██║     ██║  ██║██╔══██╗███║╚════██╗╚════██╗╚════██║',
+    '███████║██║   ██║██║     ███████║███████║╚██║ █████╔╝ █████╔╝    ██╔╝',
+    '██╔══██║██║   ██║██║     ██╔══██║██╔══██║ ██║ ╚═══██╗ ╚═══██╗   ██╔╝ ',
+    '██║  ██║╚██████╔╝███████╗██║  ██║██║  ██║ ██║██████╔╝██████╔╝   ██║  ',
+    '╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═╝╚═════╝ ╚═════╝    ╚═╝  '
 )
-$holhaColors = @("Cyan","Cyan","Cyan","Blue","Blue","Blue","DarkCyan","DarkCyan","DarkGray","DarkGray")
 Write-Host ""
-for ($__i = 0; $__i -lt $holhaBanner.Count; $__i++) {
-    Write-Host ("  " + $holhaBanner[$__i]) -ForegroundColor $holhaColors[$__i]
-    Start-Sleep -Milliseconds 30
+if ($__vt -and -not [Console]::IsOutputRedirected) {
+    # 三色标(青→蓝→紫)逐列线性插值,横向霓虹扫光;StringBuilder 单次输出
+    $__stops = @(@(56,249,215),@(67,166,255),@(200,107,255))
+    $__bw = ($holhaBanner | Measure-Object -Property Length -Maximum).Maximum
+    $__cols = for ($__x = 0; $__x -lt $__bw; $__x++) {
+        $__t = $__x / [math]::Max(1, $__bw-1); $__sg = $__stops.Count-1; $__p = $__t*$__sg
+        $__ci = [math]::Min([int][math]::Floor($__p), $__sg-1); $__f = $__p-$__ci
+        $__a = $__stops[$__ci]; $__b = $__stops[$__ci+1]
+        ,@([int]($__a[0]+($__b[0]-$__a[0])*$__f), [int]($__a[1]+($__b[1]-$__a[1])*$__f), [int]($__a[2]+($__b[2]-$__a[2])*$__f))
+    }
+    foreach ($__line in $holhaBanner) {
+        $__sb = [System.Text.StringBuilder]::new()
+        for ($__x = 0; $__x -lt $__line.Length; $__x++) {
+            $__c = $__cols[$__x]
+            [void]$__sb.Append("$__e[38;2;$($__c[0]);$($__c[1]);$($__c[2])m$($__line[$__x])")
+        }
+        [void]$__sb.Append("$__e[0m")
+        Write-Host ("  " + $__sb.ToString())
+        Start-Sleep -Milliseconds 26
+    }
+} else {
+    # 降级(无真彩/输出被重定向):16 色逐行
+    $__fc = @("Cyan","Cyan","Blue","Blue","Magenta","Magenta")
+    for ($__i = 0; $__i -lt $holhaBanner.Count; $__i++) {
+        Write-Host ("  " + $holhaBanner[$__i]) -ForegroundColor $__fc[$__i]
+    }
 }
 Write-Host ""
 # 品牌化控制台窗口标题(替代默认的临时脚本路径)
