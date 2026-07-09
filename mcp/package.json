@@ -1,0 +1,19 @@
+{
+  "name": "winutil-cn-mcp",
+  "version": "0.1.0",
+  "description": "MCP 服务器:让 AI 智能体按意图驱动 WinUtil 中文汉化版 —— 搜索/安装软件、套用组合、一键换源、查询优化项。让 Claude 帮你按意图配 Windows。",
+  "type": "module",
+  "bin": {
+    "winutil-cn-mcp": "index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "zod": "^3.23.8"
+  },
+  "license": "MIT",
+  "author": "Holha1337",
+  "repository": "https://github.com/yasewang1337-svg/winutil-cn"
+}

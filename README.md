@@ -106,6 +106,19 @@ irm https://christitus.com/windev | iex     # 开发版
 
 ---
 
+## 🤖 AI 集成（MCP · 独一份）
+
+winutil-cn 自带一个 **MCP 服务器**，让 **Claude 等 AI 智能体按意图帮你配 Windows**——你说「把这台配成国内开发环境」，AI 就自动搜软件、装软件、套用组合、换国内源。这是它区别于普通汉化版的核心。
+
+```bash
+cd mcp && npm install
+claude mcp add winutil-cn -- node "绝对路径/winutil-cn/mcp/index.js"
+```
+
+暴露的工具：`search_apps`（搜 213 条软件含国货）· `list_bundles`（一键装机组合）· `install_apps`（winget 安装）· `switch_mirror`（换源）。详见 [mcp/README.md](mcp/README.md)。
+
+---
+
 ## 跟上游同步
 
 上游更新后，合并再重跑汉化流程即可：

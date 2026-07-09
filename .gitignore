@@ -12,6 +12,9 @@ WinUtil-CN.exe
 tools/launcher/bin/
 tools/launcher/obj/
 
+# MCP 服务器依赖
+mcp/node_modules/
+
 # general software/os specific
 desktop.ini
 .DS_Store
