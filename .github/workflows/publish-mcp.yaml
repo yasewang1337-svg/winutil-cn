@@ -53,9 +53,15 @@ jobs:
         run: node build-data.js
 
       - name: 发布到 npm
-        run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "${NODE_AUTH_TOKEN}" ]; then
+            echo "::error::NPM_TOKEN secret 未设置或为空 —— 请到 仓库 Settings → Secrets and variables → Actions → Repository secrets 添加名为 NPM_TOKEN 的 npm Automation 令牌"
+            exit 1
+          fi
+          npm config set //registry.npmjs.org/:_authToken "${NODE_AUTH_TOKEN}"
+          npm publish --provenance --access public
 
       - name: 摘要
         run: echo "已发布 winutil-cn-mcp@${{ steps.ver.outputs.version }} 到 npm" >> "$GITHUB_STEP_SUMMARY"
