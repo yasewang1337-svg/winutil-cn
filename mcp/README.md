@@ -16,6 +16,8 @@
 | `set_dns` | 把已连接网卡的 DNS 设为指定提供商 ⚠️ 改系统，需管理员 |
 
 > ⚠️ `apply_tweaks` / `set_dns` / 部分 `install_apps` 会修改系统，需管理员权限——在**管理员终端**里启动 Claude / MCP 宿主。
+>
+> 🛡️ **安全预览**：这三个改系统的工具**默认只预览**（返回「将要做什么」，不执行）。AI 展示给你确认后，加 `confirm: true` 再调一次才真执行——防止 AI 误操作。
 
 **用法示例**（对 Claude 说）：
 > 「帮我把这台机器配成国内开发环境」→ AI 调 `list_bundles` 找到「国际·开发环境」+ 国货，`install_apps` 装 VSCode/Git/Node/Python/微信/WPS，再 `switch_mirror` 把 pip/npm 换国内源。

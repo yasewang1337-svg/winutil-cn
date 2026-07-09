@@ -101,7 +101,7 @@ async function runPwsh(script) {
   }
 }
 
-const server = new McpServer({ name: 'winutil-cn-mcp', version: '0.2.0' });
+const server = new McpServer({ name: 'winutil-cn-mcp', version: '0.3.0' });
 
 // ── 软件 ──────────────────────────────────────────────────────────────
 server.registerTool('search_apps', {
@@ -127,9 +127,13 @@ server.registerTool('list_bundles', {
 
 server.registerTool('install_apps', {
   title: '安装软件',
-  description: '用 winget 静默安装软件。传入 winget 包 ID 或组合里的 app key(自动解析)。部分软件需管理员权限。',
-  inputSchema: { ids: z.array(z.string()) },
-}, async ({ ids }) => {
+  description: '用 winget 静默安装软件。传入 winget 包 ID 或组合里的 app key(自动解析)。⚠️ 会改动系统:默认只预览将装什么,确认无误后加 confirm:true 再调一次才真装。部分软件需管理员权限。',
+  inputSchema: { ids: z.array(z.string()), confirm: z.boolean().optional().describe('true=执行安装;省略或 false=只预览,不安装') },
+}, async ({ ids, confirm }) => {
+  if (!confirm) {
+    const willInstall = ids.map(raw => { const app = APP_BY_KEY.get(raw.toLowerCase()); return app?.winget || raw; });
+    return ok({ preview: true, willInstall, note: '这是预览,尚未安装任何东西。确认无误后,用相同参数加 confirm:true 再调一次即可安装。' });
+  }
   const results = [];
   for (const raw of ids) {
     let wingetId = raw;
@@ -176,9 +180,13 @@ server.registerTool('list_tweaks', {
 
 server.registerTool('apply_tweaks', {
   title: '应用优化项',
-  description: '应用一个或多个优化项(执行其注册表改动 + 服务设置 + 内置脚本)。⚠️ 会修改系统,需管理员权限(在管理员终端启动 MCP 宿主)。传入 apply_tweaks 的 key。',
-  inputSchema: { keys: z.array(z.string()).describe('优化项 key,如 WPFTweaksTelemetry') },
-}, async ({ keys }) => {
+  description: '应用一个或多个优化项(执行其注册表改动 + 服务设置 + 内置脚本)。⚠️ 会修改系统:默认只预览将改什么,确认后加 confirm:true 再调一次才真改。需管理员权限(在管理员终端启动 MCP 宿主)。',
+  inputSchema: { keys: z.array(z.string()).describe('优化项 key,如 WPFTweaksTelemetry'), confirm: z.boolean().optional().describe('true=执行;省略或 false=只预览') },
+}, async ({ keys, confirm }) => {
+  if (!confirm) {
+    const plan = keys.map(k => { const t = TWEAKS[k]; return t ? { key: k, name: t.Content, 注册表改动: (t.registry || []).length, 服务设置: (t.service || []).length, 脚本: (t.InvokeScript || []).length } : { key: k, status: '未找到' }; });
+    return ok({ preview: true, willApply: plan, note: '这是预览,尚未改动系统。确认后用相同 keys 加 confirm:true 再调一次即可应用。需管理员权限。' });
+  }
   const results = [];
   for (const key of keys) {
     const t = TWEAKS[key];
@@ -210,15 +218,17 @@ server.registerTool('list_dns', {
 
 server.registerTool('set_dns', {
   title: '设置 DNS',
-  description: '把所有「已连接」网卡的 DNS 设为指定提供商(用 list_dns 里的名称;Default=恢复默认)。⚠️ 修改系统网络设置,需管理员权限。',
-  inputSchema: { provider: z.string().describe('DNS 提供商名称,如 AliDNS / Cloudflare / Default') },
-}, async ({ provider }) => {
+  description: '把所有「已连接」网卡的 DNS 设为指定提供商(用 list_dns 里的名称;Default=恢复默认)。⚠️ 修改系统网络设置:默认只预览,确认后加 confirm:true 才真改。需管理员权限。',
+  inputSchema: { provider: z.string().describe('DNS 提供商名称,如 AliDNS / Cloudflare / Default'), confirm: z.boolean().optional().describe('true=执行;省略或 false=只预览') },
+}, async ({ provider, confirm }) => {
   let script;
   if (provider === 'Default' || provider === 'DHCP') {
+    if (!confirm) return ok({ preview: true, willSet: '恢复系统默认 / DHCP', note: '预览,尚未修改网络。确认后加 confirm:true 再调。需管理员权限。' });
     script = `Get-NetAdapter | Where-Object {$_.Status -eq 'Up'} | ForEach-Object { Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ResetServerAddresses }; Write-Output 'DNS 已恢复默认'`;
   } else {
     const d = DNS[provider];
     if (!d) return ok({ status: 'not_found', reason: `未知 DNS 提供商: ${provider}`, hint: '用 list_dns 查看可用名称' });
+    if (!confirm) return ok({ preview: true, willSet: provider, addresses: { ipv4: [d.Primary, d.Secondary], ipv6: d.Primary6 ? [d.Primary6, d.Secondary6] : '无' }, note: '预览,尚未修改网络。确认后加 confirm:true 再调。需管理员权限。' });
     const v4 = `'${q1(d.Primary)}','${q1(d.Secondary)}'`;
     const v6line = d.Primary6 ? `Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ServerAddresses '${q1(d.Primary6)}','${q1(d.Secondary6)}';` : '';
     script = `Get-NetAdapter | Where-Object {$_.Status -eq 'Up'} | ForEach-Object { Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ServerAddresses ${v4}; ${v6line} }; Write-Output 'DNS 已设为 ${q1(provider)}'`;
@@ -229,4 +239,4 @@ server.registerTool('set_dns', {
 
 const transport = new StdioServerTransport();
 await server.connect(transport);
-console.error(`[winutil-cn-mcp v0.2] 已启动(${DATA.source}) · 软件 ${ALL_APPS.length} · 组合 ${Object.keys(BUNDLES).filter(k => k !== '_meta').length} · 优化项 ${Object.keys(TWEAKS).length} · DNS ${Object.keys(DNS).length}`);
+console.error(`[winutil-cn-mcp v0.3] 已启动(${DATA.source}) · 软件 ${ALL_APPS.length} · 组合 ${Object.keys(BUNDLES).filter(k => k !== '_meta').length} · 优化项 ${Object.keys(TWEAKS).length} · DNS ${Object.keys(DNS).length}`);
