@@ -16,7 +16,12 @@
 
 一套精心整理的 Windows 系统任务合集：一键**安装**软件、用**优化项**给系统瘦身、用**配置**排查故障、并管理 **Windows 更新**。每次重装 Windows 后跑一遍，快速回到顺手的状态。本项目是 [ChrisTitusTech/winutil](https://github.com/ChrisTitusTech/winutil) 的**中文本地化分支**——把图形界面、软件介绍、优化项说明和文档都翻成中文。
 
-![标题界面](/docs/assets/images/Title-Screen.png)
+<div align="center">
+  <img src="docs/assets/images/preview-cn.png" alt="WinUtil 中文汉化版 · 暗黑霓虹主题界面预览" width="820">
+  <p><i>界面预览 · 暗黑霓虹主题（Holha1337 × gamesense 风）</i></p>
+</div>
+
+**✨ 特色一览**：全中文界面 · 暗黑霓虹主题 · Holha 专属图标 · 21 款国货软件 · 一键装机组合（国内/国际×场景）· DNS 国内/国际开关 · 一键换源（pip/npm/yarn/conda/go）· **AI 驱动配置（MCP，让 Claude 帮你按意图配机器）** · 离线自包含 EXE
 
 ---
 
