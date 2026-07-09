@@ -26,3 +26,6 @@ desktop.ini
 docs/public/
 docs/.hugo_build.lock
 docs/resources/
+
+# MCP 打包快照(构建产物,发布时 prepublishOnly 自动生成)
+mcp/data.json

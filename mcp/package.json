@@ -1,11 +1,21 @@
 {
   "name": "winutil-cn-mcp",
-  "version": "0.1.0",
-  "description": "MCP 服务器:让 AI 智能体按意图驱动 WinUtil 中文汉化版 —— 搜索/安装软件、套用组合、一键换源、查询优化项。让 Claude 帮你按意图配 Windows。",
+  "version": "0.2.0",
+  "description": "MCP 服务器:让 AI 智能体按意图驱动 WinUtil 中文汉化版 —— 搜索/安装软件、套用组合、一键换源、查询/应用优化项、配置 DNS。让 Claude 帮你按意图配 Windows。",
   "type": "module",
   "bin": {
     "winutil-cn-mcp": "index.js"
   },
+  "files": [
+    "index.js",
+    "data.json",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "node build-data.js",
+    "prepublishOnly": "node build-data.js"
+  },
+  "keywords": ["mcp", "winutil", "windows", "ai", "claude", "chinese", "winget"],
   "engines": {
     "node": ">=18"
   },
