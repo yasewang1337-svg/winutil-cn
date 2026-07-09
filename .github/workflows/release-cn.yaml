@@ -137,3 +137,15 @@ jobs:
             --title "中文版 ${{ steps.ver.outputs.tag }}" `
             --notes-file notes.md `
             --latest
+
+      - name: 清理旧发布(只留最新 3 个)
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $rels = gh release list --limit 100 --json tagName,createdAt | ConvertFrom-Json |
+                  Where-Object { $_.tagName -like 'cn-*' } | Sort-Object createdAt -Descending
+          $rels | Select-Object -Skip 3 | ForEach-Object {
+            Write-Host "清理旧发布 $($_.tagName)"
+            gh release delete $_.tagName --cleanup-tag --yes
+          }
