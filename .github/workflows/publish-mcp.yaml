@@ -1,0 +1,61 @@
+name: 发布 MCP 到 npm
+
+# 打 mcp-v* 标签(如 mcp-v0.2.1)或手动触发 → 自动发布 mcp/ 到 npm。
+# 前置:仓库 Settings → Secrets and variables → Actions 里加一个 NPM_TOKEN(npm 的 Automation 访问令牌)。
+
+on:
+  push:
+    tags: ['mcp-v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '版本号(如 0.2.1);留空=用 package.json 现有版本'
+        required: false
+
+permissions:
+  contents: read
+  id-token: write   # npm provenance 供应链溯源需要
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mcp
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 配置 Node + npm 源
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: 确定版本(标签优先)
+        id: ver
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            V="${GITHUB_REF_NAME#mcp-v}"
+          else
+            V="${{ github.event.inputs.version }}"
+          fi
+          if [ -n "$V" ]; then
+            npm version "$V" --no-git-tag-version --allow-same-version
+          fi
+          echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 生成打包快照 data.json
+        run: node build-data.js
+
+      - name: 发布到 npm
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: 摘要
+        run: echo "已发布 winutil-cn-mcp@${{ steps.ver.outputs.version }} 到 npm" >> "$GITHUB_STEP_SUMMARY"
