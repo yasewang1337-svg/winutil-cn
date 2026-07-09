@@ -1,23 +1,19 @@
-# ═══ Holha1337 · WinUtil 中文汉化版 · 炫酷启动横幅 ═══
+# ═══ HOLHA1337 · ASCII 启动横幅 ═══
 try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 } catch {}
 $holhaBanner = @(
-    "█   █   █████   █       █   █    █████",
-    "█   █   █   █   █       █   █    █   █",
-    "█████   █   █   █       █████    █████",
-    "█   █   █   █   █       █   █    █   █",
-    "█   █   █████   █████   █   █    █   █"
+    '██╗  ██╗ ██████╗ ██╗     ██╗  ██╗ █████╗  ██╗██████╗ ██████╗ ███████╗',
+    '██║  ██║██╔═══██╗██║     ██║  ██║██╔══██╗███║╚════██╗╚════██╗╚════██║',
+    '███████║██║   ██║██║     ███████║███████║╚██║ █████╔╝ █████╔╝    ██╔╝',
+    '██╔══██║██║   ██║██║     ██╔══██║██╔══██║ ██║ ╚═══██╗ ╚═══██╗   ██╔╝ ',
+    '██║  ██║╚██████╔╝███████╗██║  ██║██║  ██║ ██║██████╔╝██████╔╝   ██║  ',
+    '╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═╝╚═════╝ ╚═════╝    ╚═╝  '
 )
-$holhaColors = @("Cyan","Cyan","Blue","Magenta","Magenta")
+$holhaColors = @("Cyan","Cyan","Blue","Blue","Magenta","Magenta")
 Write-Host ""
 for ($__i = 0; $__i -lt $holhaBanner.Count; $__i++) {
-    Write-Host ("     " + $holhaBanner[$__i]) -ForegroundColor $holhaColors[$__i]
-    Start-Sleep -Milliseconds 55
+    Write-Host ("  " + $holhaBanner[$__i]) -ForegroundColor $holhaColors[$__i]
+    Start-Sleep -Milliseconds 60
 }
-Write-Host ""
-$holhaTag = "     >> WinUtil 中文汉化版 · 1337 暗黑霓虹 <<"
-foreach ($__c in $holhaTag.ToCharArray()) { Write-Host $__c -NoNewline -ForegroundColor Cyan; Start-Sleep -Milliseconds 10 }
-Write-Host ""
-Write-Host "     首席维护 · Holha1337 · github.com/yasewang1337-svg" -ForegroundColor DarkCyan
 Write-Host ""
 # 品牌化控制台窗口标题(替代默认的临时脚本路径)
 try { $Host.UI.RawUI.WindowTitle = "Holha1337 · WinUtil 中文汉化版" } catch {}
