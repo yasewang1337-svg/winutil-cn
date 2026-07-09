@@ -315,5 +315,95 @@
     "ButtonWidth": "300",
     "function": "Invoke-WPFSSHServer",
     "link": "https://winutil.christitus.com/dev/features/remote-access/sshserver"
+  },
+  "WPFFeatureMirrorPipCN": {
+    "Content": "pip 换清华源",
+    "Description": "把 Python pip 默认源换成清华 TUNA 镜像，国内装包飞快。",
+    "category": "换源 · 换国内镜像",
+    "panel": "1",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "InvokeScript": ["if (Get-Command pip -ErrorAction SilentlyContinue) { pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple; pip config set global.trusted-host pypi.tuna.tsinghua.edu.cn; Write-Host 'pip 已换清华源' -ForegroundColor Green } else { Write-Host '未检测到 pip，请先安装 Python' -ForegroundColor Yellow }"]
+  },
+  "WPFFeatureMirrorNpmCN": {
+    "Content": "npm 换 npmmirror",
+    "Description": "把 npm 源换成 npmmirror（淘宝）镜像，装 node 包更快。",
+    "category": "换源 · 换国内镜像",
+    "panel": "1",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "InvokeScript": ["if (Get-Command npm -ErrorAction SilentlyContinue) { npm config set registry https://registry.npmmirror.com; Write-Host 'npm 已换 npmmirror 源' -ForegroundColor Green } else { Write-Host '未检测到 npm，请先安装 Node.js' -ForegroundColor Yellow }"]
+  },
+  "WPFFeatureMirrorYarnCN": {
+    "Content": "yarn 换 npmmirror",
+    "Description": "把 yarn 源换成 npmmirror 镜像。",
+    "category": "换源 · 换国内镜像",
+    "panel": "1",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "InvokeScript": ["if (Get-Command yarn -ErrorAction SilentlyContinue) { yarn config set registry https://registry.npmmirror.com; Write-Host 'yarn 已换 npmmirror 源' -ForegroundColor Green } else { Write-Host '未检测到 yarn' -ForegroundColor Yellow }"]
+  },
+  "WPFFeatureMirrorCondaCN": {
+    "Content": "conda 换清华源",
+    "Description": "给 conda 添加清华 anaconda 镜像频道并显示来源。",
+    "category": "换源 · 换国内镜像",
+    "panel": "1",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "InvokeScript": ["if (Get-Command conda -ErrorAction SilentlyContinue) { conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/; conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/; conda config --set show_channel_urls yes; Write-Host 'conda 已加清华源' -ForegroundColor Green } else { Write-Host '未检测到 conda' -ForegroundColor Yellow }"]
+  },
+  "WPFFeatureMirrorGoCN": {
+    "Content": "go 换 goproxy.cn",
+    "Description": "把 Go 模块代理换成 goproxy.cn。",
+    "category": "换源 · 换国内镜像",
+    "panel": "1",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "InvokeScript": ["if (Get-Command go -ErrorAction SilentlyContinue) { go env -w GOPROXY=https://goproxy.cn,direct; Write-Host 'go 已换 goproxy.cn' -ForegroundColor Green } else { Write-Host '未检测到 go' -ForegroundColor Yellow }"]
+  },
+  "WPFFeatureMirrorPipReset": {
+    "Content": "pip 恢复官方",
+    "Description": "恢复 pip 官方源 pypi.org。",
+    "category": "换源 · 恢复官方源",
+    "panel": "2",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "InvokeScript": ["if (Get-Command pip -ErrorAction SilentlyContinue) { pip config unset global.index-url 2>$null; pip config unset global.trusted-host 2>$null; Write-Host 'pip 已恢复官方源' -ForegroundColor Green } else { Write-Host '未检测到 pip' -ForegroundColor Yellow }"]
+  },
+  "WPFFeatureMirrorNpmReset": {
+    "Content": "npm 恢复官方",
+    "Description": "恢复 npm 官方源 registry.npmjs.org。",
+    "category": "换源 · 恢复官方源",
+    "panel": "2",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "InvokeScript": ["if (Get-Command npm -ErrorAction SilentlyContinue) { npm config set registry https://registry.npmjs.org; Write-Host 'npm 已恢复官方源' -ForegroundColor Green } else { Write-Host '未检测到 npm' -ForegroundColor Yellow }"]
+  },
+  "WPFFeatureMirrorYarnReset": {
+    "Content": "yarn 恢复官方",
+    "Description": "恢复 yarn 官方源。",
+    "category": "换源 · 恢复官方源",
+    "panel": "2",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "InvokeScript": ["if (Get-Command yarn -ErrorAction SilentlyContinue) { yarn config set registry https://registry.yarnpkg.com; Write-Host 'yarn 已恢复官方源' -ForegroundColor Green } else { Write-Host '未检测到 yarn' -ForegroundColor Yellow }"]
+  },
+  "WPFFeatureMirrorCondaReset": {
+    "Content": "conda 恢复官方",
+    "Description": "清除 conda 自定义频道，恢复默认。",
+    "category": "换源 · 恢复官方源",
+    "panel": "2",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "InvokeScript": ["if (Get-Command conda -ErrorAction SilentlyContinue) { conda config --remove-key channels 2>$null; Write-Host 'conda 已恢复默认频道' -ForegroundColor Green } else { Write-Host '未检测到 conda' -ForegroundColor Yellow }"]
+  },
+  "WPFFeatureMirrorGoReset": {
+    "Content": "go 恢复官方",
+    "Description": "恢复 Go 官方模块代理。",
+    "category": "换源 · 恢复官方源",
+    "panel": "2",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "InvokeScript": ["if (Get-Command go -ErrorAction SilentlyContinue) { go env -w GOPROXY=https://proxy.golang.org,direct; Write-Host 'go 已恢复官方代理' -ForegroundColor Green } else { Write-Host '未检测到 go' -ForegroundColor Yellow }"]
   }
 }
