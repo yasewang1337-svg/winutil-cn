@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/assets/images/holha-logo.svg" alt="Holha1337 — WinUtil 中文汉化 · 首席维护者" width="760">
+  <img src="docs/assets/images/holha-logo.png" alt="Holha1337 — WinUtil 中文汉化 · 首席维护者" width="760">
 </div>
 
 <h1 align="center">WinUtil 中文汉化版</h1>
@@ -169,7 +169,7 @@ pwsh -File 汉化\run-all.ps1
 
 <div align="center">
   <a href="https://github.com/yasewang1337-svg/winutil-cn">
-    <img src="docs/assets/images/ad-slot.svg" alt="推广位 · 虚位以待" width="820">
+    <img src="docs/assets/images/ad-slot.png" alt="推广位 · 虚位以待" width="820">
   </a>
   <p><i>品牌合作 · 广告投放 · 工具联动 —— 触达每一位重装 Windows 的中国开发者。合作请联系 <a href="https://github.com/yasewang1337-svg">Holha1337</a>。</i></p>
 </div>
