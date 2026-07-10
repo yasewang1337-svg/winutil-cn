@@ -969,7 +969,7 @@
                     Background="{DynamicResource ButtonInstallBackgroundColor}" Foreground="white" FontWeight="Bold" Name="WPFTab1BT">
                     <ToggleButton.Content>
                         <TextBlock FontSize="{DynamicResource TabButtonFontSize}" Background="Transparent" Foreground="{DynamicResource ButtonInstallForegroundColor}" >
-                            <Underline>I</Underline>nstall
+                            安装
                         </TextBlock>
                     </ToggleButton.Content>
                 </ToggleButton>
@@ -977,7 +977,7 @@
                     Background="{DynamicResource ButtonTweaksBackgroundColor}" Foreground="{DynamicResource ButtonTweaksForegroundColor}" FontWeight="Bold" Name="WPFTab2BT">
                     <ToggleButton.Content>
                         <TextBlock FontSize="{DynamicResource TabButtonFontSize}" Background="Transparent" Foreground="{DynamicResource ButtonTweaksForegroundColor}">
-                            <Underline>T</Underline>weaks
+                            优化
                         </TextBlock>
                     </ToggleButton.Content>
                 </ToggleButton>
@@ -985,7 +985,7 @@
                     Background="{DynamicResource ButtonConfigBackgroundColor}" Foreground="{DynamicResource ButtonConfigForegroundColor}" FontWeight="Bold" Name="WPFTab3BT">
                     <ToggleButton.Content>
                         <TextBlock FontSize="{DynamicResource TabButtonFontSize}" Background="Transparent" Foreground="{DynamicResource ButtonConfigForegroundColor}">
-                            <Underline>C</Underline>onfig
+                            配置
                         </TextBlock>
                     </ToggleButton.Content>
                 </ToggleButton>
@@ -993,7 +993,7 @@
                     Background="{DynamicResource ButtonUpdatesBackgroundColor}" Foreground="{DynamicResource ButtonUpdatesForegroundColor}" FontWeight="Bold" Name="WPFTab4BT">
                     <ToggleButton.Content>
                         <TextBlock FontSize="{DynamicResource TabButtonFontSize}" Background="Transparent" Foreground="{DynamicResource ButtonUpdatesForegroundColor}">
-                            <Underline>U</Underline>pdates
+                            更新
                         </TextBlock>
                     </ToggleButton.Content>
                 </ToggleButton>
@@ -1001,7 +1001,7 @@
                     Background="{DynamicResource ButtonWin11ISOBackgroundColor}" Foreground="{DynamicResource ButtonWin11ISOForegroundColor}" FontWeight="Bold" Name="WPFTab5BT">
                     <ToggleButton.Content>
                         <TextBlock FontSize="{DynamicResource TabButtonFontSize}" Background="Transparent" Foreground="{DynamicResource ButtonWin11ISOForegroundColor}">
-                            <Underline>W</Underline>in11 Creator
+                            Win11 镜像
                         </TextBlock>
                     </ToggleButton.Content>
                 </ToggleButton>
@@ -1261,8 +1261,8 @@
                             <Border Grid.ColumnSpan="2" Grid.Row="2" Grid.Column="0" Style="{StaticResource BorderStyle}">
                                 <StackPanel Background="{DynamicResource MainBackgroundColor}" Orientation="Horizontal" HorizontalAlignment="Left">
                                     <TextBlock Padding="10">
-                                        Note: Hover over items to get a better description. Please be careful as many of these tweaks will heavily modify your system.
-                                        <LineBreak/>Recommended selections are for normal users and if you are unsure do NOT check anything else!
+                                        提示:把鼠标悬停在项目上可查看更详细的说明。请谨慎操作——很多优化项会大幅修改你的系统。
+                                        <LineBreak/>「推荐」选项适合普通用户;如果不确定,请不要勾选其它任何项!
                                     </TextBlock>
                                 </StackPanel>
                             </Border>
@@ -1309,13 +1309,13 @@
                                     <TextBlock Margin="10"
                                              TextWrapping="Wrap"
                                              Foreground="{DynamicResource MainForegroundColor}">
-                                        <Run FontWeight="Bold">Default Windows Update Configuration</Run>
+                                        <Run FontWeight="Bold">默认 Windows 更新配置</Run>
                                         <LineBreak/>
-                                         - No modifications to Windows defaults
+                                         - 不改动 Windows 默认设置
                                         <LineBreak/>
-                                         - Removes any custom update settings
+                                         - 清除所有自定义的更新设置
                                         <LineBreak/><LineBreak/>
-                                        <Run FontStyle="Italic" FontSize="11">Note: This resets your Windows Update settings to default out of the box settings. It removes ANY policy or customization that has been done to Windows Update.</Run>
+                                        <Run FontStyle="Italic" FontSize="11">说明:这会把你的 Windows 更新设置恢复到出厂默认状态,清除对 Windows 更新做过的任何策略或自定义。</Run>
                                     </TextBlock>
                                 </StackPanel>
                             </Border>
@@ -1331,19 +1331,19 @@
                                     <TextBlock Margin="10"
                                              TextWrapping="Wrap"
                                              Foreground="{DynamicResource MainForegroundColor}">
-                                        <Run FontWeight="Bold">Balanced Security Configuration</Run>
+                                        <Run FontWeight="Bold">均衡安全配置</Run>
                                         <LineBreak/>
-                                         - Feature updates delayed by 365 days
+                                         - 功能更新延迟 365 天
                                         <LineBreak/>
-                                         - Security updates installed after 4 days
+                                         - 安全更新延迟 4 天后安装
                                         <LineBreak/>
-                                         - Prevents Windows Update from installing drivers
+                                         - 阻止 Windows 更新自动安装驱动
                                         <LineBreak/><LineBreak/>
-                                        <Run FontWeight="SemiBold">Feature Updates:</Run> New features and potential bugs
+                                        <Run FontWeight="SemiBold">功能更新:</Run> 新特性,也可能带来新 bug
                                         <LineBreak/>
-                                        <Run FontWeight="SemiBold">Security Updates:</Run> Critical security patches
+                                        <Run FontWeight="SemiBold">安全更新:</Run> 关键安全补丁
                                     <LineBreak/><LineBreak/>
-                                    <Run FontStyle="Italic" FontSize="11">Note: This only applies to Pro systems that can use group policy.</Run>
+                                    <Run FontStyle="Italic" FontSize="11">说明:仅对可使用组策略的专业版(Pro)系统生效。</Run>
                                     </TextBlock>
                                 </StackPanel>
                             </Border>
@@ -1360,15 +1360,15 @@
                                     <TextBlock Margin="10"
                                              TextWrapping="Wrap"
                                              Foreground="{DynamicResource MainForegroundColor}">
-                                        <Run FontWeight="Bold" Foreground="Red">!! Not Recommended !!</Run>
+                                        <Run FontWeight="Bold" Foreground="Red">!! 不推荐 !!</Run>
                                         <LineBreak/>
-                                         - Disables ALL Windows Updates
+                                         - 禁用所有 Windows 更新
                                         <LineBreak/>
-                                         - Increases security risks
+                                         - 增加安全风险
                                         <LineBreak/>
-                                         - Only use for isolated systems
+                                         - 仅适用于隔离(离线)系统
                                         <LineBreak/><LineBreak/>
-                                        <Run FontStyle="Italic" FontSize="11">Warning: Your system will be vulnerable without security updates.</Run>
+                                        <Run FontStyle="Italic" FontSize="11">警告:没有安全更新,你的系统将变得脆弱、易受攻击。</Run>
                                     </TextBlock>
                                 </StackPanel>
                             </Border>
@@ -1401,16 +1401,16 @@
                                 <StackPanel Grid.Column="0" Margin="5,5,15,5">
                                     <TextBlock FontSize="{DynamicResource FontSize}" FontWeight="Bold"
                                                Foreground="{DynamicResource MainForegroundColor}" Margin="0,0,0,8">
-                                        Step 1 - Select Windows 11 ISO
+                                        第 1 步 - 选择 Windows 11 ISO
                                     </TextBlock>
                                     <TextBlock FontSize="{DynamicResource FontSize}" Foreground="{DynamicResource MainForegroundColor}"
                                                TextWrapping="Wrap" Margin="0,0,0,6">
-                                        Browse to your locally saved Windows 11 ISO file. Only official ISOs
-                                        downloaded from Microsoft are supported.
+                                        浏览选择你本地保存的 Windows 11 ISO 文件。仅支持从微软官方
+                                        下载的原版 ISO。
                                     </TextBlock>
                                     <TextBlock FontSize="{DynamicResource FontSize}" Foreground="{DynamicResource MainForegroundColor}"
                                                TextWrapping="Wrap" Margin="0,0,0,12" FontStyle="Italic">
-                                        <Run FontWeight="Bold">NOTE:</Run> This is only meant for Fresh and New Windows installs.
+                                        <Run FontWeight="Bold">注意:</Run> 此功能仅用于全新安装 Windows。
                                     </TextBlock>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -1449,26 +1449,26 @@
                                     <StackPanel>
                                         <TextBlock FontSize="{DynamicResource FontSize}" FontWeight="Bold"
                                                    Foreground="OrangeRed" Margin="0,0,0,10">
-                                            !!WARNING!! You must use an official Microsoft ISO
+                                            !! 警告 !! 必须使用微软官方原版 ISO
                                         </TextBlock>
                                         <TextBlock FontSize="{DynamicResource FontSize}"
                                                    Foreground="{DynamicResource MainForegroundColor}"
                                                    TextWrapping="Wrap" Margin="0,0,0,8">
-                                            Download the Windows 11 ISO directly from Microsoft.com.
-                                            Third-party, pre-modified, or unofficial images are not supported
-                                            and may produce broken results.
+                                            请直接从 Microsoft.com 下载 Windows 11 ISO。
+                                            第三方、预改版或非官方镜像均不受支持,
+                                            可能导致制作失败。
                                         </TextBlock>
                                         <TextBlock FontSize="{DynamicResource FontSize}"
                                                    Foreground="{DynamicResource MainForegroundColor}"
                                                    TextWrapping="Wrap" Margin="0,0,0,6">
-                                            On the Microsoft download page, choose:
+                                            在微软下载页面上,选择:
                                         </TextBlock>
                                         <TextBlock FontSize="{DynamicResource FontSize}"
                                                    Foreground="{DynamicResource MainForegroundColor}"
                                                    TextWrapping="Wrap" Margin="12,0,0,12">
-                                            - Edition  : Windows 11
-                                            <LineBreak/>- Language : your preferred language
-                                            <LineBreak/>- Architecture : 64-bit (x64)
+                                            - 版本    : Windows 11
+                                            <LineBreak/>- 语言    : 你偏好的语言
+                                            <LineBreak/>- 架构    : 64 位 (x64)
                                         </TextBlock>
                                         <Button Name="WPFWin11ISODownloadLink"
                                                 Content="打开微软下载页面"
@@ -1492,13 +1492,13 @@
                                 <StackPanel Grid.Column="0" Margin="0,0,20,0" VerticalAlignment="Top">
                                     <TextBlock FontSize="{DynamicResource FontSize}" FontWeight="Bold"
                                                Foreground="{DynamicResource MainForegroundColor}" Margin="0,0,0,8">
-                                        Step 2 - Mount &amp; Verify ISO
+                                        第 2 步 - 挂载并校验 ISO
                                     </TextBlock>
                                     <TextBlock FontSize="{DynamicResource FontSize}"
                                                Foreground="{DynamicResource MainForegroundColor}"
                                                TextWrapping="Wrap" Margin="0,0,0,12" MaxWidth="320">
-                                        Mount the ISO and confirm it contains a valid Windows 11
-                                        install.wim before any modifications are made.
+                                        在任何修改之前,先挂载 ISO 并确认其中
+                                        包含有效的 Windows 11 install.wim。
                                     </TextBlock>
                                     <Button Name="WPFWin11ISOMountButton"
                                             Content="挂载并校验 ISO"
@@ -1534,7 +1534,7 @@
                                         <TextBlock FontSize="{DynamicResource FontSize}" FontWeight="Bold"
                                                    Foreground="{DynamicResource MainForegroundColor}"
                                                    Margin="0,6,0,4">
-                                            Select Edition:
+                                            选择版本:
                                         </TextBlock>
                                         <ComboBox Name="WPFWin11ISOEditionComboBox"
                                                   FontSize="{DynamicResource FontSize}"
@@ -1553,15 +1553,14 @@
                                         HorizontalAlignment="Left" MinWidth="{DynamicResource ButtonWidth}">
                                 <TextBlock FontSize="{DynamicResource FontSize}" FontWeight="Bold"
                                            Foreground="{DynamicResource MainForegroundColor}" Margin="0,0,0,8">
-                                    Step 3 - Modify install.wim
+                                    第 3 步 - 修改 install.wim
                                 </TextBlock>
                                 <TextBlock FontSize="{DynamicResource FontSize}"
                                            Foreground="{DynamicResource MainForegroundColor}"
                                            TextWrapping="Wrap" Margin="0,0,0,12">
-                                    The ISO contents will be extracted to a temporary working directory,
-                                    install.wim will be modified (components removed, tweaks applied),
-                                    and the result will be repackaged. This process may take several minutes
-                                    depending on your hardware.
+                                    ISO 内容会被解压到临时工作目录,
+                                    install.wim 将被修改(移除组件、应用优化),
+                                    然后重新打包。视你的硬件性能,此过程可能需要几分钟。
                                 </TextBlock>
                                 <Button Name="WPFWin11ISOModifyButton"
                                         Content="运行 Windows ISO 修改与制作"
@@ -1584,7 +1583,7 @@
                                     <TextBlock Grid.Column="0" FontSize="{DynamicResource FontSize}" FontWeight="Bold"
                                                Foreground="{DynamicResource MainForegroundColor}"
                                                VerticalAlignment="Center">
-                                        Step 4 - Output: What would you like to do with the modified image?
+                                        第 4 步 - 输出:你想如何处理修改后的镜像?
                                     </TextBlock>
                                     <Button Grid.Column="1"
                                             Name="WPFWin11ISOCleanResetButton"
@@ -1627,9 +1626,9 @@
                                         <TextBlock FontSize="{DynamicResource FontSize}"
                                                    Foreground="{DynamicResource MainForegroundColor}"
                                                    TextWrapping="Wrap" Margin="0,0,0,8">
-                                            <Run FontWeight="Bold" Foreground="OrangeRed">!! All data on the selected USB drive will be permanently erased !!</Run>
+                                            <Run FontWeight="Bold" Foreground="OrangeRed">!! 所选 U 盘上的所有数据将被永久擦除 !!</Run>
                                             <LineBreak/>
-                                            Select a removable USB drive below, then click Erase &amp; Write.
+                                            在下方选择一个可移动 U 盘,然后点击「擦除并写入」。
                                         </TextBlock>
                                         <!-- USB drive selector row -->
                                         <Grid Margin="0,0,0,8">
@@ -1672,7 +1671,7 @@
                                    FontSize="{DynamicResource FontSize}" FontWeight="Bold"
                                    Foreground="{DynamicResource MainForegroundColor}"
                                    Margin="0,0,0,4">
-                            Status Log
+                            状态日志
                         </TextBlock>
                         <TextBox Grid.Row="1"
                                  Name="WPFWin11ISOStatusLog"

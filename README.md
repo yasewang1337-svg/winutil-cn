@@ -10,8 +10,13 @@
 <p align="center">
   <img src="https://img.shields.io/badge/平台-Windows%2011-0078D6?style=for-the-badge&logo=windows11&logoColor=white" alt="平台 Windows 11">
   <img src="https://img.shields.io/badge/Shell-PowerShell%207-5391FE?style=for-the-badge&logo=powershell&logoColor=white" alt="PowerShell 7">
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/yasewang1337-svg/winutil-cn?style=for-the-badge&color=green" alt="许可证 MIT"></a>
-  <a href="https://github.com/yasewang1337-svg/winutil-cn/stargazers"><img src="https://img.shields.io/github/stars/yasewang1337-svg/winutil-cn?style=for-the-badge&color=%230567ff" alt="Stars"></a>
+  <a href="https://github.com/yasewang1337-svg/winutil-cn/releases/latest"><img src="https://img.shields.io/github/v/release/yasewang1337-svg/winutil-cn?style=for-the-badge&label=最新版本&color=38F9D7" alt="最新版本"></a>
+  <a href="https://github.com/yasewang1337-svg/winutil-cn/releases"><img src="https://img.shields.io/github/downloads/yasewang1337-svg/winutil-cn/total?style=for-the-badge&label=下载量&color=43A6FF" alt="下载量"></a>
+</p>
+<p align="center">
+  <a href="https://www.npmjs.com/package/winutil-cn-mcp"><img src="https://img.shields.io/npm/v/winutil-cn-mcp?style=for-the-badge&logo=npm&label=MCP%20服务器&color=C86BFF" alt="MCP npm"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/yasewang1337-svg/winutil-cn?style=for-the-badge&label=许可证&color=green" alt="许可证 MIT"></a>
+  <a href="https://github.com/yasewang1337-svg/winutil-cn/stargazers"><img src="https://img.shields.io/github/stars/yasewang1337-svg/winutil-cn?style=for-the-badge&label=Star&color=%230567ff" alt="Stars"></a>
 </p>
 
 一套精心整理的 Windows 系统任务合集：一键**安装**软件、用**优化项**给系统瘦身、用**配置**排查故障、并管理 **Windows 更新**。每次重装 Windows 后跑一遍，快速回到顺手的状态。本项目是 [ChrisTitusTech/winutil](https://github.com/ChrisTitusTech/winutil) 的**中文本地化分支**——把图形界面、软件介绍、优化项说明和文档都翻成中文。
@@ -160,8 +165,15 @@ pwsh -File 汉化\run-all.ps1
   <p><i>能为中国开发者提供更好的帮助，是我最开心的事情。未来会更好。💙</i></p>
 </div>
 
-## 致谢上游
+## 📣 推广位
 
-感谢 [Chris Titus Tech](https://github.com/ChrisTitusTech) 和所有为原项目付出的贡献者。给上游点一颗 ⭐ 支持他们：[ChrisTitusTech/winutil](https://github.com/ChrisTitusTech/winutil)
+<div align="center">
+  <a href="https://github.com/yasewang1337-svg/winutil-cn">
+    <img src="docs/assets/images/ad-slot.svg" alt="推广位 · 虚位以待" width="820">
+  </a>
+  <p><i>品牌合作 · 广告投放 · 工具联动 —— 触达每一位重装 Windows 的中国开发者。合作请联系 <a href="https://github.com/yasewang1337-svg">Holha1337</a>。</i></p>
+</div>
 
-[![Contributors](https://contrib.rocks/image?repo=ChrisTitusTech/winutil)](https://github.com/ChrisTitusTech/winutil/graphs/contributors)
+<br>
+
+<sub>本项目基于 <a href="https://github.com/ChrisTitusTech/winutil">ChrisTitusTech/winutil</a>（MIT）汉化，感谢上游作者与贡献者的开源工作。</sub>

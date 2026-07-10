@@ -24,40 +24,61 @@ function Invoke-WinUtilAssets {
 
   switch ($type) {
       'logo' {
-          # Holha1337 六边形 H 徽记(霓虹渐变描边 + 辉光)
-          $hex = New-Object Windows.Shapes.Path
-          $hex.Data = [Windows.Media.Geometry]::Parse("M50,5 L89,27 L89,73 L50,95 L11,73 L11,27 Z")
-          $hexStroke = New-Object Windows.Media.LinearGradientBrush
-          $hexStroke.StartPoint = "0,0"; $hexStroke.EndPoint = "1,1"
-          $hexStroke.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#38F9D7"), 0)))
-          $hexStroke.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#C86BFF"), 1)))
-          $hex.Stroke = $hexStroke
-          $hex.StrokeThickness = 6
-          $hex.Fill = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#0E1C33")
-          $hexGlow = New-Object Windows.Media.Effects.DropShadowEffect
-          $hexGlow.Color = [Windows.Media.ColorConverter]::ConvertFromString("#38F9D7")
-          $hexGlow.BlurRadius = 16; $hexGlow.ShadowDepth = 0; $hexGlow.Opacity = 0.9
-          $hex.Effect = $hexGlow
-          # 辉光呼吸脉冲动效(BlurRadius 10<->24 循环,营造霓虹脉动感)
-          $hexPulse = New-Object Windows.Media.Animation.DoubleAnimation
-          $hexPulse.From = 10; $hexPulse.To = 24
-          $hexPulse.Duration = New-Object Windows.Duration([TimeSpan]::FromSeconds(1.3))
-          $hexPulse.AutoReverse = $true
-          $hexPulse.RepeatBehavior = [Windows.Media.Animation.RepeatBehavior]::Forever
-          $hexGlow.BeginAnimation([Windows.Media.Effects.DropShadowEffect]::BlurRadiusProperty, $hexPulse)
+          # Holha1337 终端徽记:霓虹终端窗 + >H_ 提示符 + 闪烁光标
+          # 与 EXE 图标 >H_ 终端风格统一,暗黑霓虹 gamesense 质感
 
-          $letterH = New-Object Windows.Controls.TextBlock
-          $letterH.Text = "H"; $letterH.FontFamily = "Consolas"; $letterH.FontSize = 62; $letterH.FontWeight = "Bold"
-          $hGrad = New-Object Windows.Media.LinearGradientBrush
-          $hGrad.StartPoint = "0,0"; $hGrad.EndPoint = "1,1"
-          $hGrad.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#5CFFE6"), 0)))
-          $hGrad.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#43A6FF"), 0.6)))
-          $hGrad.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#C86BFF"), 1)))
-          $letterH.Foreground = $hGrad
-          [Windows.Controls.Canvas]::SetLeft($letterH, 29); [Windows.Controls.Canvas]::SetTop($letterH, 8)
+          # 终端"屏幕"圆角矩形(深色底 + 霓虹渐变描边 + 辉光呼吸)
+          $screen = New-Object Windows.Shapes.Rectangle
+          $screen.Width = 84; $screen.Height = 60
+          $screen.RadiusX = 13; $screen.RadiusY = 13
+          [Windows.Controls.Canvas]::SetLeft($screen, 8)
+          [Windows.Controls.Canvas]::SetTop($screen, 20)
+          $screen.Fill = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#0B1730")
+          $scStroke = New-Object Windows.Media.LinearGradientBrush
+          $scStroke.StartPoint = "0,0"; $scStroke.EndPoint = "1,1"
+          $scStroke.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#38F9D7"), 0)))
+          $scStroke.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#43A6FF"), 0.5)))
+          $scStroke.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#C86BFF"), 1)))
+          $screen.Stroke = $scStroke
+          $screen.StrokeThickness = 4
+          $scGlow = New-Object Windows.Media.Effects.DropShadowEffect
+          $scGlow.Color = [Windows.Media.ColorConverter]::ConvertFromString("#38F9D7")
+          $scGlow.BlurRadius = 16; $scGlow.ShadowDepth = 0; $scGlow.Opacity = 0.85
+          $screen.Effect = $scGlow
+          # 辉光呼吸脉冲(BlurRadius 9<->22 循环,营造霓虹脉动)
+          $scPulse = New-Object Windows.Media.Animation.DoubleAnimation
+          $scPulse.From = 9; $scPulse.To = 22
+          $scPulse.Duration = New-Object Windows.Duration([TimeSpan]::FromSeconds(1.4))
+          $scPulse.AutoReverse = $true
+          $scPulse.RepeatBehavior = [Windows.Media.Animation.RepeatBehavior]::Forever
+          $scGlow.BeginAnimation([Windows.Media.Effects.DropShadowEffect]::BlurRadiusProperty, $scPulse)
 
-          $canvas.Children.Add($hex) | Out-Null
-          $canvas.Children.Add($letterH) | Out-Null
+          # >H 提示符(霓虹渐变等宽粗体)
+          $prompt = New-Object Windows.Controls.TextBlock
+          $prompt.Text = ">H"; $prompt.FontFamily = "Consolas"; $prompt.FontSize = 34; $prompt.FontWeight = "Bold"
+          $pGrad = New-Object Windows.Media.LinearGradientBrush
+          $pGrad.StartPoint = "0,0"; $pGrad.EndPoint = "1,1"
+          $pGrad.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#5CFFE6"), 0)))
+          $pGrad.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#43A6FF"), 0.6)))
+          $pGrad.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#C86BFF"), 1)))
+          $prompt.Foreground = $pGrad
+          [Windows.Controls.Canvas]::SetLeft($prompt, 21); [Windows.Controls.Canvas]::SetTop($prompt, 26)
+
+          # _ 光标(青色,闪烁 opacity 动画,终端质感)
+          $cursor = New-Object Windows.Controls.TextBlock
+          $cursor.Text = "_"; $cursor.FontFamily = "Consolas"; $cursor.FontSize = 34; $cursor.FontWeight = "Bold"
+          $cursor.Foreground = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#5CFFE6")
+          [Windows.Controls.Canvas]::SetLeft($cursor, 59); [Windows.Controls.Canvas]::SetTop($cursor, 26)
+          $blink = New-Object Windows.Media.Animation.DoubleAnimation
+          $blink.From = 1; $blink.To = 0
+          $blink.Duration = New-Object Windows.Duration([TimeSpan]::FromSeconds(0.6))
+          $blink.AutoReverse = $true
+          $blink.RepeatBehavior = [Windows.Media.Animation.RepeatBehavior]::Forever
+          $cursor.BeginAnimation([Windows.UIElement]::OpacityProperty, $blink)
+
+          $canvas.Children.Add($screen) | Out-Null
+          $canvas.Children.Add($prompt) | Out-Null
+          $canvas.Children.Add($cursor) | Out-Null
       }
       'checkmark' {
           $canvas.Width = 512
