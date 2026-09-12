@@ -83,3 +83,14 @@
 - 正式 EXE SHA256：`7B4F6249A4D8A46A054EA25C85A57CCDC331AABD9292820C6F1FFCA3DAB80F0A`；正式 PS1 SHA256：`3E220699F7252CF624D1940308B323F4DA5724BE979006F5EB770A07909F8046`。
 - 根目录 `WinUtil-CN.exe`（797,184 字节）和 `winutil-cn.ps1`（686,430 字节）已替换为以上正式附件。核验没有启动 EXE 或执行系统修改。
 - Issue #5 / #6 保留开放。下一步产品工作优先安排首次用户试用，核对下载、按需装机、失败处理和恢复路径；收集实际反馈后再扩展网络诊断与待更新清单。
+
+## GitHub 仓库展示美化（2026-09-12，已完成）
+
+- [PR #9](https://github.com/yasewang1337-svg/winutil-cn/pull/9) 已合并为 `4b114773dead985acedd7cb87ab2c1a2ed26e022`，正式仓库首页已采用新版 README。
+- 新增蓝绿项目横幅（`docs/assets/images/repository-hero.svg` 及 PNG），整理下载按钮、版本/测试徽章、场景表、截图与文档导航，高级用法采用折叠区。保留作者、上游、MIT 与操作边界；浅色首页和软件组合图复用本版本实际 WPF 渲染。
+- GitHub About 已精简为与首页一致的中文介绍，增加 `winget`、`system-maintenance`、`package-manager` 标签，主页仍指向最新发布页。修改前元数据在 `.artifacts/repository-about-before.json`。
+- 两处贡献指南已修正 Fork 目标与中文版构建命令。运行时代码与发行版未改动，本轮不创建新 Release。
+- 验证：GitHub Markdown API 渲染、24 处本地文件链接、页内锚点、5 个折叠区；桌面/深色/390px 手机预览无页面横向溢出，图片及徽章全部加载。记录在 `.artifacts/readme-qa.json` 与 `readme-*.png`。真实 GitHub 页面已检查横幅显示与预览展开。
+- PR 构建检查与 PowerShell 5.1/7 测试均通过，测试运行 `34703528352`、构建运行 `34703528348`。仅文档与图片变更，未另行执行系统操作。
+- 当前 Git 不存在默认作者配置，提交沿用历史的 Codex noreply 身份。推送使用一次性 GitHub CLI credential helper；默认 Git Credential Manager 本次未返回结果。GitHub CLI 位于 `.artifacts/tools/gh/bin/gh.exe`，凭据仍由系统保存。
+- 本轮美化无剩余事项。后续产品体验、上游迁移等工作仍按前述记录独立处理。
