@@ -67,11 +67,12 @@ $sync.configs = @{}
 $sync.Buttons = [System.Collections.Generic.List[PSObject]]::new()
 $sync.preferences = @{}
 $sync.ProcessRunning = $false
+$sync.RunspaceJobs = [System.Collections.Concurrent.ConcurrentDictionary[string,object]]::new()
 $sync.selectedApps = [System.Collections.Generic.List[string]]::new()
 $sync.selectedTweaks = [System.Collections.Generic.List[string]]::new()
 $sync.selectedToggles = [System.Collections.Generic.List[string]]::new()
 $sync.selectedFeatures = [System.Collections.Generic.List[string]]::new()
-$sync.currentTab = "Install"
+$sync.currentTab = "WPFTab6"
 $sync.selectedAppsStackPanel
 $sync.selectedAppsPopup
 

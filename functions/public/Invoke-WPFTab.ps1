@@ -1,58 +1,28 @@
 function Invoke-WPFTab {
-
-    <#
-
-    .SYNOPSIS
-        Sets the selected tab to the tab that was clicked
-
-    .PARAMETER ClickedTab
-        The name of the tab that was clicked
-
+    <# .SYNOPSIS
+        Navigate by stable control names, independent of translated tab captions.
     #>
+    param([Parameter(Mandatory, Position = 0)][string]$ClickedTab)
 
-    Param (
-        [Parameter(Mandatory,position=0)]
-        [string]$ClickedTab
-    )
+    if ($ClickedTab -notmatch '^WPFTab([1-6])BT$') { return }
+    $tabName = 'WPFTab' + $Matches[1]
+    $target = $sync.Form.FindName($tabName)
+    if (-not $target) { return }
+    if ($sync[$ClickedTab] -and -not $sync[$ClickedTab].IsEnabled) { return }
 
-    $tabNav = Get-WinUtilVariables | Where-Object {$psitem -like "WPFTabNav"}
-    $tabNumber = [int]($ClickedTab -replace "WPFTab","" -replace "BT","") - 1
-
-    $filter = Get-WinUtilVariables -Type ToggleButton | Where-Object {$psitem -like "WPFTab?BT"}
-    ($sync.GetEnumerator()).where{$psitem.Key -in $filter} | ForEach-Object {
-        if ($ClickedTab -ne $PSItem.name) {
-            $sync[$PSItem.Name].IsChecked = $false
-        } else {
-            $sync["$ClickedTab"].IsChecked = $true
-            $tabNumber = [int]($ClickedTab-replace "WPFTab","" -replace "BT","") - 1
-            $sync.$tabNav.Items[$tabNumber].IsSelected = $true
-        }
+    foreach ($number in 1..6) {
+        $button = $sync["WPFTab${number}BT"]
+        if ($button) { $button.IsChecked = ($ClickedTab -eq $button.Name) }
     }
-    $sync.currentTab = $sync.$tabNav.Items[$tabNumber].Header
-
-    # Always reset the filter for the current tab
-    if ($sync.currentTab -eq "Install") {
-        # Reset Install tab filter
-        Find-AppsByNameOrDescription -SearchString ""
-    } elseif ($sync.currentTab -eq "Tweaks") {
-        # Reset Tweaks tab filter
-        Find-TweaksByNameOrDescription -SearchString ""
-    }
-
-    # Show search bar in Install and Tweaks tabs
-    if ($tabNumber -eq 0 -or $tabNumber -eq 1) {
-        $sync.SearchBar.Visibility = "Visible"
-        $searchIcon = ($sync.Form.FindName("SearchBar").Parent.Children | Where-Object { $_ -is [System.Windows.Controls.TextBlock] -and $_.Text -eq [char]0xE721 })[0]
-        if ($searchIcon) {
-            $searchIcon.Visibility = "Visible"
-        }
-    } else {
-        $sync.SearchBar.Visibility = "Collapsed"
-        $searchIcon = ($sync.Form.FindName("SearchBar").Parent.Children | Where-Object { $_ -is [System.Windows.Controls.TextBlock] -and $_.Text -eq [char]0xE721 })[0]
-        if ($searchIcon) {
-            $searchIcon.Visibility = "Collapsed"
-        }
-        # Hide the clear button if it's visible
-        $sync.SearchBarClearButton.Visibility = "Collapsed"
-    }
+    $target.IsSelected = $true
+    $sync.currentTab = $tabName
+    $sync.SearchBar.Text = ''
+    $searchVisible = $tabName -in @('WPFTab1', 'WPFTab2')
+    $visibility = if ($searchVisible) { 'Visible' } else { 'Collapsed' }
+    $sync.SearchBar.Visibility = $visibility
+    $sync.SearchBarClearButton.Visibility = 'Collapsed'
+    $searchIcon = $sync.Form.FindName('WPFSearchIcon')
+    if ($searchIcon) { $searchIcon.Visibility = $visibility }
+    if ($tabName -eq 'WPFTab1') { Find-AppsByNameOrDescription -SearchString '' }
+    if ($tabName -eq 'WPFTab2') { Find-TweaksByNameOrDescription -SearchString '' }
 }

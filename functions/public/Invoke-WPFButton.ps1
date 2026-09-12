@@ -45,6 +45,8 @@ function Invoke-WPFButton {
     # Fallback to hard-coded switch for buttons not in feature.json
     Switch -Wildcard ($Button) {
         "WPFTab?BT" {Invoke-WPFTab $Button}
+        "WPFHome*" {Invoke-WPFHome -Action ($Button -replace '^WPFHome','')}
+        "WPFTweakHistory" {Invoke-WPFTweakHistory}
         "WPFInstall" {Invoke-WPFInstall}
         "WPFUninstall" {Invoke-WPFUnInstall}
         "WPFInstallUpgrade" {Invoke-WPFInstallUpgrade}

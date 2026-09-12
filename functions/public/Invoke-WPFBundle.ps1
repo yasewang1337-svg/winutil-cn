@@ -1,8 +1,8 @@
-function Invoke-WPFBundle {
+﻿function Invoke-WPFBundle {
     <#
 
     .SYNOPSIS
-        一键套用「应用组合推荐」:把指定组合里的全部应用加入已选(累加,不清空已有选择),并刷新安装页复选框。
+        预览应用组合，确认后将用户勾选的软件加入已选清单，不清空已有选择、不立即安装。
         组合数据来自 config/bundles.json,由按钮 WPFBundle<id> 触发。
 
     .PARAMETER BundleId
@@ -17,9 +17,19 @@ function Invoke-WPFBundle {
         return
     }
 
-    # 累加勾选(Update-WinUtilSelections 已做去重),再按选择列表刷新安装页 UI
-    Update-WinUtilSelections -flatJson $bundle.apps
+    $plan = @(Get-WinUtilBundlePlan -Bundle $bundle -Applications $sync.configs.applications `
+        -SelectedApps @($sync.selectedApps) -InstalledPrograms @($sync.InstalledPrograms))
+    $result = Show-WinUtilBundleDialog -Bundle $bundle -Plan $plan -Owner $sync.Form
+    if (-not $result.Confirmed) { return }
+
+    # Revalidate the dialog result against this bundle's available candidates.
+    $available = @($plan | Where-Object { $_.IsAvailable } | ForEach-Object { $_.Id })
+    $selected = @($result.Apps | Where-Object { $_ -in $available } | Select-Object -Unique)
+    if (-not $selected.Count) { return }
+    $before = @($sync.selectedApps).Count
+    Update-WinUtilSelections -flatJson $selected
     Reset-WPFCheckBoxes -doToggles $false -checkboxfilterpattern "WPFInstall*"
 
-    Write-Host "已套用组合「$($bundle.region)·$($bundle.name)」,新增/勾选 $($bundle.apps.Count) 个应用。"
+    $added = @($sync.selectedApps).Count - $before
+    Write-Host "组合「$($bundle.region)·$($bundle.name)」已加入清单，新增 $added 项。请在安装页确认后点击安装/更新。"
 }

@@ -1,24 +1,24 @@
 {
     "WPFInstall": {
-        "Content": "安装/升级应用",
+        "Content": "查看并安装/升级",
         "Category": "____操作",
         "Type": "Button",
         "Order": "1",
-        "Description": "安装或升级选中的应用"
+        "Description": "先查看软件和包管理器清单，确认后安装或升级，完成后逐项显示结果"
     },
     "WPFUninstall": {
-        "Content": "卸载应用",
+        "Content": "查看并卸载",
         "Category": "____操作",
         "Type": "Button",
         "Order": "2",
-        "Description": "卸载选中的应用"
+        "Description": "先查看卸载清单，确认后卸载所选软件"
     },
     "WPFInstallUpgrade": {
-        "Content": "升级全部应用",
+        "Content": "查看全部升级操作",
         "Category": "____操作",
         "Type": "Button",
         "Order": "3",
-        "Description": "将所有应用升级到最新版本"
+        "Description": "先查看所选包管理器的整批升级说明，范围不限当前勾选；此操作不提供逐软件待更新清单"
     },
     "WingetRadioButton": {
         "Content": "WinGet",
@@ -86,69 +86,69 @@
         "Category": "___组合推荐",
         "Type": "Button",
         "Order": "1",
-        "Description": "一键勾选:微信/QQ/WPS/钉钉/飞书/腾讯会议/搜狗输入法"
+        "Description": "预览办公软件，默认推荐微信和 WPS；协作平台按需选择，确认后加入清单"
     },
     "WPFBundlecn_media": {
         "Content": "国内·影音娱乐",
         "Category": "___组合推荐",
         "Type": "Button",
         "Order": "2",
-        "Description": "一键勾选:网易云/哔哩哔哩/爱奇艺/腾讯视频/迅雷"
+        "Description": "预览影音平台，按常用账号选择；不会默认全选或立即安装"
     },
     "WPFBundlecn_cloud": {
         "Content": "国内·网盘与远程",
         "Category": "___组合推荐",
         "Type": "Button",
         "Order": "3",
-        "Description": "一键勾选:百度网盘/夸克网盘/ToDesk/夸克浏览器"
+        "Description": "预览网盘和远程工具，按已有账号与实际需要选择后加入清单"
     },
     "WPFBundlecn_create": {
         "Content": "国内·效率创作",
         "Category": "___组合推荐",
         "Type": "Button",
         "Order": "4",
-        "Description": "一键勾选:uTools/Snipaste/PicGo/Xmind"
+        "Description": "预览效率工具，默认推荐 Snipaste；启动器、图床和思维导图按需加入"
     },
     "WPFBundleintl_dev": {
         "Content": "国际·开发环境",
         "Category": "___组合推荐",
         "Type": "Button",
         "Order": "5",
-        "Description": "一键勾选:VSCode/Git/Node.js/Python/Docker"
+        "Description": "预览开发工具，默认推荐 VS Code 和 Git；运行时与 Docker 按项目需要加入"
     },
     "WPFBundleintl_browser": {
-        "Content": "国际·浏览器矩阵",
+        "Content": "国际·选择浏览器",
         "Category": "___组合推荐",
         "Type": "Button",
         "Order": "6",
-        "Description": "一键勾选:Chrome/Firefox/Brave/Edge"
+        "Description": "预览 Chrome、Firefox、Brave 和 Edge，通常选择一种即可；也可保留已有浏览器"
     },
     "WPFBundleintl_media": {
         "Content": "国际·影音媒体",
         "Category": "___组合推荐",
         "Type": "Button",
         "Order": "7",
-        "Description": "一键勾选:VLC/OBS/ShareX/K-Lite/Audacity"
+        "Description": "预览媒体工具，默认推荐 VLC；录屏、音频编辑和解码包按需加入"
     },
     "WPFBundleintl_comm": {
         "Content": "国际·通讯协作",
         "Category": "___组合推荐",
         "Type": "Button",
         "Order": "8",
-        "Description": "一键勾选:Discord/Telegram/Slack/Zoom/Signal"
+        "Description": "预览通讯软件，按联系人或团队使用的平台选择后加入清单"
     },
     "WPFBundleintl_system": {
         "Content": "国际·系统必备",
         "Category": "___组合推荐",
         "Type": "Button",
         "Order": "9",
-        "Description": "一键勾选:7-Zip/Files/Notepad++/qBittorrent/Rufus"
+        "Description": "预览日常工具，默认推荐 7-Zip；文件管理、下载和启动盘工具按需加入"
     },
     "WPFBundleintl_privacy": {
         "Content": "国际·隐私安全",
         "Category": "___组合推荐",
         "Type": "Button",
         "Order": "10",
-        "Description": "一键勾选:Bitwarden/Proton Pass/Signal/LibreWolf/Mullvad"
+        "Description": "预览密码管理器、通讯软件和浏览器；按需选择，不默认安装多个同类工具"
     }
 }

@@ -1,4 +1,4 @@
-﻿# ═══ HOLHA1337 · 真彩(24-bit)霓虹渐变启动横幅 ═══
+# ═══ HOLHA1337 · 真彩(24-bit)霓虹渐变启动横幅 ═══
 $__e = [char]27
 try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 } catch {}
 # 非 Windows Terminal(经 EXE 进 conhost 等)时兜底开启 VT/ANSI 真彩
@@ -162,8 +162,8 @@ if ($Preset) {
     Invoke-WinUtilAutoRun
 
     # Cleanup and exit
-    $sync.runspace.Dispose()
     $sync.runspace.Close()
+    $sync.runspace.Dispose()
     [System.GC]::Collect()
     Stop-Transcript
     return
@@ -175,8 +175,8 @@ if ($Config) {
     Invoke-WinUtilAutoRun
 
     # Cleanup and exit
-    $sync.runspace.Dispose()
     $sync.runspace.Close()
+    $sync.runspace.Dispose()
     [System.GC]::Collect()
     Stop-Transcript
     return
@@ -207,8 +207,8 @@ try {
 if (-NOT ($readerOperationSuccessful)) {
     Write-Host "Failed to parse xaml content using Windows.Markup.XamlReader's Load Method." -ForegroundColor Red
     Write-Host "Quitting WinUtil..." -ForegroundColor Red
-    $sync.runspace.Dispose()
     $sync.runspace.Close()
+    $sync.runspace.Dispose()
     [System.GC]::Collect()
     exit 1
 }
@@ -336,8 +336,16 @@ Set-WinUtilTaskbaritem -state "None"
 $sync["Form"].title = $sync["Form"].title + " " + $sync.version
 # Set the commands that will run when the form is closed
 $sync["Form"].Add_Closing({
-    $sync.runspace.Dispose()
+    param($sender, $eventArgs)
+    if ($sync.ProcessRunning) {
+        $eventArgs.Cancel = $true
+        [void][Windows.MessageBox]::Show('当前任务仍在执行，请等待结果后关闭窗口。', 'WinUtil CN')
+        return
+    }
+    $runspaceCleanupTimer.Stop()
+    Complete-WinUtilRunspaceJobs
     $sync.runspace.Close()
+    $sync.runspace.Dispose()
     [System.GC]::Collect()
 })
 
@@ -405,32 +413,13 @@ $sync["Form"].Add_Deactivated({
 })
 
 $sync["Form"].Add_ContentRendered({
-    # Load the Windows Forms assembly
-    Add-Type -AssemblyName System.Windows.Forms
-    $primaryScreen = [System.Windows.Forms.Screen]::PrimaryScreen
-    # Check if the primary screen is found
-    if ($primaryScreen) {
-        # Extract screen width and height for the primary monitor
-        $screenWidth = $primaryScreen.Bounds.Width
-        $screenHeight = $primaryScreen.Bounds.Height
-
-        # Compare with the primary monitor size
-        if ($sync.Form.ActualWidth -gt $screenWidth -or $sync.Form.ActualHeight -gt $screenHeight) {
-            $sync.Form.Left = 0
-            $sync.Form.Top = 0
-            $sync.Form.Width = $screenWidth
-            $sync.Form.Height = $screenHeight
-        }
-    }
 
     if ($PARAM_OFFLINE) {
         # Show offline banner
         $sync.WPFOfflineBanner.Visibility = [System.Windows.Visibility]::Visible
 
-        # Disable the install tab
-        $sync.WPFTab1BT.IsEnabled = $false
-        $sync.WPFTab1BT.Opacity = 0.5
-        $sync.WPFTab1BT.ToolTip = "Internet connection required for installing applications."
+        # Browsing and planning remain available offline; operations need a connection.
+        $sync.WPFTab1BT.ToolTip = "可以浏览软件和准备清单；安装、升级需要联网。"
 
         # Disable install-related buttons
         $sync.WPFInstall.IsEnabled = $false
@@ -439,33 +428,26 @@ $sync["Form"].Add_ContentRendered({
         $sync.WPFGetInstalled.IsEnabled = $false
 
         # Show offline indicator
-        Write-Host "Offline mode detected - Install tab disabled." -ForegroundColor Yellow
-
-        # Optionally switch to a different tab if install tab was going to be default
-        Invoke-WPFTab "WPFTab2BT"  # Switch to Tweaks tab instead
+        Write-Host "离线模式：可以查看软件和准备清单，安装和升级需联网后重新打开。" -ForegroundColor Yellow
     }
     else {
         # Online - ensure install tab is enabled
         $sync.WPFTab1BT.IsEnabled = $true
         $sync.WPFTab1BT.Opacity = 1.0
         $sync.WPFTab1BT.ToolTip = $null
-        Invoke-WPFTab "WPFTab1BT"  # Default to install tab
     }
-
-    if (-not $Config -and (Test-Path "$winutildir\lastrun.json")) {
-        $drifted = @(Get-Content "$winutildir\lastrun.json" | ConvertFrom-Json | Where-Object { $_ -notin (Invoke-WinUtilCurrentSystem -CheckBox "tweaks") })
-        if ($drifted.Count -gt 0 -and [System.Windows.MessageBox]::Show("$($drifted.Count) tweak(s) were reverted since last run. Re-select them?", "Winutil", "YesNo", "Question") -eq "Yes") {
-            Update-WinUtilSelections -flatJson $drifted
-            Reset-WPFCheckBoxes -doToggles $false
-            Invoke-WPFTab "WPFTab2BT"
-        }
-    }
+    Invoke-WPFTab "WPFTab6BT"
 
     $sync["Form"].Focus()
 })
 
 # The SearchBarTimer is used to delay the search operation until the user has stopped typing for a short period
 # This prevents the ui from stuttering when the user types quickly as it dosnt need to update the ui for every keystroke
+
+$runspaceCleanupTimer = New-Object System.Windows.Threading.DispatcherTimer
+$runspaceCleanupTimer.Interval = [TimeSpan]::FromSeconds(2)
+$runspaceCleanupTimer.Add_Tick({ Complete-WinUtilRunspaceJobs })
+$runspaceCleanupTimer.Start()
 
 $searchBarTimer = New-Object System.Windows.Threading.DispatcherTimer
 $searchBarTimer.Interval = [TimeSpan]::FromMilliseconds(300)
@@ -474,10 +456,10 @@ $searchBarTimer.IsEnabled = $false
 $searchBarTimer.add_Tick({
     $searchBarTimer.Stop()
     switch ($sync.currentTab) {
-        "Install" {
+        "WPFTab1" {
             Find-AppsByNameOrDescription -SearchString $sync.SearchBar.Text
         }
-        "Tweaks" {
+        "WPFTab2" {
             Find-TweaksByNameOrDescription -SearchString $sync.SearchBar.Text
         }
     }
@@ -496,18 +478,18 @@ $sync["SearchBar"].Add_TextChanged({
 
 $sync["Form"].Add_Loaded({
     param($e)
-    $sync.Form.MinWidth = "1000"
+    Set-WinUtilWindowBounds -Window $sync.Form
     $sync["Form"].MaxWidth = [Double]::PositiveInfinity
     $sync["Form"].MaxHeight = [Double]::PositiveInfinity
 })
 
 $NavLogoPanel = $sync["Form"].FindName("NavLogoPanel")
-$NavLogoPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size 46)) | Out-Null
+$NavLogoPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size 30)) | Out-Null
 # Holha1337 品牌字(霓虹渐变 + 辉光),置于徽记右侧
 $brandText = New-Object Windows.Controls.TextBlock
-$brandText.Text = "Holha1337"
+$brandText.Text = "WinUtil CN"
 $brandText.FontFamily = "Consolas"
-$brandText.FontSize = 22
+$brandText.FontSize = 18
 $brandText.FontWeight = "Bold"
 $brandText.VerticalAlignment = "Center"
 $brandText.Margin = "8,0,0,0"
@@ -569,17 +551,18 @@ $sync["AboutMenuItem"].Add_Click({
     Invoke-WPFPopup -Action "Hide" -Popups @("Settings")
 
     $authorInfo = @"
+中文维护 : <a href="https://github.com/yasewang1337-svg">Holha1337</a>
 Author   : <a href="https://github.com/ChrisTitusTech">@ChrisTitusTech</a>
 UI       : <a href="https://github.com/MyDrift-user">@MyDrift-user</a>, <a href="https://github.com/Marterich">@Marterich</a>
 Runspace : <a href="https://github.com/DeveloperDurp">@DeveloperDurp</a>, <a href="https://github.com/Marterich">@Marterich</a>
-GitHub   : <a href="https://github.com/ChrisTitusTech/winutil">ChrisTitusTech/winutil</a>
-Version  : <a href="https://github.com/ChrisTitusTech/winutil/releases/tag/$($sync.version)">$($sync.version)</a>
+GitHub   : <a href="https://github.com/yasewang1337-svg/winutil-cn">yasewang1337-svg/winutil-cn</a>
+Version  : <a href="https://github.com/yasewang1337-svg/winutil-cn/releases/latest">$($sync.version)</a>
 "@
-    Show-CustomDialog -Title "About" -Message $authorInfo
+    Show-CustomDialog -Title "关于 WinUtil CN" -Message $authorInfo
 })
 $sync["DocumentationMenuItem"].Add_Click({
     Invoke-WPFPopup -Action "Hide" -Popups @("Settings")
-    Start-Process "https://winutil.christitus.com/"
+    Start-Process "https://github.com/yasewang1337-svg/winutil-cn/blob/main/docs/content/userguide/getting-started/_index.md"
 })
 $sync["SponsorMenuItem"].Add_Click({
     Invoke-WPFPopup -Action "Hide" -Popups @("Settings")

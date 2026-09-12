@@ -1,8 +1,8 @@
 {
   "WPFTweaksActivity": {
-    "Content": "禁用活动历史记录",
-    "Description": "关闭 Windows 活动历史（时间线），减少对最近打开文件、剪贴板/运行历史等的记录与同步。",
-    "category": "必备优化",
+    "Content": "关闭活动历史相关策略",
+    "Description": "关闭 Windows 活动历史的记录/同步相关策略。仅修改对应策略，不清理现有文件；效果取决于系统版本。可恢复本次修改前的注册表值。",
+    "category": "常用设置（按需选择）",
     "panel": "1",
     "registry": [
       {
@@ -32,7 +32,7 @@
   "WPFTweaksHiber": {
     "Content": "禁用休眠",
     "Description": "关闭休眠功能并释放 hiberfil.sys 以节省磁盘空间。台式机通常不需要；笔记本若依赖休眠可不要选。",
-    "category": "必备优化",
+    "category": "z__高级设置 - 先了解影响",
     "panel": "1",
     "registry": [
       {
@@ -61,63 +61,30 @@
   "WPFTweaksWidget": {
     "Content": "移除小组件",
     "Description": "移除任务栏左下角的小组件及相关组件。",
-    "category": "必备优化",
+    "category": "z__高级设置 - 先了解影响",
     "panel": "1",
     "InvokeScript": [
-      "
-      # Sometimes if you dont stop the Widgets process the removal may fail
-
-      Get-Process *Widget* | Stop-Process
-      Get-AppxPackage Microsoft.WidgetsPlatformRuntime -AllUsers | Remove-AppxPackage -AllUsers
-      Get-AppxPackage MicrosoftWindows.Client.WebExperience -AllUsers | Remove-AppxPackage -AllUsers
-
-      Invoke-WinUtilExplorerUpdate -action \"restart\"
-      Write-Host \"Removed widgets\"
-      "
+      "\r\n      # Sometimes if you dont stop the Widgets process the removal may fail\r\n\r\n      Get-Process *Widget* | Stop-Process\r\n      Get-AppxPackage Microsoft.WidgetsPlatformRuntime -AllUsers | Remove-AppxPackage -AllUsers\r\n      Get-AppxPackage MicrosoftWindows.Client.WebExperience -AllUsers | Remove-AppxPackage -AllUsers\r\n\r\n      Invoke-WinUtilExplorerUpdate -action \"restart\"\r\n      Write-Host \"Removed widgets\"\r\n      "
     ],
     "link": "https://winutil.christitus.com/dev/tweaks/essential-tweaks/widget"
   },
  "WPFTweaksRevertStartMenu": {
     "Content": "恢复旧版开始菜单布局",
     "Description": "把 25H2 新版开始菜单恢复为逐步推送前的旧布局。",
-    "category": "必备优化",
+    "category": "z__高级设置 - 先了解影响",
     "panel": "1",
     "InvokeScript": [
-      "
-      Invoke-WebRequest https://github.com/thebookisclosed/ViVe/releases/download/v0.3.4/ViVeTool-v0.3.4-IntelAmd.zip -OutFile ViVeTool.zip
-
-      Expand-Archive ViVeTool.zip
-      Remove-Item ViVeTool.zip
-
-      Start-Process 'ViVeTool\\ViVeTool.exe' -ArgumentList '/disable /id:47205210' -Wait -NoNewWindow
-
-      Remove-Item ViVeTool -Recurse
-
-      Write-Host 'Old start menu reverted. Please restart your computer to take effect.'
-      Write-Host 'On newer versions of windows !!THIS TWEAK WILL NOT WORK!!.'
-      "
+      "\r\n      Invoke-WebRequest https://github.com/thebookisclosed/ViVe/releases/download/v0.3.4/ViVeTool-v0.3.4-IntelAmd.zip -OutFile ViVeTool.zip\r\n\r\n      Expand-Archive ViVeTool.zip\r\n      Remove-Item ViVeTool.zip\r\n\r\n      Start-Process 'ViVeTool\\ViVeTool.exe' -ArgumentList '/disable /id:47205210' -Wait -NoNewWindow\r\n\r\n      Remove-Item ViVeTool -Recurse\r\n\r\n      Write-Host 'Old start menu reverted. Please restart your computer to take effect.'\r\n      Write-Host 'On newer versions of windows !!THIS TWEAK WILL NOT WORK!!.'\r\n      "
     ],
     "UndoScript": [
-      "
-      Invoke-WebRequest https://github.com/thebookisclosed/ViVe/releases/download/v0.3.4/ViVeTool-v0.3.4-IntelAmd.zip -OutFile ViVeTool.zip
-
-      Expand-Archive ViVeTool.zip
-      Remove-Item ViVeTool.zip
-
-      Start-Process 'ViVeTool\\ViVeTool.exe' -ArgumentList '/enable /id:47205210' -Wait -NoNewWindow
-
-      Remove-Item ViVeTool -Recurse
-
-      Write-Host 'New start menu reverted. Please restart your computer to take effect.'
-      "
+      "\r\n      Invoke-WebRequest https://github.com/thebookisclosed/ViVe/releases/download/v0.3.4/ViVeTool-v0.3.4-IntelAmd.zip -OutFile ViVeTool.zip\r\n\r\n      Expand-Archive ViVeTool.zip\r\n      Remove-Item ViVeTool.zip\r\n\r\n      Start-Process 'ViVeTool\\ViVeTool.exe' -ArgumentList '/enable /id:47205210' -Wait -NoNewWindow\r\n\r\n      Remove-Item ViVeTool -Recurse\r\n\r\n      Write-Host 'New start menu reverted. Please restart your computer to take effect.'\r\n      "
     ],
-    "link": "https://winutil.christitus.com/dev/tweaks/essential-tweaks/revertstartmenu",
-   "link": "https://winutil.christitus.com/dev/tweaks/essential-tweaks/revertstartmenu"
+    "link": "https://winutil.christitus.com/dev/tweaks/essential-tweaks/revertstartmenu"
   },
   "WPFTweaksDisableStoreSearch": {
     "Content": "禁用 Microsoft Store 搜索结果",
     "Description": "在开始菜单搜索应用时，不再显示 Microsoft Store 推荐结果。",
-    "category": "必备优化",
+    "category": "z__高级设置 - 先了解影响",
     "panel": "1",
     "InvokeScript": [
       "icacls \"$Env:LocalAppData\\Packages\\Microsoft.WindowsStore_8wekyb3d8bbwe\\LocalState\\store.db\" /deny Everyone:F"
@@ -130,7 +97,7 @@
   "WPFTweaksLocation": {
     "Content": "禁用定位服务",
     "Description": "关闭定位相关权限/服务，阻止系统与应用获取你的地理位置。",
-    "category": "必备优化",
+    "category": "z__高级设置 - 先了解影响",
     "panel": "1",
     "service": [
       {
@@ -165,9 +132,9 @@
     "link": "https://winutil.christitus.com/dev/tweaks/essential-tweaks/location"
   },
   "WPFTweaksServices": {
-    "Content": "将部分服务设为手动启动",
-    "Description": "把一批不常用的系统服务改为“手动启动/按需启动”，减少后台常驻；如某些功能需要会在使用时自动启动。",
-    "category": "必备优化",
+    "Content": "调整服务启动方式（含禁用）",
+    "Description": "禁用离线文件、诊断跟踪和网络连接共享等服务，并将部分服务改为手动。可能影响企业离线文件、热点/共享和相关功能；不会默认勾选。注册表脚本的附加改动不在历史恢复范围内。",
+    "category": "z__高级设置 - 先了解影响",
     "panel": "1",
     "service": [
       {
@@ -197,10 +164,7 @@
       }
     ],
     "InvokeScript": [
-      "
-      $Memory = (Get-CimInstance Win32_PhysicalMemory | Measure-Object Capacity -Sum).Sum / 1KB
-      Set-ItemProperty -Path \"HKLM:\\SYSTEM\\CurrentControlSet\\Control\" -Name SvcHostSplitThresholdInKB -Value $Memory
-      "
+      "\r\n      $Memory = (Get-CimInstance Win32_PhysicalMemory | Measure-Object Capacity -Sum).Sum / 1KB\r\n      Set-ItemProperty -Path \"HKLM:\\SYSTEM\\CurrentControlSet\\Control\" -Name SvcHostSplitThresholdInKB -Value $Memory\r\n      "
     ],
     "link": "https://winutil.christitus.com/dev/tweaks/essential-tweaks/services"
   },
@@ -449,9 +413,9 @@
     "link": "https://winutil.christitus.com/dev/tweaks/z--advanced-tweaks---caution/edgedebloat"
   },
   "WPFTweaksConsumerFeatures": {
-    "Content": "禁用“消费者体验/推荐应用”",
-    "Description": "阻止 Windows 自动安装推荐应用/游戏等“消费者内容”，减少系统自带推广。",
-    "category": "必备优化",
+    "Content": "减少推荐应用和推广内容",
+    "Description": "尝试关闭 Windows 的消费者体验与推荐内容；效果取决于系统版本和组织策略。不会卸载现有应用，可恢复本次修改前的注册表值。",
+    "category": "常用设置（按需选择）",
     "panel": "1",
     "registry": [
       {
@@ -467,7 +431,7 @@
   "WPFTweaksTelemetry": {
     "Content": "禁用遥测",
     "Description": "关闭 Microsoft 遥测与部分相关数据收集。",
-    "category": "必备优化",
+    "category": "z__高级设置 - 先了解影响",
     "panel": "1",
     "registry": [
       {
@@ -556,43 +520,17 @@
       }
     ],
     "InvokeScript": [
-      "
-      # Disable Defender Auto Sample Submission
-      Set-MpPreference -SubmitSamplesConsent 2
-
-      # Disable (Connected User Experiences and Telemetry) Service
-      Set-Service -Name diagtrack -StartupType Disabled
-
-      # Disable (Windows Error Reporting Manager) Service
-      Set-Service -Name wermgr -StartupType Disabled
-
-      # Disable PowerShell 7 telemetry
-      [Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', '1', 'Machine')
-
-      Remove-ItemProperty -Path \"HKCU:\\Software\\Microsoft\\Siuf\\Rules\" -Name PeriodInNanoSeconds
-      "
+      "\r\n      # Disable Defender Auto Sample Submission\r\n      Set-MpPreference -SubmitSamplesConsent 2\r\n\r\n      # Disable (Connected User Experiences and Telemetry) Service\r\n      Set-Service -Name diagtrack -StartupType Disabled\r\n\r\n      # Disable (Windows Error Reporting Manager) Service\r\n      Set-Service -Name wermgr -StartupType Disabled\r\n\r\n      # Disable PowerShell 7 telemetry\r\n      [Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', '1', 'Machine')\r\n\r\n      Remove-ItemProperty -Path \"HKCU:\\Software\\Microsoft\\Siuf\\Rules\" -Name PeriodInNanoSeconds\r\n      "
     ],
     "UndoScript": [
-      "
-      # Enable Defender Auto Sample Submission
-      Set-MpPreference -SubmitSamplesConsent 1
-
-      # Enable (Connected User Experiences and Telemetry) Service
-      Set-Service -Name diagtrack -StartupType Automatic
-
-      # Enable (Windows Error Reporting Manager) Service
-      Set-Service -Name wermgr -StartupType Automatic
-
-      # Enable PowerShell 7 telemetry
-      [Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', '', 'Machine')
-      "
+      "\r\n      # Enable Defender Auto Sample Submission\r\n      Set-MpPreference -SubmitSamplesConsent 1\r\n\r\n      # Enable (Connected User Experiences and Telemetry) Service\r\n      Set-Service -Name diagtrack -StartupType Automatic\r\n\r\n      # Enable (Windows Error Reporting Manager) Service\r\n      Set-Service -Name wermgr -StartupType Automatic\r\n\r\n      # Enable PowerShell 7 telemetry\r\n      [Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', '', 'Machine')\r\n      "
     ],
     "link": "https://winutil.christitus.com/dev/tweaks/essential-tweaks/telemetry"
   },
   "WPFTweaksDeliveryOptimization": {
-    "Content": "传递优化 - 禁用",
-    "Description": "阻止 Windows 占用你的带宽,向互联网或局域网中的其他电脑上传更新。",
-    "category": "必备优化",
+    "Content": "关闭更新的对等传输",
+    "Description": "将更新下载设为 HTTP 模式，停止与其他电脑对等分享更新；Windows 更新仍可联网下载。可恢复本次修改前的注册表值。",
+    "category": "常用设置（按需选择）",
     "panel": "1",
     "registry": [
       {
@@ -622,9 +560,9 @@
     "link": "https://winutil.christitus.com/dev/tweaks/z--advanced-tweaks---caution/removeedge"
   },
   "WPFTweaksDisableBitLocker": {
-    "Content": "BitLocker - 禁用",
-    "Description": "禁用 BitLocker 磁盘加密。",
-    "category": "必备优化",
+    "Content": "关闭系统盘 BitLocker 加密（谨慎）",
+    "Description": "开始解密系统盘，降低设备遗失后的数据保护。解密过程需要时间；操作历史无法恢复加密状态。请先核对恢复密钥和使用需求。",
+    "category": "z__高级设置 - 先了解影响",
     "panel": "1",
     "InvokeScript": [
       "Disable-BitLocker -MountPoint $Env:SystemDrive"
@@ -847,9 +785,9 @@
     "link": "https://winutil.christitus.com/dev/tweaks/z--advanced-tweaks---caution/xboxremoval"
   },
   "WPFTweaksDeBloat": {
-    "Content": "移除所有微软商店应用（不推荐）",
-    "Description": "卸载/移除多数微软商店(UWP)应用。可能导致开始菜单、照片、计算器等缺失；一般不建议。",
-    "category": "必备优化",
+    "Content": "批量卸载内置应用（谨慎）",
+    "Description": "移除配置清单中的画图、便笺、录音机、天气、新版 Outlook、Teams 等应用及部分预装包。可能影响其他用户；应用和数据不能通过“恢复所选设置”还原，请先确认确实不需要。",
+    "category": "z__高级设置 - 先了解影响",
     "panel": "1",
     "appx": [
       "Microsoft.WindowsFeedbackHub",
@@ -873,24 +811,14 @@
       "MSTeams"
     ],
     "InvokeScript": [
-      "
-      $TeamsPath = \"$Env:LocalAppData\\Microsoft\\Teams\\Update.exe\"
-
-      if (Test-Path $TeamsPath) {
-        Write-Host \"Uninstalling Teams\"
-        Start-Process $TeamsPath -ArgumentList -uninstall -wait
-
-        Write-Host \"Deleting Teams directory\"
-        Remove-Item $TeamsPath -Recurse -Force
-      }
-      "
+      "\r\n      $TeamsPath = \"$Env:LocalAppData\\Microsoft\\Teams\\Update.exe\"\r\n\r\n      if (Test-Path $TeamsPath) {\r\n        Write-Host \"Uninstalling Teams\"\r\n        Start-Process $TeamsPath -ArgumentList -uninstall -wait\r\n\r\n        Write-Host \"Deleting Teams directory\"\r\n        Remove-Item $TeamsPath -Recurse -Force\r\n      }\r\n      "
     ],
     "link": "https://winutil.christitus.com/dev/tweaks/essential-tweaks/debloat"
   },
   "WPFTweaksRestorePoint": {
     "Content": "创建系统还原点",
-    "Description": "在执行优化前创建系统还原点，便于出问题时回滚（推荐先勾）。",
-    "category": "必备优化",
+    "Description": "先创建并核对新的 Windows 系统还原点；创建失败会停止本次其他修改。推荐通过中文版 EXE 使用，系统还原需在 Windows 中操作。",
+    "category": "常用设置（按需选择）",
     "panel": "1",
     "Checked": "False",
     "registry": [
@@ -903,21 +831,14 @@
       }
     ],
     "InvokeScript": [
-      "
-      if (-not (Get-ComputerRestorePoint)) {
-          Enable-ComputerRestore -Drive $Env:SystemDrive
-      }
-
-      Checkpoint-Computer -Description \"System Restore Point created by WinUtil\" -RestorePointType MODIFY_SETTINGS
-      Write-Host \"System Restore Point Created Successfully\" -ForegroundColor Green
-      "
+      "New-WinUtilTweakRestorePoint"
     ],
     "link": "https://winutil.christitus.com/dev/tweaks/essential-tweaks/restorepoint"
   },
   "WPFTweaksEndTaskOnTaskbar": {
     "Content": "右键任务栏启用“结束任务”",
-    "Description": "在任务栏程序右键菜单里增加“结束任务”选项，方便一键强退卡死程序。",
-    "category": "必备优化",
+    "Description": "在支持的 Windows 11 版本中，为任务栏程序右键菜单增加“结束任务”。强制结束应用可能丢失未保存内容；此项仅显示入口，不会自动结束程序。",
+    "category": "常用设置（按需选择）",
     "panel": "1",
     "registry": [
       {
@@ -989,7 +910,7 @@
   "WPFTweaksWPBT": {
     "Content": "禁用 WPBT（平台二进制表）",
     "Description": "阻止系统执行 OEM 写入的 WPBT 内容，降低厂商预装/持久化程序带来的风险（高级选项）。",
-    "category": "必备优化",
+    "category": "z__高级设置 - 先了解影响",
     "panel": "1",
     "registry": [
       {
@@ -1126,26 +1047,20 @@
   "WPFTweaksDiskCleanup": {
     "Content": "运行磁盘清理",
     "Description": "运行系统磁盘清理并清理旧组件/更新缓存，释放空间（可能需要较长时间）。",
-    "category": "必备优化",
+    "category": "常用设置（按需选择）",
     "panel": "1",
     "InvokeScript": [
-      "
-      cleanmgr.exe /d C: /VERYLOWDISK
-      Dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase
-      "
+      "\r\n      cleanmgr.exe /d C: /VERYLOWDISK\r\n      Dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase\r\n      "
     ],
     "link": "https://winutil.christitus.com/dev/tweaks/essential-tweaks/diskcleanup"
   },
   "WPFTweaksDeleteTempFiles": {
     "Content": "删除临时文件",
     "Description": "删除用户临时目录与系统临时目录中的文件，用于快速释放空间（可能删掉某些软件的临时缓存）。",
-    "category": "必备优化",
+    "category": "常用设置（按需选择）",
     "panel": "1",
     "InvokeScript": [
-      "
-      Remove-Item -Path \"$Env:Temp\\*\" -Recurse -Force
-      Remove-Item -Path \"$Env:SystemRoot\\Temp\\*\" -Recurse -Force
-      "
+      "\r\n      Remove-Item -Path \"$Env:Temp\\*\" -Recurse -Force\r\n      Remove-Item -Path \"$Env:SystemRoot\\Temp\\*\" -Recurse -Force\r\n      "
     ],
     "link": "https://winutil.christitus.com/dev/tweaks/essential-tweaks/deletetempfiles"
   },
@@ -1244,55 +1159,13 @@
   "WPFTweaksDisableExplorerAutoDiscovery": {
     "Content": "禁用资源管理器自动识别文件夹类型",
     "Description": "关闭资源管理器对文件夹“自动套模板”（图片/音乐/视频等）判断，减少卡顿或模板乱跳。",
-    "category": "必备优化",
+    "category": "z__高级设置 - 先了解影响",
     "panel": "1",
     "InvokeScript": [
-      "
-      # Previously detected folders
-      $bags = \"HKCU:\\Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\Bags\"
-
-      # Folder types lookup table
-      $bagMRU = \"HKCU:\\Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\BagMRU\"
-
-      # Flush Explorer view database
-      Remove-Item -Path $bags -Recurse -Force
-      Write-Host \"Removed $bags\"
-
-      Remove-Item -Path $bagMRU -Recurse -Force
-      Write-Host \"Removed $bagMRU\"
-
-      # Every folder
-      $allFolders = \"HKCU:\\Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\Bags\\AllFolders\\Shell\"
-
-      if (!(Test-Path $allFolders)) {
-        New-Item -Path $allFolders -Force
-        Write-Host \"Created $allFolders\"
-      }
-
-      # Generic view
-      New-ItemProperty -Path $allFolders -Name \"FolderType\" -Value \"NotSpecified\" -PropertyType String -Force
-      Write-Host \"Set FolderType to NotSpecified\"
-
-      Write-Host Please sign out and back in, or restart your computer to apply the changes!
-      "
+      "\r\n      # Previously detected folders\r\n      $bags = \"HKCU:\\Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\Bags\"\r\n\r\n      # Folder types lookup table\r\n      $bagMRU = \"HKCU:\\Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\BagMRU\"\r\n\r\n      # Flush Explorer view database\r\n      Remove-Item -Path $bags -Recurse -Force\r\n      Write-Host \"Removed $bags\"\r\n\r\n      Remove-Item -Path $bagMRU -Recurse -Force\r\n      Write-Host \"Removed $bagMRU\"\r\n\r\n      # Every folder\r\n      $allFolders = \"HKCU:\\Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\Bags\\AllFolders\\Shell\"\r\n\r\n      if (!(Test-Path $allFolders)) {\r\n        New-Item -Path $allFolders -Force\r\n        Write-Host \"Created $allFolders\"\r\n      }\r\n\r\n      # Generic view\r\n      New-ItemProperty -Path $allFolders -Name \"FolderType\" -Value \"NotSpecified\" -PropertyType String -Force\r\n      Write-Host \"Set FolderType to NotSpecified\"\r\n\r\n      Write-Host Please sign out and back in, or restart your computer to apply the changes!\r\n      "
     ],
     "UndoScript": [
-      "
-      # Previously detected folders
-      $bags = \"HKCU:\\Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\Bags\"
-
-      # Folder types lookup table
-      $bagMRU = \"HKCU:\\Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\BagMRU\"
-
-      # Flush Explorer view database
-      Remove-Item -Path $bags -Recurse -Force
-      Write-Host \"Removed $bags\"
-
-      Remove-Item -Path $bagMRU -Recurse -Force
-      Write-Host \"Removed $bagMRU\"
-
-      Write-Host Please sign out and back in, or restart your computer to apply the changes!
-      "
+      "\r\n      # Previously detected folders\r\n      $bags = \"HKCU:\\Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\Bags\"\r\n\r\n      # Folder types lookup table\r\n      $bagMRU = \"HKCU:\\Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\BagMRU\"\r\n\r\n      # Flush Explorer view database\r\n      Remove-Item -Path $bags -Recurse -Force\r\n      Write-Host \"Removed $bags\"\r\n\r\n      Remove-Item -Path $bagMRU -Recurse -Force\r\n      Write-Host \"Removed $bagMRU\"\r\n\r\n      Write-Host Please sign out and back in, or restart your computer to apply the changes!\r\n      "
     ],
     "link": "https://winutil.christitus.com/dev/tweaks/essential-tweaks/disableexplorerautodiscovery"
   },

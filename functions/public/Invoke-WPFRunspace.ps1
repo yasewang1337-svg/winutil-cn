@@ -1,59 +1,26 @@
 function Invoke-WPFRunspace {
-
-    <#
-
-    .SYNOPSIS
-        Creates and invokes a runspace using the given scriptblock and argumentlist
-
-    .PARAMETER ScriptBlock
-        The scriptblock to invoke in the runspace
-
-    .PARAMETER ArgumentList
-        A list of arguments to pass to the runspace
-
-    .PARAMETER ParameterList
-        A list of named parameters that should be provided.
-    .EXAMPLE
-        Invoke-WPFRunspace `
-            -ScriptBlock $sync.ScriptsInstallPrograms `
-            -ArgumentList "Installadvancedip,Installbitwarden" `
-
-        Invoke-WPFRunspace`
-            -ScriptBlock $sync.ScriptsInstallPrograms `
-            -ParameterList @(("PackagesToInstall", @("Installadvancedip,Installbitwarden")),("ChocoPreference", $true))
-    #>
-
+    <# .SYNOPSIS Dispatches a task and retains its pipeline until completion without closing the shared pool. #>
     [CmdletBinding()]
-    Param (
-        $ScriptBlock,
-        $ArgumentList,
-        $ParameterList
-    )
-
-    # Create a PowerShell instance
-    $script:powershell = [powershell]::Create()
-
-    # Add Scriptblock and Arguments to runspace
-    $script:powershell.AddScript($ScriptBlock)
-    $script:powershell.AddArgument($ArgumentList)
-
-    foreach ($parameter in $ParameterList) {
-        $script:powershell.AddParameter($parameter[0], $parameter[1])
+    param([Parameter(Mandatory)][scriptblock]$ScriptBlock, $ArgumentList, $ParameterList)
+    if (-not $sync.RunspaceJobs) {
+        $sync.RunspaceJobs = [System.Collections.Concurrent.ConcurrentDictionary[string,object]]::new()
     }
-
-    $script:powershell.RunspacePool = $sync.runspace
-
-    # Execute the RunspacePool
-    $script:handle = $script:powershell.BeginInvoke()
-
-    # Clean up the RunspacePool threads when they are complete, and invoke the garbage collector to clean up the memory
-    if ($script:handle.IsCompleted) {
-        $script:powershell.EndInvoke($script:handle)
-        $script:powershell.Dispose()
-        $sync.runspace.Dispose()
-        $sync.runspace.Close()
-        [System.GC]::Collect()
+    Complete-WinUtilRunspaceJobs
+    $pipeline = [powershell]::Create()
+    try {
+        $null = $pipeline.AddScript($ScriptBlock)
+        if ($PSBoundParameters.ContainsKey('ArgumentList')) { $null = $pipeline.AddArgument($ArgumentList) }
+        foreach ($parameter in $ParameterList) {
+            if ($parameter.Count -ne 2) { throw '后台任务参数应包含名称和值。' }
+            $null = $pipeline.AddParameter([string]$parameter[0], $parameter[1])
+        }
+        $pipeline.RunspacePool = $sync.runspace
+        $handle = $pipeline.BeginInvoke()
+        $id = [guid]::NewGuid().ToString('N')
+        $sync.RunspaceJobs[$id] = [pscustomobject]@{ Id=$id; Pipeline=$pipeline; Handle=$handle }
+        return $handle
+    } catch {
+        $pipeline.Dispose()
+        throw
     }
-    # Return the handle
-    return $handle
 }
