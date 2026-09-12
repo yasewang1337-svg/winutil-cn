@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="464" viewBox="0 0 1280 464" role="img" aria-labelledby="title desc">
+  <title id="title">WinUtil CN · 中文装机与维护助手</title>
+  <desc id="desc">把电脑准备成你需要的样子。中文界面、按需装机、清晰反馈。由 Holha1337 维护，基于 Chris Titus Tech Windows Utility。</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1280" y2="464" gradientUnits="userSpaceOnUse"><stop stop-color="#0B1424"/><stop offset="1" stop-color="#10243A"/></linearGradient>
+    <linearGradient id="accent" x1="-90" y1="-90" x2="90" y2="90" gradientUnits="userSpaceOnUse"><stop stop-color="#52F0D2"/><stop offset="1" stop-color="#429EFF"/></linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#38516B" stroke-opacity="0.15"/></pattern>
+  </defs>
+  <rect width="1280" height="464" rx="24" fill="url(#background)"/>
+  <rect x="800" width="480" height="464" rx="24" fill="url(#grid)"/>
+  <path d="M24 1H1256" stroke="#53E4D2" stroke-opacity="0.4"/>
+  <g font-family="'Segoe UI','Microsoft YaHei',sans-serif">
+    <g fill="#71E8D7" font-size="17" font-weight="600" letter-spacing="3"><circle cx="71" cy="61" r="4"/><text x="86" y="67">WINDOWS, MADE PERSONAL.</text></g>
+    <text x="64" y="182" font-size="98" font-weight="700" letter-spacing="-4" fill="#F1F6FC">WinUtil <tspan fill="#69E6D5">CN</tspan></text>
+    <text x="69" y="238" font-size="33" font-weight="600" fill="#E5EDF7">把电脑准备成你需要的样子</text>
+    <text x="70" y="281" font-size="21" fill="#A8BCD0">中文装机与维护助手</text>
+    <g font-size="17" fill="#C4D5E5" text-anchor="middle">
+      <rect x="70" y="310" width="122" height="36" rx="18" fill="#162F43" stroke="#2B4B60"/><text x="131" y="334">中文界面</text>
+      <rect x="204" y="310" width="122" height="36" rx="18" fill="#162F43" stroke="#2B4B60"/><text x="265" y="334">按需装机</text>
+      <rect x="338" y="310" width="122" height="36" rx="18" fill="#162F43" stroke="#2B4B60"/><text x="399" y="334">清晰反馈</text>
+    </g>
+    <path d="M70 382H1210" stroke="#2B4055"/>
+    <text x="70" y="423" font-size="15" fill="#A8BCD0" letter-spacing="1">WINDOWS 11 <tspan fill="#45617C"> / </tspan> POWERSHELL 5.1 &amp; 7</text>
+    <text x="1210" y="423" text-anchor="end" font-size="15" fill="#A8BCD0">中文汉化与维护 · <tspan fill="#E5EDF7" font-weight="600">Holha1337</tspan></text>
+  </g>
+  <!-- Decorative toolkit emblem, not an application screenshot. -->
+  <g transform="translate(952 213)">
+    <circle r="156" fill="none" stroke="#2B536A" stroke-opacity="0.5"/>
+    <circle r="123" fill="none" stroke="#3B667B" stroke-dasharray="2 12"/>
+    <path d="M-162 0H-141M141 0H162M0-162V-141M0 141V162" stroke="#69E6D5" stroke-width="2"/>
+    <g transform="rotate(-8)">
+      <rect x="-91" y="-91" width="182" height="182" rx="38" fill="#102B40" stroke="url(#accent)" stroke-width="2"/>
+      <rect x="-64" y="-64" width="57" height="57" rx="13" fill="#69E6D5"/>
+      <rect x="7" y="-64" width="57" height="57" rx="13" fill="#449EFF"/>
+      <rect x="-64" y="7" width="57" height="57" rx="13" fill="#449EFF" fill-opacity="0.4"/>
+      <rect x="7" y="7" width="57" height="57" rx="13" fill="#69E6D5" fill-opacity="0.2" stroke="#69E6D5" stroke-opacity="0.6"/>
+      <path d="M21 34L31 44L50 25" fill="none" stroke="#8DF7E3" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <circle cx="132" cy="-84" r="6" fill="#69E6D5"/><circle cx="-127" cy="90" r="4" fill="#449EFF"/>
+  </g>
+</svg>

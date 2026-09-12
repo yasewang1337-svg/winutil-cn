@@ -12,7 +12,7 @@
 
 ### 1. Fork 本仓库
 
-打开 GitHub 上的 ChrisTitusTech/winutil 仓库，点击右上角的 Fork 按钮。
+打开 [WinUtil CN 仓库](https://github.com/yasewang1337-svg/winutil-cn)，点击右上角的 Fork 按钮。中文版的翻译与功能改进请提交到本仓库。
 
 <img width="171" height="50" alt="{650A4723-F38A-44A4-9820-D232BC87C8A0}" src="https://github.com/user-attachments/assets/a214f27c-2fee-444a-920f-d87b14f5896f" />
 
@@ -21,8 +21,8 @@
 ### 2. 克隆你的 Fork
 
 ```powershell
-git clone https://github.com/YOUR_USERNAME/winutil.git
-cd winutil
+git clone https://github.com/YOUR_USERNAME/winutil-cn.git
+cd winutil-cn
 ```
 
 ---
@@ -55,21 +55,23 @@ git checkout -b add-firefox-tweak
 
 ### 5. 测试你的改动
 
-以管理员身份打开 Pwsh（注意：是 Pwsh，不是 Powershell）。
+使用 PowerShell 7（`pwsh`）构建中文版。仅构建和隔离测试无需启动应用或修改系统。
 
 进入项目文件夹：
 
 ```powershell
-cd path\to\winutil
+cd path\to\winutil-cn
 ```
 
 运行：
 
 ```powershell
-.\Compile.ps1 -Run
+pwsh -File 汉化\run-all.ps1
+pwsh -File tools\Test-Build.ps1
+powershell -NoProfile -File tools\Test-Build.ps1
 ```
 
-确认：
+功能变更需按影响运行回归测试（Pester 5.7.1），参见 `tools/Invoke-Tests.ps1`。界面与行为变更还应在合适的测试环境中确认：
 
 - WinUtil 能正常启动
 - 你的功能能正常工作
