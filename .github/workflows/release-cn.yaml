@@ -23,14 +23,21 @@ permissions:
 
 concurrency:
   group: release-cn
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
+  tests:
+    uses: ./.github/workflows/unittests.yaml
+    permissions:
+      contents: read
+
   build-release:
+    needs: tests
+    if: github.ref == 'refs/heads/main'
     runs-on: windows-latest
     steps:
       - name: 检出仓库
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: 汉化 + 编译
         shell: pwsh
@@ -42,6 +49,14 @@ jobs:
           Write-Host "产出 winutil-cn.ps1 —— $size 字节"
           if ($size -lt 500000) { throw "产物过小（$size 字节），疑似构建不完整" }
 
+      - name: 验证 PowerShell 5.1 产物
+        shell: powershell
+        run: ./tools/Test-Build.ps1 -Path ./winutil-cn.ps1
+
+      - name: 验证 PowerShell 7 产物
+        shell: pwsh
+        run: ./tools/Test-Build.ps1 -Path ./winutil-cn.ps1
+
       - name: 构建自包含 EXE 启动器
         shell: pwsh
         run: |
@@ -51,6 +66,7 @@ jobs:
           if (-not (Test-Path WinUtil-CN.exe)) { throw "EXE 构建失败" }
 
       - name: Defender 自检（仅在检出真实威胁时中断）
+        id: defender
         shell: pwsh
         run: |
           $exe = (Resolve-Path WinUtil-CN.exe).Path
@@ -86,8 +102,10 @@ jobs:
           }
           if ($scanClean) {
             Write-Host "✅ Defender 扫描完成，未检出威胁。"
+            "status=扫描完成，未检出威胁" >> $env:GITHUB_OUTPUT
           } else {
-            Write-Warning "⚠️ 本 runner 的 Defender 扫描器不可用（服务未运行），本次跳过 AV 门禁——不影响产物。"
+            Write-Warning "本 runner 未完成 Defender 扫描，发布说明将如实标注。"
+            "status=未完成扫描（runner 扫描器不可用）" >> $env:GITHUB_OUTPUT
           }
           exit 0
 
@@ -106,6 +124,8 @@ jobs:
           $sha  = "${{ github.sha }}"
           $tag  = "${{ steps.ver.outputs.tag }}"
           $exeSha = (Get-FileHash WinUtil-CN.exe -Algorithm SHA256).Hash
+          $scriptSha = (Get-FileHash winutil-cn.ps1 -Algorithm SHA256).Hash
+          @("$scriptSha  winutil-cn.ps1", "$exeSha  WinUtil-CN.exe") | Set-Content SHA256SUMS.txt -Encoding ascii
           $notes = @"
           WinUtil 中文汉化版 · 自动构建（$tag）
 
@@ -119,9 +139,11 @@ jobs:
 
           ## 说明
 
-          - 基于上游 ChrisTitusTech/winutil 最新代码 + 本仓库汉化层自动构建
+          - 基于本仓库提交 $sha 与汉化层构建；上游同步进度见仓库维护文档
           - winutil-cn.ps1 为 UTF-8 with BOM，兼容 PowerShell 5.1 中文显示
-          - WinUtil-CN.exe 为离线自包含启动器，已过 CI 的 Defender 自检
+          - WinUtil-CN.exe 为内嵌脚本的启动器，使用 Windows 自带 PowerShell 5.1
+          - Defender：${{ steps.defender.outputs.status }}
+          - PowerShell 5.1 / 7 回归测试、产物语法和编码检查通过
           - EXE 未做代码签名，个别杀软可能误报；可用 [VirusTotal](https://www.virustotal.com/gui/search/$exeSha) 核验哈希
           - EXE SHA256：``$exeSha``
           - 构建自提交 $sha
@@ -133,19 +155,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "${{ steps.ver.outputs.tag }}" winutil-cn.ps1 WinUtil-CN.exe `
+          gh release create "${{ steps.ver.outputs.tag }}" winutil-cn.ps1 WinUtil-CN.exe SHA256SUMS.txt `
+            --target "${{ github.sha }}" `
             --title "中文版 ${{ steps.ver.outputs.tag }}" `
             --notes-file notes.md `
             --latest
-
-      - name: 清理旧发布(只留最新 3 个)
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          $rels = gh release list --limit 100 --json tagName,createdAt | ConvertFrom-Json |
-                  Where-Object { $_.tagName -like 'cn-*' } | Sort-Object createdAt -Descending
-          $rels | Select-Object -Skip 3 | ForEach-Object {
-            Write-Host "清理旧发布 $($_.tagName)"
-            gh release delete $_.tagName --cleanup-tag --yes
-          }
+          if ($LASTEXITCODE -ne 0) { throw 'GitHub Release 发布失败' }

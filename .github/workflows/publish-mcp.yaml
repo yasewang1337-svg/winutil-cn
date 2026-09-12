@@ -24,7 +24,7 @@ jobs:
         working-directory: mcp
     steps:
       - name: 检出仓库
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: 配置 Node + npm 源
         uses: actions/setup-node@v7

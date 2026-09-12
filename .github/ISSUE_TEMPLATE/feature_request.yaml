@@ -1,22 +1,18 @@
-name: "Feature request"
-description: "Suggest a new feature or improvement for the project."
-labels: ["enhancement"]
-
+name: 功能与同步建议
+description: 提出中文版功能、翻译或上游版本同步需求。
+labels: [enhancement]
 body:
-  - type: markdown
-    attributes:
-      value: |
-        # ✨ **Feature request**
-        Thank you for taking the time to suggest a feature! Please provide as much detail as possible to help us understand and evaluate your request.
-
-        ## ⚠️ **IMPORTANT**
-        - 🛠️ **Supported environments only:** We only support Windows 11.
-        - 💡 For general questions, use the [Discussions section](https://github.com/Christitustech/winutil/discussions) or join our Community-driven [Discord Server](https://discord.gg/RUbZUZyByQ).
-
   - type: textarea
-    id: proposed_solution
+    id: scenario
     attributes:
-      label: 💡 Describe the solution you'd like
-      placeholder: "Provide a clear and concise description."
+      label: 使用场景与现有问题
+      placeholder: 你希望完成什么？当前在哪一步遇到限制？
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: 建议的改进
+      placeholder: 如涉及上游更新，请附版本号或对应提交、PR 链接。
     validations:
       required: true

@@ -2,21 +2,32 @@ name: Compile & Check
 
 on:
   push:
-    branches: ["main"]
+    branches: [main]
   pull_request:
-    branches: ["main"]
-  workflow_dispatch: # Manual trigger added
-  workflow_call: # Allow other Actions to call this workflow
+    branches: [main]
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
 
 jobs:
   Compile-and-Check:
     runs-on: windows-latest
     steps:
-    - name: Checkout Sources
-      uses: actions/checkout@v7
-
-    - name: Compile and Syntaxcheck winutil.ps1
-      shell: pwsh
-      run: |
-        Set-ExecutionPolicy Bypass -Scope Process -Force; ./Compile.ps1
-      continue-on-error: false # Directly fail the job on error, removing the need for a separate check
+      - uses: actions/checkout@v7
+      - name: Build Chinese script
+        shell: pwsh
+        run: ./汉化/run-all.ps1
+      - name: Check Windows PowerShell 5.1 compatibility
+        shell: powershell
+        run: ./tools/Test-Build.ps1
+      - name: Check PowerShell 7 compatibility
+        shell: pwsh
+        run: ./tools/Test-Build.ps1
+      - name: Upload validated script
+        uses: actions/upload-artifact@v7
+        with:
+          name: winutil-cn-checked
+          path: winutil.ps1
+          if-no-files-found: error

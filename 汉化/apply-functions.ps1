@@ -1,16 +1,23 @@
-# functions/ 运行时字符串汉化(MessageBox 文案/标题 + 运行时 ToolTip)
+﻿# functions/ 运行时字符串汉化(MessageBox 文案/标题 + 运行时 ToolTip)
 # 数据:i18n-functions.json —— [{file, en, zh, kind}](由汉化 Workflow 产出)
 # 把代码里的字符串字面量 "en" 精确替换为 "zh",保留 $var / `n / 参数。
 # 关键:这是改【代码】,每个文件替换后用 ParseFile 复检语法,出错自动回滚该文件。
 $ErrorActionPreference='Stop'
 $dir=$PSScriptRoot
+$root=Split-Path $dir -Parent
 $mapFile=Join-Path $dir 'i18n-functions.json'
 $enc=[System.Text.UTF8Encoding]::new($false)   # functions 源为 UTF-8 no BOM
 if(-not (Test-Path $mapFile)){ Write-Warning "缺少 $mapFile(先跑汉化 Workflow 生成),跳过"; return }
-$items=Get-Content $mapFile -Raw|ConvertFrom-Json
+$items=Get-Content $mapFile -Raw -Encoding UTF8|ConvertFrom-Json
 
 $byFile=@{}
-foreach($it in $items){ if(-not $byFile.ContainsKey($it.file)){$byFile[$it.file]=@()}; $byFile[$it.file]+=$it }
+foreach($it in $items){
+  $file=[IO.Path]::GetFullPath((Join-Path $root $it.file))
+  $functionRoot=[IO.Path]::GetFullPath((Join-Path $root 'functions'))+[IO.Path]::DirectorySeparatorChar
+  if(-not $file.StartsWith($functionRoot,[StringComparison]::OrdinalIgnoreCase)){ throw "翻译路径必须位于 functions 目录: $($it.file)" }
+  if(-not $byFile.ContainsKey($file)){$byFile[$file]=@()}
+  $byFile[$file]+=$it
+}
 
 $totalApplied=0;$totalMiss=0;$rolledBack=@()
 foreach($f in $byFile.Keys){
@@ -21,7 +28,7 @@ foreach($f in $byFile.Keys){
     if($it.en -eq $it.zh){ continue }
     $search='"'+$it.en+'"'; $replace='"'+$it.zh+'"'
     if($text.Contains($search)){ $text=$text.Replace($search,$replace);$applied++ }
-    else{ $totalMiss++; Write-Warning ("未命中 [{0}] {1}: {2}" -f $it.kind,[IO.Path]::GetFileName($f),($it.en.Substring(0,[math]::Min(45,$it.en.Length)))) }
+    elseif(-not $text.Contains($replace)){ $totalMiss++; Write-Warning ("未命中 [{0}] {1}: {2}" -f $it.kind,[IO.Path]::GetFileName($f),($it.en.Substring(0,[math]::Min(45,$it.en.Length)))) }
   }
   if($text -ne $orig){
     $tmp="$f.tmp"
@@ -33,4 +40,4 @@ foreach($f in $byFile.Keys){
   }
 }
 "functions 汉化: 应用={0} 未命中={1} 语法回滚={2}" -f $totalApplied,$totalMiss,$rolledBack.Count
-if($rolledBack.Count){ "回滚文件: $($rolledBack -join ', ')" }
+if($rolledBack.Count){ throw "汉化产生语法错误，已保留原文件：$($rolledBack -join ', ')" }

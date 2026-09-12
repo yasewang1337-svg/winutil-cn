@@ -1,4 +1,4 @@
-<#
+﻿<#
 .NOTES
     Author         : Chris Titus @christitustech
     Runspace Author: @DeveloperDurp
@@ -33,14 +33,14 @@ if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
         } elseif ($_.Value -is [array]) {
             "-$($_.Key) $($_.Value -join ',')"
         } elseif ($_.Value) {
-            "-$($_.Key) '$($_.Value)'"
+            "-$($_.Key) '$([string]$_.Value -replace "'", "''")'"
         }
     }
 
     $script = if ($PSCommandPath) {
-        "& { & `'$($PSCommandPath)`' $($argList -join ' ') }"
+        "& { & '$($PSCommandPath -replace "'", "''")' $($argList -join ' ') }"
     } else {
-        "&([ScriptBlock]::Create((irm https://github.com/ChrisTitusTech/winutil/releases/latest/download/winutil.ps1))) $($argList -join ' ')"
+        "&([ScriptBlock]::Create((irm https://github.com/yasewang1337-svg/winutil-cn/releases/latest/download/winutil-cn.ps1))) $($argList -join ' ')"
     }
 
     $powershellCmd = if (Get-Command pwsh -ErrorAction SilentlyContinue) { "pwsh" } else { "powershell" }

@@ -1,4 +1,4 @@
-# 从 git diff 重建 functions 运行时翻译的【权威】数据 -> i18n-functions.json
+﻿# 从 git diff 重建 functions 运行时翻译的【权威】数据 -> i18n-functions.json
 # 背景:运行时汉化是 Workflow 的 agent 直接改了 functions/*.ps1(非走 apply),
 #   故 i18n-functions.json 需从已落地的 diff 反向提取,才完整可复现(上游 merge 后用 apply-functions 重汉化)。
 # 仅在 functions 仍有未提交 diff 时有效;提交后改用 git log 对比。
@@ -21,7 +21,7 @@ foreach($rel in $files){
     for($j=0;$j -lt $m;$j++){
       $en=$oStr[$j].Groups[1].Value; $zh=$nStr[$j].Groups[1].Value
       if($en -ne $zh -and $zh -match '\p{IsCJKUnifiedIdeographs}'){
-        $items += [pscustomobject]@{ file=('W:/dev/projects/winutil-cn/'+($rel -replace '\\','/')); en=$en; zh=$zh; kind='runtime' }
+        $items += [pscustomobject]@{ file=($rel -replace '\\','/'); en=$en; zh=$zh; kind='runtime' }
       }
     }
   }

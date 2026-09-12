@@ -1,52 +1,53 @@
-name: "Bug report"
-description: "Report a bug to help us identify and fix issues in the project."
-labels: ["bug"]
-
+name: 错误反馈
+description: 反馈中文版的启动、界面、软件安装或系统配置问题。
+labels: [bug]
 body:
   - type: markdown
     attributes:
       value: |
-        - Remember, we only support Windows 11. If you encounter problems on Windows 10, please consider upgrading to Windows 11.
-        - For general questions, join our Community-driven [Discord Server](https://discord.gg/RUbZUZyByQ).
-
-  - type: checkboxes
-    id: read_issues
+        请先查看[已知问题](https://github.com/yasewang1337-svg/winutil-cn/blob/main/docs/content/KnownIssues.md)。
+        请勿粘贴密码、令牌或其他私人信息；可以遮去日志中的用户名和个人目录。
+  - type: input
+    id: version
     attributes:
-      label: "I have read the known issues"
-      description: "You [better do](https://winutil.christitus.com/knownissues/), cause your issue can be already there"
-      options:
-        - label: Yes, I did
-          required: true
-
-  - type: dropdown
-    id: affected_part
-    attributes:
-      label: What part of Winutil are you having issues with?
-      options:
-        - Program Install Tab
-        - Tweaks Tab
-        - Config Tab
-        - Updates Tab
-        - Win11 Creator Tab
-    validations:
-      required: false
-
-  - type: textarea
-    id: issue_description
-    attributes:
-      label: Provide a clear and concise description of the issue.
+      label: WinUtil-CN 版本
+      placeholder: 例如 cn-2026.07.10-26，或本地构建的提交号
     validations:
       required: true
-
-  - type: textarea
-    id: tweaks_applied
+  - type: input
+    id: environment
     attributes:
-      label: List the tweaks you applied before the issue occurred.
+      label: Windows 与 PowerShell 版本
+      description: Windows 版本可运行 winver 查看；PowerShell 版本可运行 $PSVersionTable.PSVersion 查看。
+      placeholder: Windows 11 24H2 / PowerShell 5.1
     validations:
-      required: false
-
-  - type: textarea
-    id: error_output
+      required: true
+  - type: dropdown
+    id: startup
     attributes:
-      label: Paste the full error output (if available) or Screenshot or Video.
-      placeholder: "Include any relevant logs or error messages."
+      label: 启动方式
+      options:
+        - Release 下载的 EXE
+        - 一键 PowerShell 命令
+        - 下载的 PS1 脚本
+        - 本地构建
+        - MCP
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: 复现步骤与预期结果
+      placeholder: 从哪一步开始出错？预期看到什么？实际发生了什么？
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: 错误日志或截图
+      description: 启动异常请提供 %TEMP%\winutil-cn-error.log；完整运行日志在 %LOCALAPPDATA%\winutil\logs。仅提供相关错误段落即可。
+      render: text
+  - type: textarea
+    id: changes
+    attributes:
+      label: 出错前应用过的优化或配置（如有）

@@ -2,39 +2,36 @@ name: Unit Tests
 
 on:
   push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
 
 jobs:
-  lint:
-    name: PS Script Analyzer
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v7
-    - name: lint
-      uses: devblackops/github-action-psscriptanalyzer@master
-      with:
-        sendComment: false
-        settingsPath: lint/PSScriptAnalyser.ps1
-        failOnErrors: false
-        failOnWarnings: false
-        failOnInfos: false
   test:
+    name: Tests (${{ matrix.shell }})
     runs-on: windows-latest
-
+    strategy:
+      fail-fast: false
+      matrix:
+        shell: [powershell, pwsh]
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v7
-
-    - name: Install Pester
-      run: |
-        Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
-        Install-Module -Name Pester -Force -SkipPublisherCheck -AllowClobber
-      shell: pwsh
-
-    - name: Run Pester tests
-      run: |
-        Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
-        Invoke-Pester -Path 'pester/*.Tests.ps1' -Output Detailed
-
-      shell: pwsh
-      env:
-        TEMP: ${{ runner.temp }}
+      - uses: actions/checkout@v7
+      - name: Install Pester 5.7.1
+        shell: pwsh
+        run: |
+          $modules = Join-Path $env:RUNNER_TEMP 'test-modules'
+          Save-Module Pester -RequiredVersion 5.7.1 -Force -Path $modules
+          "PESTER_MODULE_PATH=$modules/Pester/5.7.1/Pester.psd1" >> $env:GITHUB_ENV
+      - name: Run PowerShell 7 regression tests
+        if: matrix.shell == 'pwsh'
+        shell: pwsh
+        run: ./tools/Invoke-Tests.ps1 -PesterModule "$env:PESTER_MODULE_PATH"
+      - name: Run Windows PowerShell 5.1 regression tests
+        if: matrix.shell == 'powershell'
+        shell: powershell
+        run: ./tools/Invoke-Tests.ps1 -PesterModule "$env:PESTER_MODULE_PATH"

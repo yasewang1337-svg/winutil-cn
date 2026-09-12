@@ -1,83 +1,60 @@
-# Import Config Files
-$global:importedconfigs = @{}
-Get-ChildItem .\config | Where-Object {$_.Extension -eq ".json"} | ForEach-Object {
-    $global:importedconfigs[$psitem.BaseName] = Get-Content $psitem.FullName | ConvertFrom-Json
+﻿BeforeAll {
+    $script:repoRoot = Split-Path $PSScriptRoot -Parent
+    $script:configs = @{}
+    Get-ChildItem (Join-Path $script:repoRoot 'config') -Filter '*.json' -File | ForEach-Object {
+        $script:configs[$_.BaseName] = Get-Content $_.FullName -Raw -Encoding UTF8 | ConvertFrom-Json
+    }
+    # The release build injects this layer; validate the same effective catalog.
+    $script:apps = @{}
+    foreach ($p in $script:configs.applications.PSObject.Properties) { $script:apps[$p.Name] = $p.Value }
+    $extra = Get-Content (Join-Path $script:repoRoot '汉化/extra-apps.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+    foreach ($p in $extra.PSObject.Properties) {
+        if ($p.Name -ne '_meta' -and -not $script:apps.ContainsKey($p.Name)) { $script:apps[$p.Name] = $p.Value }
+    }
 }
 
-
-#===========================================================================
-# Tests - Application Installs
-#===========================================================================
-
-Describe "Config Files" -ForEach @(
-    @{
-        name = "applications"
-        config = $('{
-            "winget": "value",
-            "choco": "value",
-            "category": "value",
-            "content": "value",
-            "description": "value",
-            "link": "value"
-          }' | ConvertFrom-Json)
-    },
-    @{
-        name = "tweaks"
-        undo = $true
+Describe 'Release configuration consistency' {
+    It 'loads every configuration as valid JSON' {
+        $script:configs.Count | Should -BeGreaterThan 0
+        foreach ($name in $script:configs.Keys) { $script:configs[$name] | Should -Not -BeNullOrEmpty -Because $name }
     }
-) {
-    Context "$name config file" {
-        It "Imports with no errors" {
-            $global:importedconfigs.$name | should -Not -BeNullOrEmpty
-        }
-        if ($config) {
-            It "Imports should be the correct structure" {
-                $applications = $global:importedconfigs.$name | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty name
-                $template = $config | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty name
-                $result = New-Object System.Collections.Generic.List[System.Object]
-                Foreach ($application in $applications) {
-                    $compare = $global:importedconfigs.$name.$application | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty name
-                    if (-not $compare) {
-                        throw "Comparison object for application '$application' is null."
-                    }
-                    if (-not $template) {
-                        throw "Template object for application '$application' is null."
-                    }
-                    if ($(Compare-Object $compare $template) -ne $null) {
-                        $result.Add($application)
-                    }
-                }
 
-                $result | Select-String "WPF*" | should -BeNullOrEmpty
+    It 'requires display metadata and at least one installable package id for every app' {
+        foreach ($name in $script:apps.Keys) {
+            $app = $script:apps[$name]
+            foreach ($field in @('content', 'category', 'description', 'link')) {
+                $app.$field | Should -Not -BeNullOrEmpty -Because "$name.$field"
+            }
+            [bool]($app.winget -or $app.choco) | Should -BeTrue -Because $name
+        }
+    }
+
+    It 'keeps every bundle app resolvable in the compiled catalog' {
+        foreach ($bundle in $script:configs.bundles.PSObject.Properties) {
+            if ($bundle.Name -eq '_meta') { continue }
+            foreach ($id in $bundle.Value.apps) {
+                $id | Should -Match '^WPFInstall'
+                $script:apps.ContainsKey(($id -replace '^WPFInstall', '')) | Should -BeTrue -Because "$($bundle.Name): $id"
             }
         }
-        if($undo) {
-            It "Tweaks should contain original Value" {
-                $tweaks = $global:importedconfigs.$name | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty name
-                $result = New-Object System.Collections.Generic.List[System.Object]
+    }
 
-                foreach ($tweak in $tweaks) {
-                    $Originals = @(
-                        @{
-                            name = "registry"
-                            value = "OriginalValue"
-                        },
-                        @{
-                            name = "service"
-                            value = "OriginalType"
-                        }
-                    )
-                    Foreach ($original in $Originals) {
-                        $TotalCount = ($global:importedconfigs.$name.$tweak.$($original.name)).count
-                        $OriginalCount = ($global:importedconfigs.$name.$tweak.$($original.name).$($original.value) | Where-Object {$_}).count
-                        if($TotalCount -ne $OriginalCount) {
-                            $result.Add("$Tweak,$($original.name)")
-                        }
-                    }
-                }
-                $result | Select-String "WPF*" | should -BeNullOrEmpty
+    It 'keeps preset references resolvable' {
+        foreach ($preset in $script:configs.preset.PSObject.Properties) {
+            foreach ($id in $preset.Value) {
+                $script:configs.tweaks.PSObject.Properties.Name | Should -Contain $id -Because $preset.Name
             }
         }
+    }
 
+    It 'provides rollback metadata for registry and service tweaks, allowing zero or false values' {
+        foreach ($tweak in $script:configs.tweaks.PSObject.Properties) {
+            foreach ($entry in $tweak.Value.registry) {
+                $entry.PSObject.Properties.Name | Should -Contain 'OriginalValue' -Because $tweak.Name
+            }
+            foreach ($entry in $tweak.Value.service) {
+                $entry.PSObject.Properties.Name | Should -Contain 'OriginalType' -Because $tweak.Name
+            }
+        }
     }
 }

@@ -8,7 +8,7 @@ on:
 
 jobs:
   auto-merge:
-    if: github.event.pull_request.head.ref == 'docs-update' && (github.event.pull_request.user.login == 'ChrisTitusTech' || github.event.pull_request.user.login == 'github-actions[bot]')
+    if: github.event.pull_request.head.ref == 'docs-update' && (github.event.pull_request.user.login == github.repository_owner || github.event.pull_request.user.login == 'github-actions[bot]')
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -25,7 +25,7 @@ jobs:
           GH_TOKEN: ${{ secrets.AUTO_MERGE }}
 
       - name: Enable auto-merge
-        run: gh pr merge "$PR_NUMBER" --squash --delete-branch --admin
+        run: gh pr merge "$PR_NUMBER" --squash --auto
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           GH_TOKEN: ${{ secrets.AUTO_MERGE }}
