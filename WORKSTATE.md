@@ -1,96 +1,50 @@
-# WinUtil-CN 维护状态
+# WinUtil CN 维护状态
 
-更新：2026-09-12
+更新：2026-09-13。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
 
-## 目标与范围
+## 当前任务
 
-用户要求优化项目并处理 GitHub 待办。工作区原为空，已克隆官方中文仓库；初始基线 main 为 `7ca2ed8`。第一阶段维护通过 PR #7 合并为 `b7fcb63`；第二阶段体验升级通过 PR #8 合并，正式发布对应提交 `a622c3bb136793b9c7dbbe969bd1caa1961299e8`，交付证据见末尾。
+用户批准实施文件组织审计。工作分支 `maintenance/repository-organization-20260913`，基于远端 main `96cc3f3`。范围：修复维护工具覆盖数据、隔离构建输入、归类历史工具/图片/测试/分发清单、同步指南与生成参考，完成验证后提交 GitHub。保持现有中文启动与下载入口。
 
-本轮优先：启动注册表读取故障（Issue #6）、构建与测试门禁、中文反馈入口和依赖维护。完整上游迁移需单独验证，不把选择性修复描述为同步完成。
+并行分工：safe_tweaks 修复生成器与参考文档；install_results 修复翻译提取器和隔离构建；bundle_choices 归类文件与补索引；主助手整合工作流、文档入口、验证与交付。各代理不提交或推送。
 
-## 已确认
+审计证据：`.artifacts/repository-organization-audit.md`、`repository-reproduction.json`。基线353个跟踪文件，无字节级重复。隔离复现：旧文档生成器91页→0页仍成功，旧翻译提取器10859字节→0；构建软件注入192→213项并写回源码。复现未修改原仓库。
 
-- 已发布版本 `cn-2026.07.10-26` 的第 637 行在 `Get-WinUtilToggleStatus`：读取整个注册表键，可受无关损坏值影响，且查询时创建缺失键。
-- 编译脚本未检查 PowerShell 语法；汉化构建吞掉读取错误；函数测试在 Discovery 阶段枚举 BeforeAll 才赋值的变量；CI 没有用失败退出码阻止发布。
-- GitHub 待办：Issues #5（上游同步）、#6（启动错误）；PR #1 checkout v7、#2 cache v6、#4 setup-node v7。
-- 上游最新稳定版 `26.08.19`，相对共同祖先 `58a81b1` 涉及 170 个提交、362 个文件，包含 UI/配置/文档体系变化。已拉取为 `upstream/release-26.08.19` 供比较。
-- 用户已明确批准 GitHub CLI 完整权限并在 Chrome 完成官方设备授权；CLI 当前为仓库所有者账号，维护权限已核对。凭据由系统 keyring 保存，不在仓库内。
+## 实施进展
 
-## 已实现与已验证
+- 已限制并标识上游旧预发布、赞助、文档自动合并等流程；生成产物检查改为只读失败，不再自动删除文件并提交。
+- 已同步中文文档入口、自动化范围与本地 Hugo 配置；上游 CNAME 从静态发布目录移入历史资料。图片按 branding/screenshots/archive 分类，旧脚本存为非执行文本，测试夹具和旧 WinGet 清单独立归类，新增目录与函数领域索引。
+- 文档生成器已改为稳定路由、预检、暂存及失败回滚，生成105页并保留原91个路径；翻译提取器要求明确输入、合并保存并拒绝空结果，修复切换 PowerShell 目录后的相对路径读写错误。中文构建在临时副本中进行，保留原有输出入口。
+- 本地验证完成：PS5.1/7各235项测试通过；实际双引擎构建均通过双版本语法/BOM检查，117个源输入不变，编译内容仅JSON格式不同且均含213个软件。Hugo生成161页及2个别名，6522个内部页面/资源引用无缺失；27项纯移动哈希不变；Actionlint通过。
+- 验证记录：`.artifacts/organization-tests-*.log`、`organization-build-verification.json`、`organization-build-equivalence.json`、`organization-docs-qa.json`、`organization-validation.json`、`devdocs-refresh-verification.json`。一次连续构建遭遇输出文件临时占用，替换失败保留旧产物，随后重新构建成功；没有执行生成脚本或EXE。
+- 待完成：提交 PR、核对远端 CI，合并后核验自动发布的真实附件并更新本记录。
 
-- 修复只读开关探测、异常降级与详细日志、中文提权入口及路径转义。
-- 编译基于脚本目录、明确 UTF-8 BOM、校验 JSON/XML/PowerShell 后原子替换；错误不再吞掉。
-- 62 条运行时翻译路径改为相对路径，修复跨电脑构建静默跳过问题。
-- 修复测试发现与配置检查，补构建失败/注册表/汉化/XAML 回归；CI 同时测试 PS 5.1/7，并作为发布前置。
-- 已在本地合并 PR #1、#2、#4 的原始提交；更新中文反馈模板、CODEOWNERS、维护者指令权限、发布扫描状态与 SHA256 清单。
-- 2026-09-12：PowerShell 7.6.5 和 Windows PowerShell 5.1.26100.9444 各 94 项测试全通过，零跳过。日志位于 `.artifacts/tests-pwsh.log`、`.artifacts/tests-powershell.log`。
-- 全汉化构建与双版本产物语法/BOM 校验通过；actionlint 全工作流通过；MCP 快照生成成功（213 软件 / 10 组合 / 66 优化项 / 12 DNS）。
-- 实际 Windows 上只读检查 23 个开关成功（204 ms）。未执行系统优化或安装软件。
-- EXE 使用隔离的 .NET SDK 8.0.425 编译，0 警告 / 0 错误；嵌入脚本 SHA256 与构建的 PS1 完全一致。根目录 `winutil-cn.ps1` 和 `WinUtil-CN.exe` 可交付；校验和见 `.artifacts/SHA256SUMS.txt`。
-- PR #7 首次远端验证发现英文 Windows 的 PS 5.1 按 ANSI 解析无 BOM 中文源码；已将源码及汉化语法校验改为显式 UTF-8 后 ParseInput，与编译读取方式一致。已发布的 BOM 产物检查本身通过。
+## 已交付基线
 
-## 已交付（本轮完成）
+| 阶段 | 证据 |
+| --- | --- |
+| 可靠性与依赖维护 | PR #7，主提交 b7fcb63；依赖PR #1/#2/#4已合并；发布 cn-2026.09.12-27 |
+| 新手体验 | PR #8，主提交 a622c3b；发布 cn-2026.09.12-28，PS5.1/7各200项通过，真实worker/WPF调度的模拟回归 |
+| 仓库展示 | PR #9，主提交 4b11477；README/图片/贡献指南与GitHub About已更新；维护记录96cc3f3，无新Release |
 
-- [PR #7](https://github.com/yasewang1337-svg/winutil-cn/pull/7) 已合并；三个依赖 PR #1、#2、#4 均已由 GitHub 标记为 merged，开放 PR 数为零。
-- [中文版本 cn-2026.09.12-27](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/cn-2026.09.12-27) 已发布，目标提交为 `b7fcb63`。发布运行 `34700049739` 全部成功，Defender 完成扫描、未检出威胁。
-- 已下载真实 Release 的 EXE、PS1、SHA256SUMS.txt 到 `.artifacts/released/cn-2026.09.12-27/`，校验哈希及 PS 5.1/7 语法/BOM 通过。与本地产物的 PS1 差异仅为换行。根目录入口已更新为这些官方发布产物。
-- Issue #6 已说明故障链、测试范围、修复版本和日志入口（comment `5646574064`）；等待原报告环境复测，保留开放。
-- Issue #5 已回复并保留开放（comment `5646574180`），完整迁移尚未完成，范围见 `docs/MAINTENANCE.md`。这不是本轮可靠性修复的已完成项目。
+正式最新交付 `cn-2026.09.12-28`：运行 `34702119863` 全成功，Defender完成扫描未检出威胁。实际附件已核验SHA256、双版本语法/BOM、EXE内嵌PS1一致性；根目录 EXE/PS1 为这些附件。
 
-## 后续工作
+- EXE：`7B4F6249A4D8A46A054EA25C85A57CCDC331AABD9292820C6F1FFCA3DAB80F0A`
+- PS1：`3E220699F7252CF624D1940308B323F4DA5724BE979006F5EB770A07909F8046`
+- 发布附件与验证记录在 `.artifacts/released/cn-2026.09.12-28/`、`experience-ci-tests.log`。
+- 展示验证：`.artifacts/readme-qa.json` 与 `readme-*.png`，桌面/深色/手机布局与真实GitHub页面已核对。
 
-若用户继续要求同步上游，先从 `upstream/release-26.08.19` 与迁移清单恢复，确认当时上游最新版本，再单独做兼容性迁移。不要把历史测试结果当成新改动的验证。
+完整历史记录保留在 Git 提交 `96cc3f3:WORKSTATE.md`，本轮前备份 `.artifacts/WORKSTATE-before-organization.md`。历史“已确认问题”不代表当前仍未修复，历史测试不替代本轮验证。
 
-验证时只调用构建和隔离测试，不运行系统优化、软件安装或系统设置操作。
+## 后续边界
 
-## 产品体验升级（2026-09-12，已授权实施）
+- Issue #5：完整上游迁移未完成。此前核对稳定版26.08.19，相对共同祖先58a81b1有170提交/362文件变化；后续恢复时重新核对版本，参考 docs/MAINTENANCE.md。
+- Issue #6：前述开关启动读取故障已有修复，等待原报告环境复测，保留开放。
+- 逐软件待更新清单、网络诊断与外部首次用户试用仍是独立后续任务；设置恢复限已记录的注册表值和服务启动配置。
 
-用户新增目标：让项目更人性化、更实用、更容易被普通用户接受。完成代码与界面评估后，用户已明确要求开始实施，并用多智能体并行协调。当前工作分支 `feature/friendly-workflows-20260912`，基于 `b7fcb63`；以下调查记录保留为改动依据，当前进展见末尾。未进行外部用户试用。
+## 操作入口
 
-建议定位为“WinUtil CN · 中文装机与维护助手”，首要场景是中文 Windows 11 用户的新电脑/重装装机，其次是日常软件维护。保留开发者功能与上游署名，将 MCP、镜像制作、包管理器细节收进高级入口。已有搜索、字体缩放、明暗主题、10 个装机组合、导入导出，后续应改进这些现有能力，避免重复开发。
-
-已确认的体验缺口：
-
-- `config/preset.json` 的 Minimal、Standard 均包含 DeBloat 和 Services。DeBloat 标注“不推荐”却属于“必备优化”，配置列出画图、便笺、录音机等 19 个 Appx；Services 标题说设为手动，但部分项目实际设为 Disabled。应先重审默认选择与实际效果的文案。
-- `Invoke-WinUtilTweaks.ps1` 撤销注册表/服务使用配置中的 OriginalValue/OriginalType，未记录每台电脑的真实原值；`lastrun.json` 只保存部分优化 ID。不能将这种撤销描述为完整恢复原状。还原点在勾选时已有优先执行逻辑，后续应校验创建结果并补充逐项恢复记录。
-- `Install-WinUtilProgramWinget.ps1` 等待进程但未读取退出码，安装入口随后显示完成。应逐软件记录成功/失败/跳过/需重启，显示原因、重试失败项和查看日志。
-- `Invoke-WPFBundle.ps1` 会累加勾选整个组合。办公组合一次选中 7 个软件，浏览器组合 4 个浏览器；建议提供用途选择、同类候选、已安装检测和执行前清单。
-- DNS 修改遍历全部 Up 网卡；建议明确选中的网卡、显示修改前后值，先诊断再修改，并保留原配置恢复入口。
-- 入门文档仍把默认启动命令指向英文上游，有“对所有用户安全”“恢复到之前的状态”等过度承诺。下载入口应突出中文 EXE，准确说明单文件启动与安装软件仍需联网的区别。
-
-建议实施顺序：第一阶段重审默认预设、统一文案和下载入口、补真实执行结果；第二阶段操作计划/历史/按实际旧值恢复、改进装机组合；第三阶段新手首页、日常更新与故障诊断入口、易分享的装机清单。完整上游迁移仍是单独工作，应与界面升级协调，避免重复修改同一结构。
-
-体验验收建议：让少量首次使用者尝试下载安装、选择所需软件、处理一次模拟失败、恢复一次可恢复改动；记录能否无口头指导完成、误选及卡住的位置。离线、无 WinGet、部分安装失败、1366×768/150% 缩放作为明确验收场景，不以新增功能数评价升级。
-
-### 实施进展
-
-- 三个子智能体分别实现：稳妥默认方案与真实设置历史；逐软件执行结果/日志/失败重试；可调整装机组合及中文文档。主智能体负责首页、中文搜索、导入导出、后台任务生命周期、整合与 GitHub 交付。
-- 已落地：Minimal/Standard 不含脚本、批量卸载和服务禁用；registry/service 保存修改前状态并有限恢复；组合先预览后加入；安装/卸载读真实退出码；首页导航与清单入口；中文搜索按固定控件 ID；DPI 窗口尺寸、主题与大字体排版；EXE 下载优先。
-- 最终整合版本：PowerShell 7.6.5 与 Windows PowerShell 5.1.26100.9444 各 200 项测试全通过，零失败、零跳过。日志为 `.artifacts/experience-tests-pwsh.log` 和 `.artifacts/experience-tests-ps51.log`。PS 5.1 清单导入的 JSON 数组差异已修复。
-- 设置与软件链均通过真实 worker + WPF dispatcher 联调；主 UI 线程预先创建回调，后台只传递进度及结果数据。软件部分验证两个软件之一失败时仅重试该失败项；设置部分验证结果返回、异常和忙碌状态清理。
-- 汉化构建、PS 5.1/7 产物语法与 BOM、actionlint、MCP 快照通过。离屏检查首页、明暗主题、小窗口和大字体、软件与设置结果窗口。
-- 本地候选 EXE 编译成功；缓存依赖构建有两条 NU1900 联网漏洞索引警告，无编译错误。通过反射读取内嵌 PS1 的 SHA256 与独立脚本一致（未运行启动器）。脚本 SHA256：`347C67E53C8BE7FFAC59801AD28D7AF8545495F36BF3240903F5766678B9D31B`。
-- 所有系统写入/安装测试使用 mocks、TestDrive 或临时目录。界面检查采用实际 WPF XAML 离屏渲染；未运行真实安装、卸载、系统优化或还原点。
-- 本轮实现、验证、合并和发布均已完成。软件逐项待更新清单、网络诊断与完整上游迁移不在本次已实现范围。
-- PR #8（`f81bfdb`）首次 CI：构建与 PS 7 测试通过，英文 Windows PS 5.1 将无 BOM 的中文测试文件按 ANSI 解码。已为三份测试补 UTF-8 BOM，并在测试入口检查非 ASCII 测试文件的 BOM，避免本机 UTF-8 系统默认编码掩盖问题。应用源码仍显式 UTF-8 读取，编译产物原有 BOM 检查通过。
-- 修复提交 `3480b48` 在 GitHub Windows 上通过双版本各 200 项测试（PS 7.6.5 / PS 5.1.26100.33296），构建检查通过；日志 `.artifacts/experience-ci-tests.log`。PR #8 已于 2026-09-12 合并为 `a622c3b`；自动发布运行 `34702119863` 全部成功。
-- GitHub About 已更新为中文装机与维护助手的实际能力说明，并设置最新版发布页为主页入口。
-
-### 体验升级交付（完成）
-
-- [PR #8](https://github.com/yasewang1337-svg/winutil-cn/pull/8) 已合并；[正式版本 cn-2026.09.12-28](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/cn-2026.09.12-28) 已发布为 Latest，目标提交 `a622c3b`。Defender 扫描完成，未检出威胁。
-- 从真实 Release 下载 EXE、PS1、SHA256SUMS.txt 至 `.artifacts/released/cn-2026.09.12-28/`，两个文件的 SHA256、双 PowerShell 语法/BOM、EXE 内嵌脚本一致性均通过。正式 PS1 与本地已验证脚本的差异仅为换行。
-- 正式 EXE SHA256：`7B4F6249A4D8A46A054EA25C85A57CCDC331AABD9292820C6F1FFCA3DAB80F0A`；正式 PS1 SHA256：`3E220699F7252CF624D1940308B323F4DA5724BE979006F5EB770A07909F8046`。
-- 根目录 `WinUtil-CN.exe`（797,184 字节）和 `winutil-cn.ps1`（686,430 字节）已替换为以上正式附件。核验没有启动 EXE 或执行系统修改。
-- Issue #5 / #6 保留开放。下一步产品工作优先安排首次用户试用，核对下载、按需装机、失败处理和恢复路径；收集实际反馈后再扩展网络诊断与待更新清单。
-
-## GitHub 仓库展示美化（2026-09-12，已完成）
-
-- [PR #9](https://github.com/yasewang1337-svg/winutil-cn/pull/9) 已合并为 `4b114773dead985acedd7cb87ab2c1a2ed26e022`，正式仓库首页已采用新版 README。
-- 新增蓝绿项目横幅（`docs/assets/images/repository-hero.svg` 及 PNG），整理下载按钮、版本/测试徽章、场景表、截图与文档导航，高级用法采用折叠区。保留作者、上游、MIT 与操作边界；浅色首页和软件组合图复用本版本实际 WPF 渲染。
-- GitHub About 已精简为与首页一致的中文介绍，增加 `winget`、`system-maintenance`、`package-manager` 标签，主页仍指向最新发布页。修改前元数据在 `.artifacts/repository-about-before.json`。
-- 两处贡献指南已修正 Fork 目标与中文版构建命令。运行时代码与发行版未改动，本轮不创建新 Release。
-- 验证：GitHub Markdown API 渲染、24 处本地文件链接、页内锚点、5 个折叠区；桌面/深色/390px 手机预览无页面横向溢出，图片及徽章全部加载。记录在 `.artifacts/readme-qa.json` 与 `readme-*.png`。真实 GitHub 页面已检查横幅显示与预览展开。
-- PR 构建检查与 PowerShell 5.1/7 测试均通过，测试运行 `34703528352`、构建运行 `34703528348`。仅文档与图片变更，未另行执行系统操作。
-- 当前 Git 不存在默认作者配置，提交沿用历史的 Codex noreply 身份。推送使用一次性 GitHub CLI credential helper；默认 Git Credential Manager 本次未返回结果。GitHub CLI 位于 `.artifacts/tools/gh/bin/gh.exe`，凭据仍由系统保存。
-- 本轮美化无剩余事项。后续产品体验、上游迁移等工作仍按前述记录独立处理。
+- 测试工具：`.artifacts/tools/Pester/5.7.1/Pester.psd1`；调用 tools/Invoke-Tests.ps1 时使用绝对模块路径，中文测试文件必须UTF-8 BOM。
+- GitHub CLI：`.artifacts/tools/gh/bin/gh.exe`，用户已授权本仓库维护及repo/workflow登录。凭据由系统保存，不写入项目。
+- Git无默认作者时沿用历史Codex noreply身份；推送使用一次性CLI credential helper，避免等待默认Credential Manager。
+- 只执行隔离测试和构建，不在用户电脑上运行真实优化、安装、卸载、还原点或自动导入操作。

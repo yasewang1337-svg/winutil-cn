@@ -1,13 +1,30 @@
 ---
-title: "Num Lock on Startup"
-description: ""
+title: "开机自动开启 NumLock"
+description: "当前源配置生成的开发参考"
+generated: true
 ---
 
-```json {filename="config/tweaks.json",linenos=inline,linenostart=1580}
+<!-- winutil-devdocs: tweaks/WPFToggleNumLock; schema=1 -->
+
+> 本页由 tools/devdocs-generator.ps1 生成，请修改源配置或函数后重新生成。目录保留历史 URL，实际分类以本页为准。
+
+- 稳定 ID：`WPFToggleNumLock`
+- 当前分类：自定义偏好
+- 源配置：`config/tweaks.json`
+- 源配置 SHA-256：`e2ce1bf52cefe360a765bdcbde469664139ec732c332661c9bfdfeb383e10959`
+
+控制开机后 NumLock 是否默认开启。
+
+本页描述实现，不代表推荐勾选。历史恢复仅覆盖工具实际记录的设置；配置中的 OriginalValue / OriginalType 不等于这台电脑的修改前状态。应用、文件及脚本其他改动不保证可恢复。
+
+## 配置定义
+
+```json
+{
   "WPFToggleNumLock": {
-    "Content": "Num Lock on Startup",
-    "Description": "Toggle the Num Lock key state when your computer starts.",
-    "category": "Customize Preferences",
+    "Content": "开机自动开启 NumLock",
+    "Description": "控制开机后 NumLock 是否默认开启。",
+    "category": "自定义偏好",
     "panel": "2",
     "Type": "Toggle",
     "registry": [
@@ -28,10 +45,7 @@ description: ""
         "DefaultState": "false"
       }
     ],
+    "link": "https://winutil.christitus.com/dev/tweaks/customize-preferences/numlock"
+  }
+}
 ```
-
-## Registry Changes
-
-Applications and System Components store and retrieve configuration data to modify Windows settings, so we can use the registry to change many settings in one place.
-
-You can find information about the registry on [Wikipedia](https://en.wikipedia.org/wiki/Windows_Registry) and [Microsoft's Website](https://learn.microsoft.com/en-us/windows/win32/sysinfo/registry).

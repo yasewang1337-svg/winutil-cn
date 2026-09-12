@@ -1,5 +1,16 @@
 # 中文版维护与验证
 
+## 当前维护入口
+
+- [仓库结构](REPOSITORY.md)：源码、配置、测试、文档、构建与历史文件的职责。
+- [工作流用途](../.github/WORKFLOWS.md)：中文版发布、回归、MCP 和上游保留流程。
+- [文档说明](README.md)：用户指南、生成参考、本地 Hugo 预览。
+- [汉化层](../汉化/README.md)：日常隔离构建、直接修改源码的 apply 工具，以及单独的翻译提取维护入口。
+
+常规构建在临时副本中应用翻译和额外软件，成功后只替换根目录 `winutil.ps1`。不要把 `.artifacts/`、EXE、编译脚本、MCP data 或启动器 bin/obj 加入 Git；CI 会报告这类误提交，不再自动删除并推送。
+
+开发参考通过 `tools/devdocs-generator.ps1` 从当前配置生成，路径由 `tools/devdocs-routes.json` 中的稳定项目 ID 映射决定；不要手动编辑生成正文，也不要在 config 顶层放归档或示例 JSON。生成器和翻译提取器在失败或零有效输出时保留既有内容。
+
 ## 2026-09 可靠性维护
 
 - 启动开关探测只读取指定注册表值，不枚举无关值、不创建注册表键。值损坏或无权限时记录包含路径和值名的警告并继续加载；缺失值采用配置默认值。对应 [Issue #6](https://github.com/yasewang1337-svg/winutil-cn/issues/6)。
@@ -15,8 +26,9 @@
 ```powershell
 Save-Module Pester -RequiredVersion 5.7.1 -Path .artifacts/test-modules
 pwsh -NoProfile -File 汉化\run-all.ps1
-pwsh -NoProfile -File tools\Invoke-Tests.ps1 -PesterModule .artifacts/test-modules/Pester/5.7.1/Pester.psd1
-powershell -NoProfile -File tools\Invoke-Tests.ps1 -PesterModule .artifacts/test-modules/Pester/5.7.1/Pester.psd1
+$testModule = (Resolve-Path '.artifacts/test-modules/Pester/5.7.1/Pester.psd1').Path
+pwsh -NoProfile -File tools\Invoke-Tests.ps1 -PesterModule $testModule
+powershell -NoProfile -File tools\Invoke-Tests.ps1 -PesterModule $testModule
 pwsh -NoProfile -File tools\Test-Build.ps1
 powershell -NoProfile -File tools\Test-Build.ps1
 ```
@@ -28,7 +40,7 @@ Copy-Item winutil.ps1 winutil-cn.ps1
 pwsh -NoProfile -File tools\launcher\build.ps1
 ```
 
-测试覆盖源文件语法、编译失败、编码、配置/装机组合引用、注册表探测、汉化可移植性与 XAML 加载。系统优化实际效果、第三方安装程序、完整交互操作仍需在测试虚拟机上验证；不能用自动测试结果替代真机效果验证。
+测试覆盖源文件语法、编译失败与输入不变、编码、配置/装机组合引用、注册表探测、设置历史、软件执行结果、真实 worker/WPF 调度、翻译维护和文档生成的失败路径。中文测试文件必须保存为 UTF-8 BOM，避免英文 Windows 上的 PS 5.1 按默认 ANSI 解码。系统优化实际效果、第三方安装程序、完整交互操作仍需在测试虚拟机上验证；不能用自动测试结果替代真机效果验证。
 
 ## 上游迁移状态
 

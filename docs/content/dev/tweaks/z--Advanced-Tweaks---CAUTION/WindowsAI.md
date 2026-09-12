@@ -1,13 +1,30 @@
 ---
-title: "Windows AI - Disable"
-description: ""
+title: "Windows AI - 禁用"
+description: "当前源配置生成的开发参考"
+generated: true
 ---
 
-```json {filename="config/tweaks.json",linenos=inline,linenostart=949}
+<!-- winutil-devdocs: tweaks/WPFTweaksWindowsAI; schema=1 -->
+
+> 本页由 tools/devdocs-generator.ps1 生成，请修改源配置或函数后重新生成。目录保留历史 URL，实际分类以本页为准。
+
+- 稳定 ID：`WPFTweaksWindowsAI`
+- 当前分类：z__高级优化 - 谨慎
+- 源配置：`config/tweaks.json`
+- 源配置 SHA-256：`e2ce1bf52cefe360a765bdcbde469664139ec732c332661c9bfdfeb383e10959`
+
+移除或禁用所有 AI 功能与组件(如 Copilot、Recall)。
+
+本页描述实现，不代表推荐勾选。历史恢复仅覆盖工具实际记录的设置；配置中的 OriginalValue / OriginalType 不等于这台电脑的修改前状态。应用、文件及脚本其他改动不保证可恢复。
+
+## 配置定义
+
+```json
+{
   "WPFTweaksWindowsAI": {
-    "Content": "Windows AI - Disable",
-    "Description": "Removes or disables all ai features and packages",
-    "category": "z__Advanced Tweaks - CAUTION",
+    "Content": "Windows AI - 禁用",
+    "Description": "移除或禁用所有 AI 功能与组件(如 Copilot、Recall)。",
+    "category": "z__高级优化 - 谨慎",
     "panel": "1",
     "registry": [
       {
@@ -26,26 +43,9 @@ description: ""
       }
     ],
     "InvokeScript": [
-      "
-      $Appx = (Get-AppxPackage MicrosoftWindows.Client.CoreAI).PackageFullName
-      $Sid = (Get-LocalUser $Env:UserName).Sid.Value
-
-      New-Item \"HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Appx\\AppxAllUserStore\\EndOfLife\\$Sid\\$Appx\" -Force
-
-      Get-AppxPackage -AllUsers *Copilot* | Remove-AppxPackage -AllUsers
-      Get-AppxPackage -AllUsers Microsoft.MicrosoftOfficeHub | Remove-AppxPackage -AllUsers
-      Remove-AppxPackage $Appx
-
-      Set-Service -Name WSAIFabricSvc -StartupType Disabled
-      Disable-WindowsOptionalFeature -FeatureName Recall -Online -NoRestart
-
-      Write-Host \"Windows AI Disabled\"
-      "
+      "\r\n      $Appx = (Get-AppxPackage MicrosoftWindows.Client.CoreAI).PackageFullName\r\n      $Sid = (Get-LocalUser $Env:UserName).Sid.Value\r\n\r\n      New-Item \"HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Appx\\AppxAllUserStore\\EndOfLife\\$Sid\\$Appx\" -Force\r\n\r\n      Get-AppxPackage -AllUsers *Copilot* | Remove-AppxPackage -AllUsers\r\n      Get-AppxPackage -AllUsers Microsoft.MicrosoftOfficeHub | Remove-AppxPackage -AllUsers\r\n      Remove-AppxPackage $Appx\r\n\r\n      Set-Service -Name WSAIFabricSvc -StartupType Disabled\r\n      Disable-WindowsOptionalFeature -FeatureName Recall -Online -NoRestart\r\n\r\n      Write-Host \"Windows AI Disabled\"\r\n      "
     ],
+    "link": "https://winutil.christitus.com/dev/tweaks/z--advanced-tweaks---caution/windowsai"
+  }
+}
 ```
-
-## Registry Changes
-
-Applications and System Components store and retrieve configuration data to modify Windows settings, so we can use the registry to change many settings in one place.
-
-You can find information about the registry on [Wikipedia](https://en.wikipedia.org/wiki/Windows_Registry) and [Microsoft's Website](https://learn.microsoft.com/en-us/windows/win32/sysinfo/registry).

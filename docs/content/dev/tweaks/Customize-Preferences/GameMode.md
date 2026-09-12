@@ -1,13 +1,30 @@
 ---
-title: "Game Mode"
-description: ""
+title: "游戏模式"
+description: "当前源配置生成的开发参考"
+generated: true
 ---
 
-```json {filename="config/tweaks.json",linenos=inline,linenostart=1822}
+<!-- winutil-devdocs: tweaks/WPFToggleGameMode; schema=1 -->
+
+> 本页由 tools/devdocs-generator.ps1 生成，请修改源配置或函数后重新生成。目录保留历史 URL，实际分类以本页为准。
+
+- 稳定 ID：`WPFToggleGameMode`
+- 当前分类：自定义偏好
+- 源配置：`config/tweaks.json`
+- 源配置 SHA-256：`e2ce1bf52cefe360a765bdcbde469664139ec732c332661c9bfdfeb383e10959`
+
+开启后 Windows 通过为游戏分配系统资源,优先保证游戏性能。
+
+本页描述实现，不代表推荐勾选。历史恢复仅覆盖工具实际记录的设置；配置中的 OriginalValue / OriginalType 不等于这台电脑的修改前状态。应用、文件及脚本其他改动不保证可恢复。
+
+## 配置定义
+
+```json
+{
   "WPFToggleGameMode": {
-    "Content": "Game Mode",
-    "Description": "Toggles Windows prioritizes gaming performance by allocating system resources to games.",
-    "category": "Customize Preferences",
+    "Content": "游戏模式",
+    "Description": "开启后 Windows 通过为游戏分配系统资源,优先保证游戏性能。",
+    "category": "自定义偏好",
     "panel": "2",
     "Type": "Toggle",
     "registry": [
@@ -28,10 +45,7 @@ description: ""
         "DefaultState": "true"
       }
     ],
+    "link": "https://winutil.christitus.com/dev/tweaks/customize-preferences/gamemode"
+  }
+}
 ```
-
-## Registry Changes
-
-Applications and System Components store and retrieve configuration data to modify Windows settings, so we can use the registry to change many settings in one place.
-
-You can find information about the registry on [Wikipedia](https://en.wikipedia.org/wiki/Windows_Registry) and [Microsoft's Website](https://learn.microsoft.com/en-us/windows/win32/sysinfo/registry).

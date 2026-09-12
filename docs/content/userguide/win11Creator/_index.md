@@ -8,7 +8,7 @@ prev: /userguide/automation/
 
 Winutil 内置了一个 **Win11 创建器（Win11 Creator）** 工具，让你能拿一份官方 Windows 11 ISO，产出一个自定义、已瘦身的版本。生成的镜像可以移除遥测、绕过硬件要求检查，并开箱即用地启用本地账户设置。你可以把结果导出为一个新的 ISO 文件，或直接写入 U 盘。
 
-{{< image src="images/win11creator-tab-new" alt="Winutil 中的 Win11 创建器标签页" >}}
+{{< image src="images/screenshots/win11creator-tab-new" alt="Winutil 中的 Win11 创建器标签页" >}}
 
 > [!IMPORTANT]
 > 开始之前，你需要一份来自[微软官网](https://www.microsoft.com/en-us/software-download/windows11)的**官方 Windows 11 ISO**。不支持自定义、修改过或非官方的 ISO。整个过程会占用约 10–15 GB 的临时磁盘空间，请确保有足够空间。

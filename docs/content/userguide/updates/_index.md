@@ -9,7 +9,7 @@ Winutil 提供三种更新模式，让你自行决定系统上的 Windows 更新
 
 切换模式会调整系统级的 Windows 更新行为。切换后，请给 Windows 一点时间来套用策略；如果新状态没有立即出现，请做好重启的准备。
 
-{{< image src="images/updates-tab-new" alt="Winutil 中的更新标签页" >}}
+{{< image src="images/screenshots/updates-tab-new" alt="Winutil 中的更新标签页" >}}
 
 - **Default（Out of the Box）Settings（默认/开箱设置）**：恢复标准的 Windows 更新行为
 - **Security（Recommended）Settings（安全/推荐设置）**：优先保证稳定性，同时仍接收安全更新

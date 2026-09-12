@@ -1,13 +1,30 @@
 ---
-title: "BSoD Verbose Mode"
-description: ""
+title: "详细蓝屏信息"
+description: "当前源配置生成的开发参考"
+generated: true
 ---
 
-```json {filename="config/tweaks.json",linenos=inline,linenostart=1299}
+<!-- winutil-devdocs: tweaks/WPFToggleDetailedBSoD; schema=1 -->
+
+> 本页由 tools/devdocs-generator.ps1 生成，请修改源配置或函数后重新生成。目录保留历史 URL，实际分类以本页为准。
+
+- 稳定 ID：`WPFToggleDetailedBSoD`
+- 当前分类：自定义偏好
+- 源配置：`config/tweaks.json`
+- 源配置 SHA-256：`e2ce1bf52cefe360a765bdcbde469664139ec732c332661c9bfdfeb383e10959`
+
+蓝屏时显示更详细的信息（对排障更友好）。
+
+本页描述实现，不代表推荐勾选。历史恢复仅覆盖工具实际记录的设置；配置中的 OriginalValue / OriginalType 不等于这台电脑的修改前状态。应用、文件及脚本其他改动不保证可恢复。
+
+## 配置定义
+
+```json
+{
   "WPFToggleDetailedBSoD": {
-    "Content": "BSoD Verbose Mode",
-    "Description": "Gives more information when you blue screen.",
-    "category": "Customize Preferences",
+    "Content": "详细蓝屏信息",
+    "Description": "蓝屏时显示更详细的信息（对排障更友好）。",
+    "category": "自定义偏好",
     "panel": "2",
     "Type": "Toggle",
     "registry": [
@@ -28,10 +45,7 @@ description: ""
         "DefaultState": "false"
       }
     ],
+    "link": "https://winutil.christitus.com/dev/tweaks/customize-preferences/detailedbsod"
+  }
+}
 ```
-
-## Registry Changes
-
-Applications and System Components store and retrieve configuration data to modify Windows settings, so we can use the registry to change many settings in one place.
-
-You can find information about the registry on [Wikipedia](https://en.wikipedia.org/wiki/Windows_Registry) and [Microsoft's Website](https://learn.microsoft.com/en-us/windows/win32/sysinfo/registry).

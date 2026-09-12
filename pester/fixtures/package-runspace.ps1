@@ -1,7 +1,7 @@
 ﻿param([Parameter(Mandatory)][string]$LogRoot)
 $ErrorActionPreference='Stop'
 Add-Type -AssemblyName PresentationFramework
-$root=Split-Path $PSScriptRoot -Parent
+$root=Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 $env:LOCALAPPDATA=$LogRoot
 $names=@('Get-WinUtilPackagePlan','Get-WinUtilPackageExitResult','Invoke-WinUtilPackageProcess','Install-WinUtilProgramWinget','Install-WinUtilProgramChoco','Invoke-WinUtilPackageBatch','Show-WinUtilPackageDialog','Invoke-WinUtilPackageOperation','Initialize-WinUtilPackageUiCallbacks','Invoke-WinUtilPackageUiAction','Show-WPFInstallAppBusy','Hide-WPFInstallAppBusy','Invoke-WPFUIThread','Invoke-WPFRunspace','Complete-WinUtilRunspaceJobs')
 foreach($name in $names){$file=Get-ChildItem (Join-Path $root 'functions') -Recurse -Filter "$name.ps1" | Select-Object -First 1;. ([scriptblock]::Create((Get-Content $file.FullName -Raw -Encoding UTF8)))}

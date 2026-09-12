@@ -1,105 +1,82 @@
 ---
-title: "Dev Docs Generator"
-description: "How the devdocs-generator.ps1 script works"
+title: "开发参考生成器"
+description: "稳定页面路径、完整覆盖验证及安全发布"
 ---
 
-# Dev Docs Generator
+# 开发参考生成器
 
-The `devdocs-generator.ps1` script automatically generates Hugo-compatible markdown files for the development documentation. It pulls content directly from the JSON config files and PowerShell function files so the docs never go out of sync.
+`tools/devdocs-generator.ps1` 从当前 `config/tweaks.json`、`config/feature.json` 和需要展示的入口函数生成开发参考。它不执行配置里的脚本，不修改源配置的 `link`，也不提交 Git 或部署站点。
 
-## When Does it Run?
+## 使用
 
-- Automatically triggered by the `docs.yaml` GitHub Actions workflow, which generates the `.md` files, commits them back to the repo, and then triggers Hugo to build the site
-- Automatically runs during the pre-release workflow, committing the updated `"link"` properties back to the JSON config files
-- Watches `docs/**`, `config/tweaks.json`, `config/feature.json`, and `functions/**` for changes
-- Supports manual runs via `workflow_dispatch`
+在仓库根目录运行，支持 Windows PowerShell 5.1 和 PowerShell 7：
 
-## What Does It Do?
+```powershell
+# 完整生成并验证，确认无误后更新已登记的参考页
+.\tools\devdocs-generator.ps1
 
-### 1. Loads the Data
+# 仅生成和验证；保留现有页面，不发布暂存结果
+.\tools\devdocs-generator.ps1 -ValidateOnly
 
-- Reads `config/tweaks.json` and `config/feature.json`
-- Reads all `.ps1` function files from `functions/public/` and `functions/private/`
-- Parses `Invoke-WPFButton.ps1` to build a mapping of button names to their function names
-
-### 2. Updates Links in JSON
-
-- Adds or updates a `"link"` property on every entry in both JSON config files
-- Each link points to that entry's documentation page on the Hugo site
-- The updated links are automatically committed back to the JSON config files as part of the pre-release workflow
-
-### 3. Cleans Up Old Docs
-
-- Deletes all `.md` files (except `_index.md`) from `docs/content/dev/tweaks/` and `docs/content/dev/features/`
-- This prevents duplicate or orphaned files from previous runs
-
-### 4. Generates Tweak Documentation
-
-For each entry in `tweaks.json` that belongs to a documented category:
-
-- **Button type** entries get the mapped PowerShell function file embedded
-- **All other types** get the raw JSON snippet embedded with correct line numbers from the source file
-- Entries with **registry changes** get a Registry Changes section added
-- Entries with **services** get the `Set-WinUtilService.ps1` function appended
-
-### 5. Generates Feature Documentation
-
-For each entry in `feature.json` that belongs to a documented category:
-
-- **Fixes and Legacy Windows Panels** get the mapped PowerShell function file embedded
-- **Features** get the raw JSON snippet embedded with correct line numbers
-
-### 6. Output Format
-
-- Every `.md` file gets Hugo frontmatter with `title` and `description`
-- Code blocks use Hugo syntax with filename labels and line numbers
-- Files are organized into category subdirectories matching the JSON `category` field
-
-## Documented Categories
-
-The script generates docs for entries in these categories:
-
-- Essential Tweaks
-- z--Advanced-Tweaks---CAUTION
-- Customize Preferences
-- Performance Plans
-- Features
-- Fixes
-- Legacy Windows Panels
-
-## File Structure
-
-```
-docs/content/dev/
-  tweaks/
-    Essential-Tweaks/
-    z--Advanced-Tweaks---CAUTION/
-    Customize-Preferences/
-    Performance-Plans/
-  features/
-    Features/
-    Fixes/
-    Legacy-Windows-Panels/
+# 检查隔离的仓库副本；路径也可包含中文和空格
+.\tools\devdocs-generator.ps1 -RepositoryRoot 'C:\临时目录\winutil-cn'
 ```
 
-## How File Names Are Derived
+源文件或映射存在问题时会抛出错误，以非零状态结束。正式中文发布流程不依赖此生成器；工作流是否调用它应以 `.github/workflows/` 的当前配置为准。
 
-The script strips common prefixes from the JSON key names using the pattern `WPF(WinUtil|Toggle|Features?|Tweaks?|Panel|Fix(es)?)?`. For example:
+## 页面地址与覆盖范围
 
-| JSON Key            | Generated File |
-| ------------------- | -------------- |
-| `WPFTweaksHiber`    | `Hiber.md`     |
-| `WPFTweaksDeBloat`  | `DeBloat.md`   |
-| `WPFFeatureshyperv` | `hyperv.md`    |
-| `WPFPanelDISM`      | `DISM.md`      |
+`tools/devdocs-routes.json` 是生成器专用的路径表，不参与运行时配置编译。每个配置项都必须登记，不能因为分类名称是中文或发生翻译变化而跳过。
 
-## Key Points
+```json
+{
+  "schemaVersion": 1,
+  "routes": [
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksServices",
+      "path": "tweaks/Essential-Tweaks/Services.md"
+    }
+  ]
+}
+```
 
-- The JSON config files are the single source of truth
-- Manual edits to generated `.md` files will be overwritten on the next run
-- The script does not modify `_index.md` or `architecture.md`
-  — do not delete `_index.md` or `architecture.md`, as they will need to be recreated manually.
-- Category directories are created automatically if they don't exist
-- The `"link"` property added to JSON entries is excluded from the displayed code blocks
-- The `docs` workflow generates the `.md` files and commits them back to the repo before Hugo builds the site
-- The `pre-release` workflow generates the `"link"` properties and commits them back to the repo
+上面仅是格式示例，实际路径表必须完整覆盖两份源配置。`path` 相对于 `docs/content/dev/`。条目 ID、路径均需唯一；绝对路径、目录穿越、重解析点和 `_index.md` 都会被拒绝。
+
+- 旧页面沿用已有路径。`Essential-Tweaks` 等英文目录是历史 URL，不再表示当前风险级别；页面展示源配置中的实际中文分类和说明。
+- 新配置项必须先增加明确路径；新栏目索引由维护者单独编写。
+- 源配置的 `function` 决定展示哪个入口函数；函数文件递归查找并检查语法。少数在按钮分发器中调用的入口，可用路径表的 `handler` 明确登记；调用方式变更时也要核对它。
+- 可选 `aliases` 保留已存在的旧站点路径，例如性能计划早期配置使用的地址。它们只写入 Markdown frontmatter，不修改源配置。
+- 删除配置项后，也要明确处理路径表和历史页面。生成器不会擅自删除旧页面或创建重定向。
+
+页面包含中文名称、当前分类、配置文件 SHA-256、完整且有效的 JSON，以及适用时的入口函数源码。JSON 重新格式化显示，不伪造源文件行号；入口函数可能继续调用其他函数，不能仅凭本页判断全部执行效果。不同 PowerShell 版本可能产生不同的 JSON 排版，但读取的配置与覆盖规则相同。
+
+## 防止内容丢失的流程
+
+1. 预检两份配置、路径表完整覆盖、路径冲突、页面归属，以及所需函数是否存在和语法正确。
+2. 在仓库 `.artifacts/devdocs-<随机编号>/pages/` 中生成全部页面；核对页数、条目标记和内容，重新核对输入文件摘要，防止生成途中读取过时版本。
+3. 发布前核对现有目标是否被并行修改，并备份所有将更新的旧页面。
+4. 仅复制路径表拥有的页面，并检查发布后摘要；没有变化的页面保持原样。复制失败时尝试恢复已写入的页面、移除本次新建的页面。
+5. 正常结束后清理本次暂存目录；若回滚失败则报告并保留备份路径，交由维护者恢复。
+
+预检或生成失败时，现有页面不变。发布阶段是逐文件复制加回滚，不能保证整个目录在断电或进程被强制终止时原子切换；这种情况应检查 Git 差异和 `.artifacts/devdocs-*/backup/` 后恢复。生成期间不要同时编辑相同的目标页面。
+
+## 手写页面与首次迁移
+
+生成器不扫描删除目录，不拥有任何 `_index.md`，也不会删除或更新路径表之外的手写页面。
+
+已生成页面用以下标记声明归属：
+
+```html
+<!-- winutil-devdocs: tweaks/WPFTweaksServices; schema=1 -->
+```
+
+旧生成器的页面没有标记，路径表中的 `legacySha256` 用于识别本次迁移前已核对的旧生成页。遇到未识别的同名页面时会中止并保留原文件；不能为了绕过检查随意给手写页面添加生成标记或改填摘要。确认内容归属后再决定迁移或保留。
+
+生成页顶部已经注明来源。需要修改内容时应修改源配置或函数；需要修改 URL 时应更新路径表并保留兼容地址，不能从中文展示分类重新推导路径。
+
+## 定向验证
+
+`pester/devdocs-generator.Tests.ps1` 在 TestDrive 副本中验证中文分类、完整覆盖、缺映射或函数、非法路径、未知手写页面、生成失败、并行源文件变更、发布回滚、源配置不变和重复生成结果不变。还会复制当前仓库的两份完整配置、函数与文档目录，验证所有当前条目及既有路径。
+
+含中文的测试文件保存为 UTF-8 BOM，兼容 Windows PowerShell 5.1。测试不运行旧生成器，也不调用任何真实系统设置。

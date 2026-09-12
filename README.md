@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/assets/images/repository-hero.png" alt="WinUtil CN · 中文装机与维护助手：把电脑准备成你需要的样子" width="100%">
+  <img src="docs/assets/images/branding/repository-hero.png" alt="WinUtil CN · 中文装机与维护助手：把电脑准备成你需要的样子" width="100%">
 </div>
 
 <h1 align="center">WinUtil CN · 中文装机与维护助手</h1>
@@ -37,7 +37,7 @@
 ## 界面预览
 
 <div align="center">
-  <img src="docs/assets/images/home-cn.png" alt="深色首页：新电脑装机、日常软件管理、基础设置、清单与恢复入口" width="100%">
+  <img src="docs/assets/images/screenshots/home-cn.png" alt="深色首页：新电脑装机、日常软件管理、基础设置、清单与恢复入口" width="100%">
   <p><sub>从首页进入装机、软件管理与基础设置；浏览和导入清单不会自动执行。</sub></p>
 </div>
 
@@ -46,11 +46,11 @@
 
 ### 浅色主题
 
-![WinUtil CN 浅色主题首页](docs/assets/images/home-light-cn.png)
+![WinUtil CN 浅色主题首页](docs/assets/images/screenshots/home-light-cn.png)
 
 ### 按用途调整软件组合
 
-![办公组合选择：逐项说明用途，确认后加入清单](docs/assets/images/bundle-cn.png)
+![办公组合选择：逐项说明用途，确认后加入清单](docs/assets/images/screenshots/bundle-cn.png)
 
 </details>
 
@@ -150,7 +150,7 @@ powershell -NoProfile -File tools\Test-Build.ps1
 感谢 [Chris Titus Tech 与上游贡献者](https://github.com/ChrisTitusTech/winutil)提供 Windows Utility，感谢 [constansino/WinUtil_CN](https://github.com/constansino/WinUtil_CN) 提供借用层翻译。本项目是独立维护的中文本地化分支，沿用 [MIT 许可证](LICENSE)。中文版本的下载、构建与反馈均使用本仓库入口。
 
 <div align="center">
-  <a href="https://github.com/yasewang1337-svg"><img src="docs/assets/images/holha-logo.png" width="420" alt="Holha1337 · WinUtil CN 中文汉化与维护"></a>
+  <a href="https://github.com/yasewang1337-svg"><img src="docs/assets/images/branding/holha-logo.png" width="420" alt="Holha1337 · WinUtil CN 中文汉化与维护"></a>
   <p><b>让中文用户更容易用好自己的 Windows。</b><br><sub>欢迎改进翻译、提交问题、分享装机经验；如果它帮到了你，也欢迎点亮一颗 Star。</sub></p>
   <p>合作与推广 · 品牌合作、工具联动请联系 <a href="https://github.com/yasewang1337-svg">Holha1337</a></p>
 </div>

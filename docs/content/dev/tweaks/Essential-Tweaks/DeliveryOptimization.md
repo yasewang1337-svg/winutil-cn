@@ -1,13 +1,30 @@
 ---
-title: "Delivery Optimization - Disable"
-description: ""
+title: "关闭更新的对等传输"
+description: "当前源配置生成的开发参考"
+generated: true
 ---
 
-```json {filename="config/tweaks.json",linenos=inline,linenostart=592}
+<!-- winutil-devdocs: tweaks/WPFTweaksDeliveryOptimization; schema=1 -->
+
+> 本页由 tools/devdocs-generator.ps1 生成，请修改源配置或函数后重新生成。目录保留历史 URL，实际分类以本页为准。
+
+- 稳定 ID：`WPFTweaksDeliveryOptimization`
+- 当前分类：常用设置（按需选择）
+- 源配置：`config/tweaks.json`
+- 源配置 SHA-256：`e2ce1bf52cefe360a765bdcbde469664139ec732c332661c9bfdfeb383e10959`
+
+将更新下载设为 HTTP 模式，停止与其他电脑对等分享更新；Windows 更新仍可联网下载。可恢复本次修改前的注册表值。
+
+本页描述实现，不代表推荐勾选。历史恢复仅覆盖工具实际记录的设置；配置中的 OriginalValue / OriginalType 不等于这台电脑的修改前状态。应用、文件及脚本其他改动不保证可恢复。
+
+## 配置定义
+
+```json
+{
   "WPFTweaksDeliveryOptimization": {
-    "Content": "Delivery Optimization - Disable",
-    "Description": "Stops Windows from using your bandwidth to upload updates to other PCs on the internet or local network.",
-    "category": "Essential Tweaks",
+    "Content": "关闭更新的对等传输",
+    "Description": "将更新下载设为 HTTP 模式，停止与其他电脑对等分享更新；Windows 更新仍可联网下载。可恢复本次修改前的注册表值。",
+    "category": "常用设置（按需选择）",
     "panel": "1",
     "registry": [
       {
@@ -18,10 +35,7 @@ description: ""
         "OriginalValue": "<RemoveEntry>"
       }
     ],
+    "link": "https://winutil.christitus.com/dev/tweaks/essential-tweaks/deliveryoptimization"
+  }
+}
 ```
-
-## Registry Changes
-
-Applications and System Components store and retrieve configuration data to modify Windows settings, so we can use the registry to change many settings in one place.
-
-You can find information about the registry on [Wikipedia](https://en.wikipedia.org/wiki/Windows_Registry) and [Microsoft's Website](https://learn.microsoft.com/en-us/windows/win32/sysinfo/registry).

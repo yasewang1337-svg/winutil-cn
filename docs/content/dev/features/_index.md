@@ -23,3 +23,7 @@ toc: false
 ### PowerShell 配置文件（仅 PowerShell 7+）
 
 {{< autolinks section="dev/features/powershell-profile-powershell-7--only" >}}
+
+### 换源与恢复默认
+
+{{< autolinks section="dev/features/mirrors" >}}

@@ -1,4 +1,4 @@
-# winutil-cn 内容汉化(tweaks/feature 的 Content/Description)
+﻿# winutil-cn 内容汉化(tweaks/feature 的 Content/Description)
 # 数据来源两层(按 winutil 稳定 key 索引):
 #   i18n-borrowed.json   —— 借自 constansino/WinUtil_CN(GPL-3.0),复用其已翻条目
 #   i18n-supplement.json —— 本机补翻:上游新增、借用层未覆盖的条目
@@ -16,7 +16,7 @@ $map = @{ tweaks = @{}; feature = @{} }
 foreach ($f in 'i18n-borrowed.json','i18n-supplement.json') {
     $p = Join-Path $dir $f
     if (-not (Test-Path $p)) { continue }
-    $src = Get-Content $p -Raw | ConvertFrom-Json
+    $src = Get-Content $p -Raw -Encoding UTF8 | ConvertFrom-Json
     foreach ($sec in 'tweaks','feature') {
         if (-not $src.PSObject.Properties[$sec]) { continue }
         foreach ($e in $src.$sec.PSObject.Properties) {
@@ -30,7 +30,7 @@ foreach ($f in 'i18n-borrowed.json','i18n-supplement.json') {
 
 foreach ($sec in 'tweaks','feature') {
     $path  = Join-Path $cfg "$sec.json"
-    $obj   = Get-Content $path -Raw | ConvertFrom-Json
+    $obj   = Get-Content $path -Raw -Encoding UTF8 | ConvertFrom-Json
     $text  = [IO.File]::ReadAllText($path, $enc)
     $applied = 0; $miss = 0; $multi = 0; $alreadyCN = 0; $noKey = 0
     foreach ($k in $map[$sec].Keys) {

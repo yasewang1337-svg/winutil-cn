@@ -1,4 +1,4 @@
-# 把"专属软件层" extra-apps.json 注入 config/applications.json
+﻿# 把"专属软件层" extra-apps.json 注入 config/applications.json
 # - 已存在的 key 自动跳过(幂等);注入到首个条目前,保持 4 空格缩进格式
 # - 注入后校验 JSON 有效性才写回
 # 上游更新后重跑即可重新注入你的软件。
@@ -8,7 +8,7 @@ $appsPath=Join-Path $dir '..\config\applications.json'
 $extraPath=Join-Path $dir 'extra-apps.json'
 $enc=[System.Text.UTF8Encoding]::new($false)
 if(-not(Test-Path $extraPath)){ Write-Warning "无 extra-apps.json,跳过"; return }
-$extra=Get-Content $extraPath -Raw|ConvertFrom-Json
+$extra=Get-Content $extraPath -Raw -Encoding UTF8|ConvertFrom-Json
 $text=[IO.File]::ReadAllText($appsPath,$enc)
 $appsObj=$text|ConvertFrom-Json
 $order='category','choco','content','description','link','winget','foss'

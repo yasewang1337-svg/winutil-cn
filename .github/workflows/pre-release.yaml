@@ -1,4 +1,4 @@
-name: Pre-Release WinUtil
+name: 上游保留 - Pre-Release WinUtil
 
 permissions:
   contents: write
@@ -10,6 +10,8 @@ on:
 
 jobs:
   build-runspace:
+    # Chinese releases use release-cn.yaml and its mandatory test gate.
+    if: github.repository == 'ChrisTitusTech/winutil'
     runs-on: windows-latest
     outputs:
       version: ${{ steps.extract_version.outputs.version }}
@@ -89,6 +91,7 @@ jobs:
           path: ./winutil.ps1
 
   release:
+    if: github.repository == 'ChrisTitusTech/winutil'
     needs: build-runspace
     runs-on: ubuntu-latest
     steps:

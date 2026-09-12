@@ -1,4 +1,4 @@
-# applications 软件介绍(description)汉化
+﻿# applications 软件介绍(description)汉化
 # 数据:i18n-apps.json —— {key: 中文description}(由翻译 Workflow 产出)
 # 只替换 config/applications.json 的 description 字段值(英文 -> 中文),
 # content(产品名)/winget/choco/link/category/key 一律不动。精确值替换,命中必须唯一。
@@ -8,8 +8,8 @@ $path=Join-Path $dir '..\config\applications.json'
 $mapFile=Join-Path $dir 'i18n-apps.json'
 $enc=[System.Text.UTF8Encoding]::new($false)
 if(-not (Test-Path $mapFile)){ Write-Warning "缺少 $mapFile(先跑翻译 Workflow 生成),跳过 applications 汉化"; return }
-$map = Get-Content $mapFile -Raw | ConvertFrom-Json
-$obj = Get-Content $path -Raw | ConvertFrom-Json
+$map = Get-Content $mapFile -Raw -Encoding UTF8 | ConvertFrom-Json
+$obj = Get-Content $path -Raw -Encoding UTF8 | ConvertFrom-Json
 $text = [IO.File]::ReadAllText($path,$enc)
 $applied=0;$miss=0;$already=0;$nokey=0
 foreach($e in $map.PSObject.Properties){

@@ -1,13 +1,30 @@
 ---
-title: "IPv6 - Set IPv4 as Preferred"
-description: ""
+title: "优先使用 IPv4（降低 IPv6 优先级）"
+description: "当前源配置生成的开发参考"
+generated: true
 ---
 
-```json {filename="config/tweaks.json",linenos=inline,linenostart=1152}
+<!-- winutil-devdocs: tweaks/WPFTweaksIPv46; schema=1 -->
+
+> 本页由 tools/devdocs-generator.ps1 生成，请修改源配置或函数后重新生成。目录保留历史 URL，实际分类以本页为准。
+
+- 稳定 ID：`WPFTweaksIPv46`
+- 当前分类：z__高级优化 - 谨慎
+- 源配置：`config/tweaks.json`
+- 源配置 SHA-256：`e2ce1bf52cefe360a765bdcbde469664139ec732c332661c9bfdfeb383e10959`
+
+不完全禁用 IPv6，而是让系统优先走 IPv4；在 IPv6 配置不完整的网络里可能更稳定。
+
+本页描述实现，不代表推荐勾选。历史恢复仅覆盖工具实际记录的设置；配置中的 OriginalValue / OriginalType 不等于这台电脑的修改前状态。应用、文件及脚本其他改动不保证可恢复。
+
+## 配置定义
+
+```json
+{
   "WPFTweaksIPv46": {
-    "Content": "IPv6 - Set IPv4 as Preferred",
-    "Description": "Setting the IPv4 preference can have latency and security benefits on private networks where IPv6 is not configured.",
-    "category": "z__Advanced Tweaks - CAUTION",
+    "Content": "优先使用 IPv4（降低 IPv6 优先级）",
+    "Description": "不完全禁用 IPv6，而是让系统优先走 IPv4；在 IPv6 配置不完整的网络里可能更稳定。",
+    "category": "z__高级优化 - 谨慎",
     "panel": "1",
     "registry": [
       {
@@ -18,10 +35,7 @@ description: ""
         "OriginalValue": "0"
       }
     ],
+    "link": "https://winutil.christitus.com/dev/tweaks/z--advanced-tweaks---caution/ipv46"
+  }
+}
 ```
-
-## Registry Changes
-
-Applications and System Components store and retrieve configuration data to modify Windows settings, so we can use the registry to change many settings in one place.
-
-You can find information about the registry on [Wikipedia](https://en.wikipedia.org/wiki/Windows_Registry) and [Microsoft's Website](https://learn.microsoft.com/en-us/windows/win32/sysinfo/registry).

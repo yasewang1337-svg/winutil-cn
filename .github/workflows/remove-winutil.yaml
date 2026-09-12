@@ -1,34 +1,25 @@
-name: Remove winutil.ps1 if included in a Push
+name: 检查生成产物未入库
 
 on:
   push:
-    branches:
-      - '**'
+    branches: ['**']
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
 
 jobs:
-  check-and-delete-file:
+  check-generated-files:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v7
-
-    - name: Check if winutil.ps1 exists
-      id: check_existence
-      run: |
-        if [ -f "winutil.ps1" ]; then
-          echo "winutil_exists=true" >> $GITHUB_OUTPUT
-        else
-          echo "winutil_exists=false" >> $GITHUB_OUTPUT
-        fi
-
-    - name: Delete winutil.ps1 if it exists
-      if: steps.check_existence.outputs.winutil_exists == 'true'
-      run: |
-        git config --global user.email "winutil-action@noreply.github.com"
-        git config --global user.name "winutil-action"
-        git rm winutil.ps1
-        git commit -m "Delete winutil.ps1 as it is not allowed"
-        git push origin HEAD:${{ github.ref }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v7
+      - name: Reject tracked build outputs
+        shell: bash
+        run: |
+          tracked=$(git ls-files -- winutil.ps1 winutil-cn.ps1 WinUtil-CN.exe mcp/data.json .artifacts tools/launcher/bin tools/launcher/obj)
+          if [ -n "$tracked" ]; then
+            printf '%s\n' "$tracked"
+            echo '::error::Build outputs must stay untracked. Remove them from the Git index and commit the source files instead.'
+            exit 1
+          fi

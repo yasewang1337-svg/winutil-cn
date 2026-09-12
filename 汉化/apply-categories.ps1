@@ -1,4 +1,4 @@
-# winutil-cn 分类名汉化
+﻿# winutil-cn 分类名汉化
 # 只替换 config/*.json 里 category/Category 字段的【值】,保留排序前缀(z__ / ____ / __)。
 # 不碰 key / registry / InvokeScript / winget / choco / link。最小 diff、可重复、上游 merge 后可重跑。
 $ErrorActionPreference = 'Stop'

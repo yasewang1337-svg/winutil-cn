@@ -1,4 +1,4 @@
-name: Deploy Hugo site to Pages
+name: 上游保留 - Hugo Pages
 
 on:
   push:

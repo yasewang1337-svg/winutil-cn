@@ -1,4 +1,4 @@
-name: Close Discussion on PR Merge
+name: 上游保留 - Close Discussion on PR Merge
 
 on:
   pull_request:

@@ -1,13 +1,30 @@
 ---
-title: "Hibernation - Disable"
-description: ""
+title: "禁用休眠"
+description: "当前源配置生成的开发参考"
+generated: true
 ---
 
-```json {filename="config/tweaks.json",linenos=inline,linenostart=32}
+<!-- winutil-devdocs: tweaks/WPFTweaksHiber; schema=1 -->
+
+> 本页由 tools/devdocs-generator.ps1 生成，请修改源配置或函数后重新生成。目录保留历史 URL，实际分类以本页为准。
+
+- 稳定 ID：`WPFTweaksHiber`
+- 当前分类：z__高级设置 - 先了解影响
+- 源配置：`config/tweaks.json`
+- 源配置 SHA-256：`e2ce1bf52cefe360a765bdcbde469664139ec732c332661c9bfdfeb383e10959`
+
+关闭休眠功能并释放 hiberfil.sys 以节省磁盘空间。台式机通常不需要；笔记本若依赖休眠可不要选。
+
+本页描述实现，不代表推荐勾选。历史恢复仅覆盖工具实际记录的设置；配置中的 OriginalValue / OriginalType 不等于这台电脑的修改前状态。应用、文件及脚本其他改动不保证可恢复。
+
+## 配置定义
+
+```json
+{
   "WPFTweaksHiber": {
-    "Content": "Hibernation - Disable",
-    "Description": "Hibernation is really meant for laptops as it saves what's in memory before turning the PC off. It really should never be used.",
-    "category": "Essential Tweaks",
+    "Content": "禁用休眠",
+    "Description": "关闭休眠功能并释放 hiberfil.sys 以节省磁盘空间。台式机通常不需要；笔记本若依赖休眠可不要选。",
+    "category": "z__高级设置 - 先了解影响",
     "panel": "1",
     "registry": [
       {
@@ -31,10 +48,7 @@ description: ""
     "UndoScript": [
       "powercfg.exe /hibernate on"
     ],
+    "link": "https://winutil.christitus.com/dev/tweaks/essential-tweaks/hiber"
+  }
+}
 ```
-
-## Registry Changes
-
-Applications and System Components store and retrieve configuration data to modify Windows settings, so we can use the registry to change many settings in one place.
-
-You can find information about the registry on [Wikipedia](https://en.wikipedia.org/wiki/Windows_Registry) and [Microsoft's Website](https://learn.microsoft.com/en-us/windows/win32/sysinfo/registry).
