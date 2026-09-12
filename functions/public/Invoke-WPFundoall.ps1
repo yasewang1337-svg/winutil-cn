@@ -1,48 +1,22 @@
 function Invoke-WPFundoall {
-    <#
-
-    .SYNOPSIS
-        Undoes every selected tweak
-
-    #>
-
-    if($sync.ProcessRunning) {
-        $msg = "[Invoke-WPFundoall] 当前有进程正在运行。"
-        [System.Windows.MessageBox]::Show($msg, "Winutil", [System.Windows.MessageBoxButton]::OK, [System.Windows.MessageBoxImage]::Warning)
+    <# .SYNOPSIS Restores selected settings from real recorded snapshots. #>
+    if ($sync.ProcessRunning) { Write-Warning '其他操作正在执行，请稍后再试。'; return }
+    $tweaks = @($sync.selectedTweaks)
+    if (-not $tweaks.Count) {
+        if ($sync.Form) { [System.Windows.MessageBox]::Show($sync.Form, '请先勾选需要恢复的设置。', '恢复记录', 'OK', 'Information') | Out-Null }
         return
     }
-
-    $tweaks = $sync.selectedTweaks
-
-    if ($tweaks.count -eq 0) {
-        $msg = "请勾选你要撤销的优化项。"
-        [System.Windows.MessageBox]::Show($msg, "Winutil", [System.Windows.MessageBoxButton]::OK, [System.Windows.MessageBoxImage]::Warning)
-        return
-    }
-
-    Invoke-WPFRunspace -ArgumentList $tweaks -ScriptBlock {
-        param($tweaks)
-
-        $sync.ProcessRunning = $true
-        if ($tweaks.count -eq 1) {
-            Invoke-WPFUIThread -ScriptBlock { Set-WinUtilTaskbaritem -state "Indeterminate" -value 0.01 -overlay "logo" }
-        } else {
-            Invoke-WPFUIThread -ScriptBlock { Set-WinUtilTaskbaritem -state "Normal" -value 0.01 -overlay "logo" }
-        }
-
-
-        for ($i = 0; $i -lt $tweaks.Count; $i++) {
-            Set-WinUtilProgressBar -Label "Undoing $($tweaks[$i])" -Percent ($i / $tweaks.Count * 100)
-            Invoke-WinUtiltweaks $tweaks[$i] -undo $true
-            Invoke-WPFUIThread -ScriptBlock { Set-WinUtilTaskbaritem -value ($i/$tweaks.Count) }
-        }
-
-        Set-WinUtilProgressBar -Label "Undo Tweaks Finished" -Percent 100
+    if (-not (Confirm-WinUtilTweakPlan -Tweaks $tweaks -Undo)) { return }
+    $sync.ProcessRunning = $true
+    if (-not $sync.Form) { Invoke-WinUtilTweakBatch -Tweaks $tweaks -Undo; return }
+    try {
+        Initialize-WinUtilTweakUiCallbacks
+        Invoke-WPFRunspace -ParameterList @(, @('Tweaks', $tweaks)) -ScriptBlock {
+            param($Tweaks)
+            Invoke-WinUtilTweakBatch -Tweaks $Tweaks -Undo
+        } | Out-Null
+    } catch {
         $sync.ProcessRunning = $false
-        Invoke-WPFUIThread -ScriptBlock { Set-WinUtilTaskbaritem -state "None" -overlay "checkmark" }
-        Write-Host "=================================="
-        Write-Host "---  Undo Tweaks are Finished  ---"
-        Write-Host "=================================="
-
+        [System.Windows.MessageBox]::Show($sync.Form, $_.Exception.Message, '无法开始恢复', 'OK', 'Error') | Out-Null
     }
 }

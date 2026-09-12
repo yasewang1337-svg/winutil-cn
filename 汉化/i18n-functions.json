@@ -294,18 +294,6 @@
     "kind": "runtime"
   },
   {
-    "file": "functions/public/Invoke-WPFInstall.ps1",
-    "en": "[Invoke-WPFInstall] An Install process is currently running.",
-    "zh": "[Invoke-WPFInstall] 当前有安装进程正在运行。",
-    "kind": "runtime"
-  },
-  {
-    "file": "functions/public/Invoke-WPFInstall.ps1",
-    "en": "Please select the program(s) to install or upgrade.",
-    "zh": "请选择要安装或升级的程序。",
-    "kind": "runtime"
-  },
-  {
     "file": "functions/public/Invoke-WPFUltimatePerformance.ps1",
     "en": "Ultimate Power Plan plan installed and activated.",
     "zh": "卓越性能电源计划已安装并启用。",
@@ -327,48 +315,6 @@
     "file": "functions/public/Invoke-WPFUltimatePerformance.ps1",
     "en": "Success",
     "zh": "成功",
-    "kind": "runtime"
-  },
-  {
-    "file": "functions/public/Invoke-WPFUnInstall.ps1",
-    "en": "[Invoke-WPFUnInstall] Install process is currently running",
-    "zh": "[Invoke-WPFUnInstall] 当前有进程正在运行",
-    "kind": "runtime"
-  },
-  {
-    "file": "functions/public/Invoke-WPFUnInstall.ps1",
-    "en": "Please select the program(s) to uninstall",
-    "zh": "请选择要卸载的程序",
-    "kind": "runtime"
-  },
-  {
-    "file": "functions/public/Invoke-WPFUnInstall.ps1",
-    "en": "Are you sure?",
-    "zh": "确定吗?",
-    "kind": "runtime"
-  },
-  {
-    "file": "functions/public/Invoke-WPFtweaksbutton.ps1",
-    "en": "[Invoke-WPFtweaksbutton] Install process is currently running.",
-    "zh": "[Invoke-WPFtweaksbutton] 当前有进程正在运行。",
-    "kind": "runtime"
-  },
-  {
-    "file": "functions/public/Invoke-WPFtweaksbutton.ps1",
-    "en": "Please check the tweaks you wish to perform.",
-    "zh": "请勾选你要执行的优化项。",
-    "kind": "runtime"
-  },
-  {
-    "file": "functions/public/Invoke-WPFundoall.ps1",
-    "en": "[Invoke-WPFundoall] Install process is currently running.",
-    "zh": "[Invoke-WPFundoall] 当前有进程正在运行。",
-    "kind": "runtime"
-  },
-  {
-    "file": "functions/public/Invoke-WPFundoall.ps1",
-    "en": "Please check the tweaks you wish to undo.",
-    "zh": "请勾选你要撤销的优化项。",
     "kind": "runtime"
   }
 ]

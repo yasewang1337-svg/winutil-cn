@@ -1,67 +1,10 @@
-function Invoke-WPFUnInstall {
+﻿function Invoke-WPFUnInstall {
     param(
-        [Parameter(Mandatory=$false)]
-        [PSObject[]]$PackagesToUninstall = $($sync.selectedApps | Foreach-Object { $sync.configs.applicationsHashtable.$_ })
+        [object[]]$PackagesToUninstall = @($sync.selectedApps | ForEach-Object { $sync.configs.applicationsHashtable.$_ }),
+        [switch]$NonInteractive
     )
-    <#
-
-    .SYNOPSIS
-        Uninstalls the selected programs
-    #>
-
-    if($sync.ProcessRunning) {
-        $msg = "[Invoke-WPFUnInstall] 当前有进程正在运行"
-        [System.Windows.MessageBox]::Show($msg, "Winutil", [System.Windows.MessageBoxButton]::OK, [System.Windows.MessageBoxImage]::Warning)
-        return
-    }
-
-    if ($PackagesToUninstall.Count -eq 0) {
-        $WarningMsg = "请选择要卸载的程序"
-        [System.Windows.MessageBox]::Show($WarningMsg, $AppTitle, [System.Windows.MessageBoxButton]::OK, [System.Windows.MessageBoxImage]::Warning)
-        return
-    }
-
-    $ButtonType = [System.Windows.MessageBoxButton]::YesNo
-    $MessageboxTitle = "确定吗?"
-    $Messageboxbody = ("This will uninstall the following applications: `n $($PackagesToUninstall | Select-Object Name, Description| Out-String)")
-    $MessageIcon = [System.Windows.MessageBoxImage]::Information
-
-    $confirm = [System.Windows.MessageBox]::Show($Messageboxbody, $MessageboxTitle, $ButtonType, $MessageIcon)
-
-    if($confirm -eq "No") {return}
-
-    $ManagerPreference = $sync.preferences.packagemanager
-
-    Invoke-WPFRunspace -ParameterList @(("PackagesToUninstall", $PackagesToUninstall),("ManagerPreference", $ManagerPreference)) -ScriptBlock {
-        param($PackagesToUninstall, $ManagerPreference)
-
-        $packagesSorted = Get-WinUtilSelectedPackages -PackageList $PackagesToUninstall -Preference $ManagerPreference
-        $packagesWinget = $packagesSorted[[PackageManagers]::Winget]
-        $packagesChoco = $packagesSorted[[PackageManagers]::Choco]
-
-        try {
-            $sync.ProcessRunning = $true
-            Show-WPFInstallAppBusy -text "Uninstalling apps..."
-
-            # Uninstall all selected programs in new window
-            if($packagesWinget.Count -gt 0) {
-                Install-WinUtilProgramWinget -Action Uninstall -Programs $packagesWinget
-            }
-            if($packagesChoco.Count -gt 0) {
-                Install-WinUtilProgramChoco -Action Uninstall -Programs $packagesChoco
-            }
-            Hide-WPFInstallAppBusy
-            Write-Host "==========================================="
-            Write-Host "--       Uninstalls have finished       ---"
-            Write-Host "==========================================="
-            Invoke-WPFUIThread -ScriptBlock { Set-WinUtilTaskbaritem -state "None" -overlay "checkmark" }
-        } catch {
-            Write-Host "==========================================="
-            Write-Host "Error: $_"
-            Write-Host "==========================================="
-           Invoke-WPFUIThread -ScriptBlock { Set-WinUtilTaskbaritem -state "Error" -overlay "warning" }
-        }
-        $sync.ProcessRunning = $False
-
-    }
+    $preference = [string]$sync.preferences.packagemanager
+    if ($preference -notin @('Winget', 'Choco')) { $preference = 'Winget' }
+    $plan = @(Get-WinUtilPackagePlan -Packages $PackagesToUninstall -Preference $preference -Action Uninstall)
+    Invoke-WinUtilPackageOperation -Plan $plan -NonInteractive:$NonInteractive
 }

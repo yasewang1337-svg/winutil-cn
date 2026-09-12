@@ -1,43 +1,20 @@
 {
   "Standard": [
-    "WPFTweaksActivity",
     "WPFTweaksConsumerFeatures",
-    "WPFTweaksDisableExplorerAutoDiscovery",
-    "WPFTweaksWPBT",
-    "WPFTweaksDeBloat",
-    "WPFTweaksLocation",
-    "WPFTweaksServices",
-    "WPFTweaksTelemetry",
-    "WPFTweaksDeliveryOptimization",
-    "WPFTweaksDiskCleanup",
-    "WPFTweaksDeleteTempFiles",
     "WPFTweaksEndTaskOnTaskbar",
-    "WPFTweaksRestorePoint"
+    "WPFTweaksActivity",
+    "WPFTweaksDeliveryOptimization"
   ],
   "Minimal": [
     "WPFTweaksConsumerFeatures",
-    "WPFTweaksDeBloat",
-    "WPFTweaksWPBT",
-    "WPFTweaksServices",
-    "WPFTweaksTelemetry"
+    "WPFTweaksEndTaskOnTaskbar"
   ],
   "Advanced": [
-    "WPFTweaksActivity",
+    "WPFTweaksRestorePoint",
     "WPFTweaksConsumerFeatures",
-    "WPFTweaksDisableExplorerAutoDiscovery",
-    "WPFTweaksWPBT",
-    "WPFTweaksDeBloat",
-    "WPFTweaksLocation",
-    "WPFTweaksServices",
-    "WPFTweaksTelemetry",
-    "WPFTweaksDeliveryOptimization",
-    "WPFTweaksDeleteTempFiles",
     "WPFTweaksEndTaskOnTaskbar",
-    "WPFTweaksDisableStoreSearch",
-    "WPFTweaksRevertStartMenu",
-    "WPFTweaksWidget",
-    "WPFTweaksRemoveOneDrive",
-    "WPFTweaksWindowsAI",
+    "WPFTweaksActivity",
+    "WPFTweaksDeliveryOptimization",
     "WPFTweaksRightClickMenu"
   ]
 }

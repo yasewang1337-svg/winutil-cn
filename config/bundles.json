@@ -1,63 +1,142 @@
 {
-    "_meta": "应用组合推荐(策展式一键装机):按 id 索引,每组含 region(国内/国际)、name(中文名)、desc、apps(完整 WPFInstall<key>)。id 用作按钮名 WPFBundle<id>,须为 ASCII。apps 可直接喂给 Update-WinUtilSelections 一键勾选。数据驱动,加组合只改本文件。",
+    "_meta": "应用组合候选清单：apps 保留完整 WPFInstall<key> 供 GUI/MCP 使用；defaultApps 仅用于 GUI 预览时的保守推荐，缺省不全选；purposes 说明用途。按钮 WPFBundle<id> 先预览，确认后加入已选清单，不直接安装。",
     "cn_office": {
         "region": "国内",
         "name": "日常办公",
-        "desc": "国内主流办公通讯全家桶:聊天、协作、文档、输入法一步到位。",
+        "desc": "先选聊天和文档工具；会议与协作平台按公司、学校要求选择，输入法按习惯选用。",
+        "defaultApps": ["WPFInstallwechat", "WPFInstallwpsoffice"],
+        "purposes": {
+            "WPFInstallwechat": "聊天与文件传输",
+            "WPFInstalltencentqq": "QQ 联系人与群聊，按需选择",
+            "WPFInstallwpsoffice": "编辑文档、表格和演示文稿；已有办公软件可不选",
+            "WPFInstalldingtalk": "钉钉协作；按单位要求选择",
+            "WPFInstallfeishu": "飞书协作；按单位要求选择",
+            "WPFInstalltencentmeeting": "参加腾讯会议时选用",
+            "WPFInstallsogouinput": "更换输入法时选用；可继续使用系统输入法"
+        },
         "apps": ["WPFInstallwechat", "WPFInstalltencentqq", "WPFInstallwpsoffice", "WPFInstalldingtalk", "WPFInstallfeishu", "WPFInstalltencentmeeting", "WPFInstallsogouinput"]
     },
     "cn_media": {
         "region": "国内",
         "name": "影音娱乐",
-        "desc": "听歌、追剧、看视频、下载,国内平台一网打尽。",
+        "desc": "按常用账号和内容平台选择；不需要把所有播放器都装上。",
+        "defaultApps": [],
+        "purposes": {
+            "WPFInstallneteasecloudmusic": "听歌，适合已有网易云音乐账号的用户",
+            "WPFInstallbilibili": "观看哔哩哔哩视频",
+            "WPFInstalliqiyi": "观看爱奇艺内容",
+            "WPFInstalltencentvideo": "观看腾讯视频内容",
+            "WPFInstallthunder": "使用迅雷下载时选用"
+        },
         "apps": ["WPFInstallneteasecloudmusic", "WPFInstallbilibili", "WPFInstalliqiyi", "WPFInstalltencentvideo", "WPFInstallthunder"]
     },
     "cn_cloud": {
         "region": "国内",
         "name": "网盘与远程",
-        "desc": "云存储 + 远程控制 + 极简浏览器,居家办公/传文件常用。",
+        "desc": "按已有网盘账号选择；仅在需要远程协助时勾选远程控制工具。",
+        "defaultApps": [],
+        "purposes": {
+            "WPFInstallbaidunetdisk": "同步与下载百度网盘文件",
+            "WPFInstallquarkclouddrive": "同步与下载夸克网盘文件",
+            "WPFInstalltodesk": "远程协助或访问自己的电脑；按需选择",
+            "WPFInstallquark": "夸克浏览器；已有常用浏览器可不选"
+        },
         "apps": ["WPFInstallbaidunetdisk", "WPFInstallquarkclouddrive", "WPFInstalltodesk", "WPFInstallquark"]
     },
     "cn_create": {
         "region": "国内",
         "name": "效率创作",
-        "desc": "启动器、截图贴图、图床、思维导图,提升日常效率。",
+        "desc": "推荐从截图贴图开始，其他工具按实际工作需要添加。",
+        "defaultApps": ["WPFInstallsnipaste"],
+        "purposes": {
+            "WPFInstallutools": "快捷启动与插件工具",
+            "WPFInstallsnipaste": "截图并将图片固定在屏幕上",
+            "WPFInstallpicgo": "上传图片到已配置的图床",
+            "WPFInstallxmind": "整理思路、制作思维导图"
+        },
         "apps": ["WPFInstallutools", "WPFInstallsnipaste", "WPFInstallpicgo", "WPFInstallxmind"]
     },
     "intl_dev": {
         "region": "国际",
         "name": "开发环境",
-        "desc": "编辑器 + 版本控制 + 运行时 + 容器,开箱即用的开发工作站。",
+        "desc": "先准备编辑器和 Git，语言运行时与 Docker 按项目需要选择。",
+        "defaultApps": ["WPFInstallvscode", "WPFInstallgit"],
+        "purposes": {
+            "WPFInstallvscode": "编辑代码与管理项目",
+            "WPFInstallgit": "代码版本管理",
+            "WPFInstallnodejs": "开发 Node.js 或前端项目时选用",
+            "WPFInstallpython3": "运行 Python 项目时选用",
+            "WPFInstalldockerdesktop": "运行容器时选用；需要相应系统环境"
+        },
         "apps": ["WPFInstallvscode", "WPFInstallgit", "WPFInstallnodejs", "WPFInstallpython3", "WPFInstalldockerdesktop"]
     },
     "intl_browser": {
         "region": "国际",
-        "name": "浏览器矩阵",
-        "desc": "主流与注重隐私的浏览器,按需选用。",
+        "name": "选择浏览器",
+        "desc": "通常选择一个常用浏览器即可；可继续使用电脑已有的浏览器。",
+        "defaultApps": [],
+        "purposes": {
+            "WPFInstallchrome": "使用 Chrome 扩展或同步 Google 账号",
+            "WPFInstallfirefox": "使用 Firefox 及其账号同步",
+            "WPFInstallbrave": "使用 Brave 的浏览体验",
+            "WPFInstalledge": "使用 Edge 或同步微软账号；系统可能已自带"
+        },
         "apps": ["WPFInstallchrome", "WPFInstallfirefox", "WPFInstallbrave", "WPFInstalledge"]
     },
     "intl_media": {
         "region": "国际",
         "name": "影音媒体",
-        "desc": "全能播放器、录屏、截图、音频处理与解码包。",
+        "desc": "推荐一个播放器，录屏、截图和音频编辑工具按需添加。",
+        "defaultApps": ["WPFInstallvlc"],
+        "purposes": {
+            "WPFInstallvlc": "播放本地音视频文件",
+            "WPFInstallobs": "录屏或直播时选用",
+            "WPFInstallsharex": "截图、录屏和图片分享",
+            "WPFInstallklite": "其他播放器需要解码器时选用；仅用 VLC 可不选",
+            "WPFInstallaudacity": "录制与编辑音频"
+        },
         "apps": ["WPFInstallvlc", "WPFInstallobs", "WPFInstallsharex", "WPFInstallklite", "WPFInstallaudacity"]
     },
     "intl_comm": {
         "region": "国际",
         "name": "通讯协作",
-        "desc": "国际主流即时通讯与会议工具。",
+        "desc": "按联系人或团队使用的平台选择，不预选多个通讯软件。",
+        "defaultApps": [],
+        "purposes": {
+            "WPFInstalldiscord": "加入 Discord 社区或语音频道",
+            "WPFInstalltelegram": "与 Telegram 联系人通讯",
+            "WPFInstallslack": "加入 Slack 工作区",
+            "WPFInstallzoom": "参加 Zoom 会议",
+            "WPFInstallsignal": "与 Signal 联系人通讯"
+        },
         "apps": ["WPFInstalldiscord", "WPFInstalltelegram", "WPFInstallslack", "WPFInstallzoom", "WPFInstallsignal"]
     },
     "intl_system": {
         "region": "国际",
         "name": "系统必备",
-        "desc": "压缩、文件管理、文本编辑、下载、启动盘制作,重装必备。",
+        "desc": "推荐压缩工具；文件管理、下载和启动盘工具按使用场景添加。",
+        "defaultApps": ["WPFInstall7zip"],
+        "purposes": {
+            "WPFInstall7zip": "解压与创建压缩包",
+            "WPFInstallfiles": "尝试另一种文件管理器",
+            "WPFInstallnotepadplus": "编辑纯文本与配置文件",
+            "WPFInstallqbittorrent": "下载种子或磁力链接时选用",
+            "WPFInstallrufus": "制作启动 U 盘时选用"
+        },
         "apps": ["WPFInstall7zip", "WPFInstallfiles", "WPFInstallnotepadplus", "WPFInstallqbittorrent", "WPFInstallrufus"]
     },
     "intl_privacy": {
         "region": "国际",
         "name": "隐私安全",
-        "desc": "密码管理、加密通讯、注重隐私的浏览器。",
+        "desc": "密码管理器通常选择一种；通讯软件和浏览器按自己的习惯选用。",
+        "defaultApps": [],
+        "purposes": {
+            "WPFInstallbitwarden": "密码管理器；与 Proton Pass 按需选择其一",
+            "WPFInstallprotonpass": "密码管理器；与 Bitwarden 按需选择其一",
+            "WPFInstallsignal": "与 Signal 联系人通讯",
+            "WPFInstalllibrewolf": "使用 LibreWolf 浏览器",
+            "WPFInstallmullvadbrowser": "使用 Mullvad Browser 浏览器"
+        },
         "apps": ["WPFInstallbitwarden", "WPFInstallprotonpass", "WPFInstallsignal", "WPFInstalllibrewolf", "WPFInstallmullvadbrowser"]
     }
 }

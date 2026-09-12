@@ -127,24 +127,41 @@ jobs:
           $scriptSha = (Get-FileHash winutil-cn.ps1 -Algorithm SHA256).Hash
           @("$scriptSha  winutil-cn.ps1", "$exeSha  WinUtil-CN.exe") | Set-Content SHA256SUMS.txt -Encoding ascii
           $notes = @"
-          WinUtil 中文汉化版 · 自动构建（$tag）
+          WinUtil CN 中文装机与维护助手 · 自动构建（$tag）
 
-          ## 两种用法
+          ## 三步开始
 
-          **① 一键命令**（以管理员身份打开 PowerShell / 终端后粘贴）：
+          1. 下载下方附件 WinUtil-CN.exe。
+          2. 双击打开，按 Windows 提示授予管理员权限，从首页选择用途。
+          3. 调整软件或设置清单，查看范围后确认执行，完成后检查结果。
+
+          EXE 内嵌本版本脚本，使用 Windows 自带 PowerShell 5.1。首次准备包管理器、下载安装软件和更新仍需要联网；单文件启动不等于离线安装所有软件。
+
+          ## 本版使用体验
+
+          - 首页提供装机、软件管理、基础设置、清单导入导出与设置历史入口
+          - 组合先预览用途和候选，再按需加入清单；确认组合不会立即安装
+          - 安装或卸载所选软件先核对计划，完成后逐项报告状态、原因与日志，可仅重试失败项
+          - 全部升级入口先说明整批范围，范围不限当前勾选；只提供整批结果与日志
+          - 基础和标准方案不含批量卸载应用或禁用服务；修改设置前展示影响和恢复范围
+          - 有记录的注册表值和服务启动配置可按历史恢复；无记录的旧改动、已删除应用、清理文件及脚本其他效果不能完整恢复
+
+          [中文上手指南](https://github.com/$repo/blob/$sha/docs/content/userguide/getting-started/_index.md) · [软件组合说明](https://github.com/$repo/blob/$sha/docs/content/userguide/recommendations/_index.md)
+
+          ## PowerShell 入口
+
+          习惯命令行的用户可在管理员 PowerShell 中运行最新版中文脚本，或下载下方 winutil-cn.ps1：
 
               irm https://github.com/$repo/releases/latest/download/winutil-cn.ps1 | iex
-
-          **② 下载 EXE 双击运行**：见下方 `WinUtil-CN.exe`（离线自包含，双击弹 UAC 后启动）。
 
           ## 说明
 
           - 基于本仓库提交 $sha 与汉化层构建；上游同步进度见仓库维护文档
           - winutil-cn.ps1 为 UTF-8 with BOM，兼容 PowerShell 5.1 中文显示
-          - WinUtil-CN.exe 为内嵌脚本的启动器，使用 Windows 自带 PowerShell 5.1
+          - 中文维护：Holha1337；基于 Chris Titus Tech Windows Utility，沿用 MIT 许可
           - Defender：${{ steps.defender.outputs.status }}
           - PowerShell 5.1 / 7 回归测试、产物语法和编码检查通过
-          - EXE 未做代码签名，个别杀软可能误报；可用 [VirusTotal](https://www.virustotal.com/gui/search/$exeSha) 核验哈希
+          - EXE 未做代码签名；校验文件见 SHA256SUMS.txt，也可按哈希查看 [VirusTotal](https://www.virustotal.com/gui/search/$exeSha) 是否已有检测记录
           - EXE SHA256：``$exeSha``
           - 构建自提交 $sha
           "@

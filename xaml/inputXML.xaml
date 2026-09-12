@@ -12,7 +12,7 @@
         Height="Auto"
         MinWidth="800"
         MinHeight="600"
-        Title="WinUtil">
+        Title="WinUtil CN · 中文装机与维护助手">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0" CornerRadius="10"/>
     </WindowChrome.WindowChrome>
@@ -952,19 +952,27 @@
         </Grid.ColumnDefinitions>
         <!-- Offline banner -->
         <Border Name="WPFOfflineBanner" Grid.Row="0" Background="#8B0000" Visibility="Collapsed" Padding="6,4">
-            <TextBlock Text="&#x26A0; Offline Mode - No Internet Connection" Foreground="White" FontWeight="Bold"
+            <TextBlock Text="离线模式 · 可浏览和准备清单，安装及更新需要联网" Foreground="White" FontWeight="Bold"
                 HorizontalAlignment="Center" FontSize="13" Background="Transparent"/>
         </Border>
         <Grid Grid.Row="1" Background="{DynamicResource MainBackgroundColor}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/> <!-- Navigation buttons -->
                 <ColumnDefinition Width="*"/> <!-- Search bar and buttons -->
             </Grid.ColumnDefinitions>
 
             <!-- Navigation Buttons Panel -->
-            <StackPanel Name="NavDockPanel" Orientation="Horizontal" Grid.Column="0" Margin="5,5,10,5">
+            <WrapPanel Name="NavDockPanel" Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,5,10,5">
                 <StackPanel Name="NavLogoPanel" Orientation="Horizontal" HorizontalAlignment="Left" Background="{DynamicResource MainBackgroundColor}" SnapsToDevicePixels="True" Margin="10,0,20,0">
                 </StackPanel>
+                <ToggleButton Name="WPFTab6BT" Margin="0,0,5,0" Height="{DynamicResource TabButtonHeight}" Width="{DynamicResource TabButtonWidth}"
+                    Background="{DynamicResource ButtonInstallBackgroundColor}" Foreground="{DynamicResource ButtonInstallForegroundColor}" FontWeight="Bold">
+                    <TextBlock Text="首页" FontSize="{DynamicResource TabButtonFontSize}"/>
+                </ToggleButton>
                 <ToggleButton Margin="0,0,5,0" Height="{DynamicResource TabButtonHeight}" Width="{DynamicResource TabButtonWidth}"
                     Background="{DynamicResource ButtonInstallBackgroundColor}" Foreground="white" FontWeight="Bold" Name="WPFTab1BT">
                     <ToggleButton.Content>
@@ -1005,10 +1013,10 @@
                         </TextBlock>
                     </ToggleButton.Content>
                 </ToggleButton>
-            </StackPanel>
+            </WrapPanel>
 
             <!-- Search Bar and Action Buttons -->
-            <Grid Name="GridBesideNavDockPanel" Grid.Column="1" Background="{DynamicResource MainBackgroundColor}" ShowGridLines="False" Height="Auto">
+            <Grid Name="GridBesideNavDockPanel" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,0,5,5" Background="{DynamicResource MainBackgroundColor}" ShowGridLines="False" Height="Auto">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*"/> <!-- Search bar area - priority space -->
                     <ColumnDefinition Width="Auto"/><!-- Buttons area -->
@@ -1027,7 +1035,7 @@
                             Padding="3,3,30,0"
                             ToolTip="按 Ctrl-F 输入软件名筛选下方列表,按 Esc 清除筛选">
                         </TextBox>
-                        <TextBlock
+                        <TextBlock Name="WPFSearchIcon"
                             VerticalAlignment="Center" HorizontalAlignment="Right"
                             FontFamily="Segoe MDL2 Assets"
                             Foreground="{DynamicResource ButtonBackgroundSelectedColor}"
@@ -1175,7 +1183,7 @@
                             </MenuItem>
                             <MenuItem FontSize="{DynamicResource ButtonFontSize}" Header="导出" Name="ExportMenuItem" Foreground="{DynamicResource MainForegroundColor}">
                                 <MenuItem.ToolTip>
-                                    <ToolTip Content="导出所选项并将执行命令复制到剪贴板。"/>
+                                    <ToolTip Content="保存所选项目到清单文件，稍后可导入预览。"/>
                                 </MenuItem.ToolTip>
                             </MenuItem>
                             <Separator/>
@@ -1245,13 +1253,13 @@
 
                             <StackPanel Background="{DynamicResource MainBackgroundColor}" Orientation="Vertical" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="5">
                                 <Label Content="推荐方案:" FontSize="{DynamicResource FontSize}" VerticalAlignment="Center" Margin="2"/>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,2,0,0">
+                                <WrapPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,2,0,0">
                                     <Button Name="WPFstandard" Content=" 标准 " Margin="2" Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}"/>
-                                    <Button Name="WPFminimal" Content=" 精简 " Margin="2" Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}"/>
+                                    <Button Name="WPFminimal" Content=" 基础设置 " Margin="2" Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}"/>
                                     <Button Name="WPFAdvanced" Content=" 高级 " Margin="2" Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}"/>
                                     <Button Name="WPFClearTweaksSelection" Content=" 清除 " Margin="2" Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}"/>
-                                    <Button Name="WPFGetInstalledTweaks" Content=" 获取已装优化 " Margin="2" Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}"/>
-                                </StackPanel>
+                                    <Button Name="WPFGetInstalledTweaks" Content=" 检查当前设置 " Margin="2" Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}"/>
+                                </WrapPanel>
                             </StackPanel>
 
                             <Grid Name="tweakspanel" Grid.Row="1">
@@ -1260,9 +1268,9 @@
 
                             <Border Grid.ColumnSpan="2" Grid.Row="2" Grid.Column="0" Style="{StaticResource BorderStyle}">
                                 <StackPanel Background="{DynamicResource MainBackgroundColor}" Orientation="Horizontal" HorizontalAlignment="Left">
-                                    <TextBlock Padding="10">
-                                        提示:把鼠标悬停在项目上可查看更详细的说明。请谨慎操作——很多优化项会大幅修改你的系统。
-                                        <LineBreak/>「推荐」选项适合普通用户;如果不确定,请不要勾选其它任何项!
+                                    <TextBlock Padding="10" TextWrapping="Wrap">
+                                        选择方案只会勾选项目。点击“查看并运行”后，会先列出改动和恢复范围。
+                                        <LineBreak/>系统设置可按记录恢复；卸载应用、清理文件等操作不能完整撤销，请逐项查看说明。
                                     </TextBlock>
                                 </StackPanel>
                             </Border>
@@ -1270,8 +1278,9 @@
                     </ScrollViewer>
                     <Border Grid.Row="1" Background="{DynamicResource MainBackgroundColor}" BorderBrush="{DynamicResource BorderColor}" BorderThickness="1" CornerRadius="5" HorizontalAlignment="Stretch" Padding="10">
                         <WrapPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0">
-                            <Button Name="WPFTweaksbutton" Content="运行优化" Margin="5" Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}"/>
-                            <Button Name="WPFUndoall" Content="撤销所选优化" Margin="5" Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}"/>
+                            <Button Name="WPFTweaksbutton" Content="查看并运行" Margin="5" Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}"/>
+                            <Button Name="WPFUndoall" Content="恢复所选设置" Margin="5" Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}"/>
+                            <Button Name="WPFTweakHistory" Content="操作历史" Margin="5" Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}"/>
                         </WrapPanel>
                     </Border>
                 </Grid>
@@ -1688,6 +1697,56 @@
                     </Grid>
 
                 </Grid>
+            </TabItem>
+            <TabItem Header="首页" Visibility="Collapsed" Name="WPFTab6">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Margin="20,12,20,20" MaxWidth="1100" HorizontalAlignment="Left">
+                        <StackPanel.Resources>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                <Setter Property="Foreground" Value="{DynamicResource MainForegroundColor}"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Style>
+                        </StackPanel.Resources>
+                        <TextBlock Text="把电脑准备成你需要的样子" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource MainForegroundColor}" TextWrapping="Wrap"/>
+                        <TextBlock Text="先选用途，再查看清单。浏览、选择和导入清单都不会自动安装软件。" Margin="0,8,0,14" Foreground="{DynamicResource MainForegroundColor}" TextWrapping="Wrap"/>
+                        <WrapPanel>
+                            <Border Style="{StaticResource BorderStyle}" Width="230" Margin="0,0,10,10" Padding="12">
+                                <StackPanel>
+                                    <TextBlock Text="新电脑装机" FontSize="{DynamicResource HeaderFontSize}" FontWeight="Bold"/>
+                                    <TextBlock Text="打开办公、影音、开发等组合，挑选自己需要的软件。" Margin="0,8,0,12" TextWrapping="Wrap"/>
+                                    <Button Width="Auto" MinWidth="0" Name="WPFHomeInstall" Content="选择装机软件" Padding="8" Height="Auto"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource BorderStyle}" Width="230" Margin="0,0,10,10" Padding="12">
+                                <StackPanel>
+                                    <TextBlock Text="管理日常软件" FontSize="{DynamicResource HeaderFontSize}" FontWeight="Bold"/>
+                                    <TextBlock Text="查看已装应用，安装、升级或卸载所选项，检查每项执行结果。" Margin="0,8,0,12" TextWrapping="Wrap"/>
+                                    <Button Width="Auto" MinWidth="0" Name="WPFHomeManage" Content="打开软件管理" Padding="8" Height="Auto"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource BorderStyle}" Width="230" Margin="0,0,10,10" Padding="12">
+                                <StackPanel>
+                                    <TextBlock Text="调整使用习惯" FontSize="{DynamicResource HeaderFontSize}" FontWeight="Bold"/>
+                                    <TextBlock Text="从基础设置开始，查看改动说明，再决定是否执行。" Margin="0,8,0,12" TextWrapping="Wrap"/>
+                                    <Button Width="Auto" MinWidth="0" Name="WPFHomeSettings" Content="查看基础设置" Padding="8" Height="Auto"/>
+                                </StackPanel>
+                            </Border>
+                        </WrapPanel>
+                        <TextBlock Text="清单与恢复" Margin="0,8,0,8" FontSize="{DynamicResource HeaderFontSize}" FontWeight="Bold"/>
+                        <WrapPanel>
+                            <Button Width="Auto" MinWidth="0" Name="WPFHomeImport" Content="导入装机清单" Margin="0,0,8,8" Padding="10,6" Height="Auto"/>
+                            <Button Width="Auto" MinWidth="0" Name="WPFHomeExport" Content="保存当前清单" Margin="0,0,8,8" Padding="10,6" Height="Auto"/>
+                            <Button Width="Auto" MinWidth="0" Name="WPFHomeHistory" Content="查看设置操作历史" Margin="0,0,8,8" Padding="10,6" Height="Auto"/>
+                        </WrapPanel>
+                        <TextBlock Text="清单保存所选软件与设置，不备份个人文件。操作历史只恢复已记录的设置；不能完整撤销的项目会单独说明。" TextWrapping="Wrap" Margin="0,0,0,12"/>
+                        <TextBlock Text="需要帮助？" Margin="0,8,0,8" FontSize="{DynamicResource HeaderFontSize}" FontWeight="Bold"/>
+                        <WrapPanel>
+                            <Button Width="Auto" MinWidth="0" Name="WPFHomeRepair" Content="查看系统修复工具" Margin="0,0,8,8" Padding="10,6" Height="Auto"/>
+                            <Button Width="Auto" MinWidth="0" Name="WPFHomeHelp" Content="中文上手指南" Margin="0,0,8,8" Padding="10,6" Height="Auto"/>
+                        </WrapPanel>
+                        <TextBlock Text="系统修复、Windows 更新策略和镜像制作适合有明确需求时使用。WinUtil CN 由 Holha1337 维护，基于 Chris Titus Tech WinUtil。" TextWrapping="Wrap" Margin="0,6,0,0"/>
+                    </StackPanel>
+                </ScrollViewer>
             </TabItem>
         </TabControl>
     </Grid>

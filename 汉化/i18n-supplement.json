@@ -2,12 +2,12 @@
   "_meta": "本机补翻层:上游新增、constansino 汉化版尚未覆盖的条目。与 i18n-borrowed.json(借用层)分开维护,来源清晰。apply-i18n.ps1 会合并两层。",
   "tweaks": {
     "WPFTweaksDeliveryOptimization": {
-      "Content": "传递优化 - 禁用",
-      "Description": "阻止 Windows 占用你的带宽,向互联网或局域网中的其他电脑上传更新。"
+      "Content": "关闭更新的对等传输",
+      "Description": "将更新下载设为 HTTP 模式，停止与其他电脑对等分享更新；Windows 更新仍可联网下载。可恢复本次修改前的注册表值。"
     },
     "WPFTweaksDisableBitLocker": {
-      "Content": "BitLocker - 禁用",
-      "Description": "禁用 BitLocker 磁盘加密。"
+      "Content": "关闭系统盘 BitLocker 加密（谨慎）",
+      "Description": "开始解密系统盘，降低设备遗失后的数据保护。解密过程需要时间；操作历史无法恢复加密状态。请先核对恢复密钥和使用需求。"
     },
     "WPFTweaksRemoveHomeAndGallery": {
       "Content": "文件资源管理器 主文件夹与图库 - 禁用",
@@ -31,6 +31,70 @@
     "WPFToggleLongPaths": {
       "Content": "启用长路径",
       "Description": "开启后资源管理器支持长度超过 260 个字符的文件路径。"
+    },
+    "WPFTweaksActivity": {
+      "Content": "关闭活动历史相关策略",
+      "Description": "关闭 Windows 活动历史的记录/同步相关策略。仅修改对应策略，不清理现有文件；效果取决于系统版本。可恢复本次修改前的注册表值。"
+    },
+    "WPFTweaksHiber": {
+      "Content": "禁用休眠",
+      "Description": "关闭休眠功能并释放 hiberfil.sys 以节省磁盘空间。台式机通常不需要；笔记本若依赖休眠可不要选。"
+    },
+    "WPFTweaksWidget": {
+      "Content": "移除小组件",
+      "Description": "移除任务栏左下角的小组件及相关组件。"
+    },
+    "WPFTweaksRevertStartMenu": {
+      "Content": "恢复旧版开始菜单布局",
+      "Description": "把 25H2 新版开始菜单恢复为逐步推送前的旧布局。"
+    },
+    "WPFTweaksDisableStoreSearch": {
+      "Content": "禁用 Microsoft Store 搜索结果",
+      "Description": "在开始菜单搜索应用时，不再显示 Microsoft Store 推荐结果。"
+    },
+    "WPFTweaksLocation": {
+      "Content": "禁用定位服务",
+      "Description": "关闭定位相关权限/服务，阻止系统与应用获取你的地理位置。"
+    },
+    "WPFTweaksServices": {
+      "Content": "调整服务启动方式（含禁用）",
+      "Description": "禁用离线文件、诊断跟踪和网络连接共享等服务，并将部分服务改为手动。可能影响企业离线文件、热点/共享和相关功能；不会默认勾选。注册表脚本的附加改动不在历史恢复范围内。"
+    },
+    "WPFTweaksConsumerFeatures": {
+      "Content": "减少推荐应用和推广内容",
+      "Description": "尝试关闭 Windows 的消费者体验与推荐内容；效果取决于系统版本和组织策略。不会卸载现有应用，可恢复本次修改前的注册表值。"
+    },
+    "WPFTweaksTelemetry": {
+      "Content": "禁用遥测",
+      "Description": "关闭 Microsoft 遥测与部分相关数据收集。"
+    },
+    "WPFTweaksDeBloat": {
+      "Content": "批量卸载内置应用（谨慎）",
+      "Description": "移除配置清单中的画图、便笺、录音机、天气、新版 Outlook、Teams 等应用及部分预装包。可能影响其他用户；应用和数据不能通过“恢复所选设置”还原，请先确认确实不需要。"
+    },
+    "WPFTweaksRestorePoint": {
+      "Content": "创建系统还原点",
+      "Description": "先创建并核对新的 Windows 系统还原点；创建失败会停止本次其他修改。推荐通过中文版 EXE 使用，系统还原需在 Windows 中操作。"
+    },
+    "WPFTweaksEndTaskOnTaskbar": {
+      "Content": "右键任务栏启用“结束任务”",
+      "Description": "在支持的 Windows 11 版本中，为任务栏程序右键菜单增加“结束任务”。强制结束应用可能丢失未保存内容；此项仅显示入口，不会自动结束程序。"
+    },
+    "WPFTweaksWPBT": {
+      "Content": "禁用 WPBT（平台二进制表）",
+      "Description": "阻止系统执行 OEM 写入的 WPBT 内容，降低厂商预装/持久化程序带来的风险（高级选项）。"
+    },
+    "WPFTweaksDiskCleanup": {
+      "Content": "运行磁盘清理",
+      "Description": "运行系统磁盘清理并清理旧组件/更新缓存，释放空间（可能需要较长时间）。"
+    },
+    "WPFTweaksDeleteTempFiles": {
+      "Content": "删除临时文件",
+      "Description": "删除用户临时目录与系统临时目录中的文件，用于快速释放空间（可能删掉某些软件的临时缓存）。"
+    },
+    "WPFTweaksDisableExplorerAutoDiscovery": {
+      "Content": "禁用资源管理器自动识别文件夹类型",
+      "Description": "关闭资源管理器对文件夹“自动套模板”（图片/音乐/视频等）判断，减少卡顿或模板乱跳。"
     }
   }
 }

@@ -1,21 +1,7 @@
-function Invoke-WPFInstallUpgrade {
-    if ($sync.ChocoRadioButton.IsChecked) {
-        Install-WinUtilChoco # Ensure Chocolatey is installed before upgrading
-
-        Write-Host "==========================================="
-        Write-Host "--           Updates started            ---"
-        Write-Host "-- You can close this window if desired ---"
-        Write-Host "==========================================="
-
-        Start-Process -FilePath powershell.exe -ArgumentList 'choco upgrade all -y'
-    } else {
-        Install-WinUtilWinget # Ensure WinGet is installed before upgrading
-
-        Write-Host "==========================================="
-        Write-Host "--           Updates started            ---"
-        Write-Host "-- You can close this window if desired ---"
-        Write-Host "==========================================="
-
-        Start-Process -FilePath powershell.exe -ArgumentList '-NoExit winget upgrade --all --include-unknown --silent --accept-source-agreements --accept-package-agreements'
-    }
+﻿function Invoke-WPFInstallUpgrade {
+    param([switch]$NonInteractive)
+    $preference = [string]$sync.preferences.packagemanager
+    if ($preference -notin @('Winget', 'Choco')) { $preference = 'Winget' }
+    $plan = @(Get-WinUtilPackagePlan -Preference $preference -Action UpgradeAll)
+    Invoke-WinUtilPackageOperation -Plan $plan -NonInteractive:$NonInteractive
 }
