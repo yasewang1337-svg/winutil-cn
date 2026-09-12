@@ -1,4 +1,4 @@
-BeforeAll {
+﻿BeforeAll {
     Add-Type -AssemblyName PresentationFramework
     $script:root = Split-Path $PSScriptRoot -Parent
     foreach ($file in @('public/Invoke-WPFTab.ps1', 'public/Invoke-WPFHome.ps1', 'private/Set-WinUtilWindowBounds.ps1', 'private/Invoke-WinutilThemeChange.ps1', 'private/Invoke-WinUtilFontScaling.ps1')) {

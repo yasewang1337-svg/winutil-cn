@@ -1,4 +1,4 @@
-BeforeAll {
+﻿BeforeAll {
     $script:originalLocalAppData = $env:LOCALAPPDATA
     $private = Join-Path $PSScriptRoot '../functions/private'
     foreach ($name in @('Get-WinUtilTweakRegistryState', 'Get-WinUtilTweakHistory', 'Save-WinUtilTweakHistory', 'Restore-WinUtilTweakHistory', 'Set-WinUtilRegistry', 'Set-WinUtilService', 'Invoke-WinUtilTweaks', 'Confirm-WinUtilTweakPlan', 'Invoke-WinUtilTweakBatch', 'Invoke-WinUtilTweakToggle', 'New-WinUtilTweakRestorePoint', 'Initialize-WinUtilTweakUiCallbacks')) {

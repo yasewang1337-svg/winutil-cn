@@ -1,4 +1,4 @@
-BeforeAll {
+﻿BeforeAll {
     $root = Split-Path $PSScriptRoot -Parent
     foreach ($path in @('functions/public/Invoke-WPFImpex.ps1', 'functions/private/Update-WinUtilSelections.ps1')) {
         . ([scriptblock]::Create([IO.File]::ReadAllText((Join-Path $root $path))))
