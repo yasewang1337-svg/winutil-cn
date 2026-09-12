@@ -5,7 +5,10 @@ Describe 'PowerShell source syntax' -ForEach @(
 ) {
     It '<SourceName> parses without errors' {
         $errors = $null
-        $ast = [System.Management.Automation.Language.Parser]::ParseFile($SourcePath, [ref]$null, [ref]$errors)
+        # Source files are UTF-8; only the standalone release requires a BOM.
+        # Match Compile.ps1 instead of letting PS 5.1 guess the system ANSI page.
+        $source = Get-Content -LiteralPath $SourcePath -Raw -Encoding UTF8
+        $ast = [System.Management.Automation.Language.Parser]::ParseInput($source, $SourcePath, [ref]$null, [ref]$errors)
         @($errors).Count | Should -Be 0 -Because ($errors | Out-String)
         @($ast.FindAll({ param($node) $node -is [System.Management.Automation.Language.FunctionDefinitionAst] }, $true)).Count | Should -BeGreaterThan 0
     }

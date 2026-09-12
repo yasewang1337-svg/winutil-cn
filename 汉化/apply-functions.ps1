@@ -34,7 +34,7 @@ foreach($f in $byFile.Keys){
     $tmp="$f.tmp"
     [IO.File]::WriteAllText($tmp,$text,$enc)
     $errs=$null;$toks=$null
-    [System.Management.Automation.Language.Parser]::ParseFile($tmp,[ref]$toks,[ref]$errs)|Out-Null
+    [System.Management.Automation.Language.Parser]::ParseInput($text,$f,[ref]$toks,[ref]$errs)|Out-Null
     if($errs.Count -eq 0){ Move-Item $tmp $f -Force; $totalApplied+=$applied }
     else{ Remove-Item $tmp -Force; $rolledBack+=[IO.Path]::GetFileName($f); Write-Warning "$([IO.Path]::GetFileName($f)) 替换后语法错误 $($errs.Count) 处,已回滚不改" }
   }

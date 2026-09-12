@@ -27,6 +27,7 @@
 - 全汉化构建与双版本产物语法/BOM 校验通过；actionlint 全工作流通过；MCP 快照生成成功（213 软件 / 10 组合 / 66 优化项 / 12 DNS）。
 - 实际 Windows 上只读检查 23 个开关成功（204 ms）。未执行系统优化或安装软件。
 - EXE 使用隔离的 .NET SDK 8.0.425 编译，0 警告 / 0 错误；嵌入脚本 SHA256 与构建的 PS1 完全一致。根目录 `winutil-cn.ps1` 和 `WinUtil-CN.exe` 可交付；校验和见 `.artifacts/SHA256SUMS.txt`。
+- PR #7 首次远端验证发现英文 Windows 的 PS 5.1 按 ANSI 解析无 BOM 中文源码；已将源码及汉化语法校验改为显式 UTF-8 后 ParseInput，与编译读取方式一致。已发布的 BOM 产物检查本身通过。
 
 ## 待交付
 
