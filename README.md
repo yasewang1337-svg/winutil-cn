@@ -40,7 +40,7 @@
 - **运行时提示**：MessageBox 弹窗 + ToolTip 共 62 对
 - **专属软件层**：额外收录上游未含、但中国开发者常用的软件（如 Docker Desktop）
 
-汉化只改用户可见文本，**不碰**逻辑 / 注册表 / 命令 / 控件 key，与上游解耦，便于跟版本。机制细节见 [汉化层说明](汉化/README.md)。
+翻译数据集中在汉化层，中文软件组合、主题和可靠性修复另行维护。同步上游时需要核对控件 key、配置和功能兼容性。机制细节见 [汉化层说明](汉化/README.md)。
 
 ---
 
@@ -56,7 +56,7 @@
 irm https://github.com/yasewang1337-svg/winutil-cn/releases/latest/download/winutil-cn.ps1 | iex
 ```
 
-> 首次启动较慢（winget 初始化 + 加载约 190 个应用）。界面显示 `Responding=False` 是**正在加载**、不是卡死，耐心等一会儿。
+> 首次启动会初始化 winget 并加载软件列表。如果持续没有响应，请查看 `%LOCALAPPDATA%\winutil\logs`；启动错误另存于 `%TEMP%\winutil-cn-error.log`。反馈时附上版本、启动方式和相关错误段落。
 
 ### 方式二：本地构建（开发 / 自定义）
 
@@ -131,14 +131,15 @@ claude mcp add winutil-cn -- node "绝对路径/winutil-cn/mcp/index.js"
 
 ## 跟上游同步
 
-上游更新后，合并再重跑汉化流程即可：
+上游同步需要同时验证配置、控件和翻译兼容性。当前维护基线与迁移差异见 [维护说明](docs/MAINTENANCE.md)，同步请求跟踪于 [Issue #5](https://github.com/yasewang1337-svg/winutil-cn/issues/5)。建议在独立分支合并选定的稳定版，解决冲突后运行：
 
 ```powershell
-git fetch upstream && git merge upstream/main    # upstream = ChrisTitusTech/winutil
 pwsh -File 汉化\run-all.ps1
+pwsh -File tools\Test-Build.ps1
+powershell -NoProfile -File tools\Test-Build.ps1
 ```
 
-各 apply 脚本会报「未命中 / 缺 key」，据此把新增条目补进对应翻译数据文件。详见 [汉化层说明](汉化/README.md)。
+完整回归测试需 Pester 5.7.1，命令见 [维护说明](docs/MAINTENANCE.md)。各 apply 脚本会报「未命中 / 缺 key」，据此把新增条目补进对应翻译数据文件；构建或语法检查失败时应先修复再发布。详见 [汉化层说明](汉化/README.md)。
 
 想参与贡献代码，请见 [贡献指南](.github/CONTRIBUTING.md)。
 

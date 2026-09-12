@@ -6,10 +6,12 @@ on:
 
 jobs:
   closeDiscussion:
+    # This inherited workflow targets upstream Discussions, not Chinese Issues.
+    if: github.repository == 'ChrisTitusTech/winutil'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Check if PR was merged
         if: github.event.pull_request.merged == true
@@ -18,11 +20,11 @@ jobs:
       - name: Extract Discussion Number & Close If any Were Found
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_BODY: ${{ github.event.pull_request.body }}
         if: github.event.pull_request.merged == true
         id: extract-discussion
         run: |
-          pr_body="${{ github.event.pull_request.body }}"
-          discussion_ids=$(echo "$pr_body" | grep -oP '(?i)(resolve|fix|close)[s|d]? #\K[0-9]+')
+          discussion_ids=$(printf '%s\n' "$PR_BODY" | grep -oP '(?i)(resolve|fix|close)[s|d]? #\K[0-9]+' || true)
 
           if [ -z "$discussion_ids" ]; then
             echo "No discussion IDs found."

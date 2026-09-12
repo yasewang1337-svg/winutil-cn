@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-    - name: 💻 Community Discord
-      url: https://discord.gg/RUbZUZyByQ
-      about: Join our Community Discord server to chat with other users in the Winutil community.
+  - name: 中文常见问题
+    url: https://github.com/yasewang1337-svg/winutil-cn/blob/main/docs/content/faq.md
+    about: 启动、安装与配置的常见问题。
+  - name: 上游同步与维护进度
+    url: https://github.com/yasewang1337-svg/winutil-cn/blob/main/docs/MAINTENANCE.md
+    about: 已验证的维护范围、上游迁移差异和本地验证命令。
