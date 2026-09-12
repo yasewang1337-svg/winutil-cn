@@ -1,9 +1,42 @@
 ---
-title: "NTP Server - Enable"
-description: ""
+title: "配置 NTP 时间服务器"
+description: "当前源配置生成的开发参考"
+generated: true
 ---
 
-```powershell {filename="functions/public/Invoke-WPFFixesNTPPool.ps1",linenos=inline,linenostart=1}
+<!-- winutil-devdocs: features/WPFFixesNTPPool; schema=1 -->
+
+> 本页由 tools/devdocs-generator.ps1 生成，请修改源配置或函数后重新生成。目录保留历史 URL，实际分类以本页为准。
+
+- 稳定 ID：`WPFFixesNTPPool`
+- 当前分类：修复
+- 源配置：`config/feature.json`
+- 源配置 SHA-256：`9f9acba26432ca25eb2203ca70cec15563c7a3a4e0d5fa1dc795f149ac77c374`
+
+将 Windows 默认时间服务器（time.windows.com）替换为 pool.ntp.org，以提高校时准确性和稳定性。
+
+## 配置定义
+
+```json
+{
+  "WPFFixesNTPPool": {
+    "Content": "配置 NTP 时间服务器",
+    "Description": "将 Windows 默认时间服务器（time.windows.com）替换为 pool.ntp.org，以提高校时准确性和稳定性。",
+    "category": "修复",
+    "panel": "1",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "function": "Invoke-WPFFixesNTPPool",
+    "link": "https://winutil.christitus.com/dev/features/fixes/ntppool"
+  }
+}
+```
+
+## 入口函数
+
+来源：`functions/public/Invoke-WPFFixesNTPPool.ps1`。这里只展示入口，其他被调用函数以仓库源码为准。
+
+```powershell
 function Invoke-WPFFixesNTPPool {
     <#
     .SYNOPSIS

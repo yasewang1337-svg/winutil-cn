@@ -1,4 +1,4 @@
-# winutil-cn 界面骨架汉化(xaml/inputXML.xaml)
+﻿# winutil-cn 界面骨架汉化(xaml/inputXML.xaml)
 # 只替换带属性前缀(Header=/Content=/Text=/ToolTip=)的字面英文标签,
 # 不碰 Name= / x:Name= / {Binding} / 资源键 / 事件绑定。保留 N/A、100% 等动态/数值占位。
 # 最小 diff、可重复、上游 merge 后可重跑(已译条目重跑会提示 0 命中,无害)。

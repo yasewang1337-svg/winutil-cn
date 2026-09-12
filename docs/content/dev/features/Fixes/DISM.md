@@ -1,9 +1,39 @@
 ---
-title: "System Corruption Scan - Run"
-description: ""
+title: "系统损坏扫描/修复（SFC/DISM）"
+description: "当前源配置生成的开发参考"
+generated: true
 ---
 
-```powershell {filename="functions/public/Invoke-WPFSystemRepair.ps1",linenos=inline,linenostart=1}
+<!-- winutil-devdocs: features/WPFPanelDISM; schema=1 -->
+
+> 本页由 tools/devdocs-generator.ps1 生成，请修改源配置或函数后重新生成。目录保留历史 URL，实际分类以本页为准。
+
+- 稳定 ID：`WPFPanelDISM`
+- 当前分类：修复
+- 源配置：`config/feature.json`
+- 源配置 SHA-256：`9f9acba26432ca25eb2203ca70cec15563c7a3a4e0d5fa1dc795f149ac77c374`
+
+## 配置定义
+
+```json
+{
+  "WPFPanelDISM": {
+    "Content": "系统损坏扫描/修复（SFC/DISM）",
+    "category": "修复",
+    "panel": "1",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "function": "Invoke-WPFSystemRepair",
+    "link": "https://winutil.christitus.com/dev/features/fixes/dism"
+  }
+}
+```
+
+## 入口函数
+
+来源：`functions/public/Invoke-WPFSystemRepair.ps1`。这里只展示入口，其他被调用函数以仓库源码为准。
+
+```powershell
 function Invoke-WPFSystemRepair {
     <#
     .SYNOPSIS

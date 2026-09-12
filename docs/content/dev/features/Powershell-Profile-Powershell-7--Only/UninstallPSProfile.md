@@ -1,9 +1,39 @@
 ---
-title: "CTT PowerShell Profile - Remove"
-description: ""
+title: "卸载 CTT PowerShell 配置文件"
+description: "当前源配置生成的开发参考"
+generated: true
 ---
 
-```powershell {filename="functions/private/Invoke-WinUtilUninstallPSProfile.ps1",linenos=inline,linenostart=1}
+<!-- winutil-devdocs: features/WPFWinUtilUninstallPSProfile; schema=1 -->
+
+> 本页由 tools/devdocs-generator.ps1 生成，请修改源配置或函数后重新生成。目录保留历史 URL，实际分类以本页为准。
+
+- 稳定 ID：`WPFWinUtilUninstallPSProfile`
+- 当前分类：PowerShell 配置文件(仅 7+)
+- 源配置：`config/feature.json`
+- 源配置 SHA-256：`9f9acba26432ca25eb2203ca70cec15563c7a3a4e0d5fa1dc795f149ac77c374`
+
+## 配置定义
+
+```json
+{
+  "WPFWinUtilUninstallPSProfile": {
+    "Content": "卸载 CTT PowerShell 配置文件",
+    "category": "PowerShell 配置文件(仅 7+)",
+    "panel": "2",
+    "Type": "Button",
+    "ButtonWidth": "300",
+    "function": "Invoke-WinUtilUninstallPSProfile",
+    "link": "https://winutil.christitus.com/dev/features/powershell-profile-powershell-7--only/uninstallpsprofile"
+  }
+}
+```
+
+## 入口函数
+
+来源：`functions/private/Invoke-WinUtilUninstallPSProfile.ps1`。这里只展示入口，其他被调用函数以仓库源码为准。
+
+```powershell
 function Invoke-WinUtilUninstallPSProfile {
 
     if (Test-Path ($Profile + ".bak")) {

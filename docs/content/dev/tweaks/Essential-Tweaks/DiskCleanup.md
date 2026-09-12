@@ -1,18 +1,35 @@
 ---
-title: "Disk Cleanup - Run"
-description: ""
+title: "运行磁盘清理"
+description: "当前源配置生成的开发参考"
+generated: true
 ---
 
-```json {filename="config/tweaks.json",linenos=inline,linenostart=1126}
+<!-- winutil-devdocs: tweaks/WPFTweaksDiskCleanup; schema=1 -->
+
+> 本页由 tools/devdocs-generator.ps1 生成，请修改源配置或函数后重新生成。目录保留历史 URL，实际分类以本页为准。
+
+- 稳定 ID：`WPFTweaksDiskCleanup`
+- 当前分类：常用设置（按需选择）
+- 源配置：`config/tweaks.json`
+- 源配置 SHA-256：`e2ce1bf52cefe360a765bdcbde469664139ec732c332661c9bfdfeb383e10959`
+
+运行系统磁盘清理并清理旧组件/更新缓存，释放空间（可能需要较长时间）。
+
+本页描述实现，不代表推荐勾选。历史恢复仅覆盖工具实际记录的设置；配置中的 OriginalValue / OriginalType 不等于这台电脑的修改前状态。应用、文件及脚本其他改动不保证可恢复。
+
+## 配置定义
+
+```json
+{
   "WPFTweaksDiskCleanup": {
-    "Content": "Disk Cleanup - Run",
-    "Description": "Runs Disk Cleanup on Drive C: and removes old Windows Updates.",
-    "category": "Essential Tweaks",
+    "Content": "运行磁盘清理",
+    "Description": "运行系统磁盘清理并清理旧组件/更新缓存，释放空间（可能需要较长时间）。",
+    "category": "常用设置（按需选择）",
     "panel": "1",
     "InvokeScript": [
-      "
-      cleanmgr.exe /d C: /VERYLOWDISK
-      Dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase
-      "
+      "\r\n      cleanmgr.exe /d C: /VERYLOWDISK\r\n      Dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase\r\n      "
     ],
+    "link": "https://winutil.christitus.com/dev/tweaks/essential-tweaks/diskcleanup"
+  }
+}
 ```

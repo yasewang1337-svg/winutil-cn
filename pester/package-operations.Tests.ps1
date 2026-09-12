@@ -212,7 +212,7 @@ Describe 'Package dialog layout without starting software operations' {
 
 Describe 'Real software worker and WPF dispatcher boundary' {
     It 'returns progress, results and retry decisions to the UI runspace without hanging' {
-        $fixture = Join-Path $PSScriptRoot 'package-runspace.fixture.ps1'
+        $fixture = Join-Path $PSScriptRoot 'fixtures/package-runspace.ps1'
         $executable = [Diagnostics.Process]::GetCurrentProcess().MainModule.FileName
         $stdout = Join-Path $TestDrive 'worker.stdout.log'
         $stderr = Join-Path $TestDrive 'worker.stderr.log'

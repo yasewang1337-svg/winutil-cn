@@ -9,7 +9,7 @@ next: /userguide/updates/
 
 本页对应 Winutil 中的 **Config（配置）** 标签页。有些操作会立即完成，另一些则可能弹出提示、从微软下载文件，或需要重启后改动才完全生效。
 
-{{< image src="images/config-tab-new" alt="包含功能与修复的配置标签页" >}}
+{{< image src="images/screenshots/config-tab-new" alt="包含功能与修复的配置标签页" >}}
 
 ## Windows 功能
 

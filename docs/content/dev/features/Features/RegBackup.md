@@ -1,22 +1,34 @@
 ---
-title: "Registry Backup (Daily Task 12:30am) - Enable"
-description: ""
+title: "启用每日注册表备份任务（00:30）"
+description: "当前源配置生成的开发参考"
+generated: true
 ---
 
-```json {filename="config/feature.json",linenos=inline,linenostart=79}
+<!-- winutil-devdocs: features/WPFFeatureRegBackup; schema=1 -->
+
+> 本页由 tools/devdocs-generator.ps1 生成，请修改源配置或函数后重新生成。目录保留历史 URL，实际分类以本页为准。
+
+- 稳定 ID：`WPFFeatureRegBackup`
+- 当前分类：功能
+- 源配置：`config/feature.json`
+- 源配置 SHA-256：`9f9acba26432ca25eb2203ca70cec15563c7a3a4e0d5fa1dc795f149ac77c374`
+
+创建/启用每日注册表自动备份计划任务（默认 00:30），便于系统故障时回滚。
+
+## 配置定义
+
+```json
+{
   "WPFFeatureRegBackup": {
-    "Content": "Registry Backup (Daily Task 12:30am) - Enable",
-    "Description": "Enables daily registry backup, previously disabled by Microsoft in Windows 10 1803.",
-    "category": "Features",
+    "Content": "启用每日注册表备份任务（00:30）",
+    "Description": "创建/启用每日注册表自动备份计划任务（默认 00:30），便于系统故障时回滚。",
+    "category": "功能",
     "panel": "1",
     "feature": [],
     "InvokeScript": [
-      "
-      New-ItemProperty -Path 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Configuration Manager' -Name 'EnablePeriodicBackup' -Type DWord -Value 1 -Force
-      New-ItemProperty -Path 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Configuration Manager' -Name 'BackupCount' -Type DWord -Value 2 -Force
-      $action = New-ScheduledTaskAction -Execute 'schtasks' -Argument '/run /i /tn \"\\Microsoft\\Windows\\Registry\\RegIdleBackup\"'
-      $trigger = New-ScheduledTaskTrigger -Daily -At 00:30
-      Register-ScheduledTask -Action $action -Trigger $trigger -TaskName 'AutoRegBackup' -Description 'Create System Registry Backups' -User 'System'
-      "
+      "\r\n      New-ItemProperty -Path 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Configuration Manager' -Name 'EnablePeriodicBackup' -Type DWord -Value 1 -Force\r\n      New-ItemProperty -Path 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Configuration Manager' -Name 'BackupCount' -Type DWord -Value 2 -Force\r\n      $action = New-ScheduledTaskAction -Execute 'schtasks' -Argument '/run /i /tn \"\\Microsoft\\Windows\\Registry\\RegIdleBackup\"'\r\n      $trigger = New-ScheduledTaskTrigger -Daily -At 00:30\r\n      Register-ScheduledTask -Action $action -Trigger $trigger -TaskName 'AutoRegBackup' -Description 'Create System Registry Backups' -User 'System'\r\n      "
     ],
+    "link": "https://winutil.christitus.com/dev/features/features/regbackup"
+  }
+}
 ```

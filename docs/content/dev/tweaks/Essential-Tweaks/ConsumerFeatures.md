@@ -1,13 +1,30 @@
 ---
-title: "ConsumerFeatures - Disable"
-description: ""
+title: "减少推荐应用和推广内容"
+description: "当前源配置生成的开发参考"
+generated: true
 ---
 
-```json {filename="config/tweaks.json",linenos=inline,linenostart=451}
+<!-- winutil-devdocs: tweaks/WPFTweaksConsumerFeatures; schema=1 -->
+
+> 本页由 tools/devdocs-generator.ps1 生成，请修改源配置或函数后重新生成。目录保留历史 URL，实际分类以本页为准。
+
+- 稳定 ID：`WPFTweaksConsumerFeatures`
+- 当前分类：常用设置（按需选择）
+- 源配置：`config/tweaks.json`
+- 源配置 SHA-256：`e2ce1bf52cefe360a765bdcbde469664139ec732c332661c9bfdfeb383e10959`
+
+尝试关闭 Windows 的消费者体验与推荐内容；效果取决于系统版本和组织策略。不会卸载现有应用，可恢复本次修改前的注册表值。
+
+本页描述实现，不代表推荐勾选。历史恢复仅覆盖工具实际记录的设置；配置中的 OriginalValue / OriginalType 不等于这台电脑的修改前状态。应用、文件及脚本其他改动不保证可恢复。
+
+## 配置定义
+
+```json
+{
   "WPFTweaksConsumerFeatures": {
-    "Content": "ConsumerFeatures - Disable",
-    "Description": "Windows will not automatically install any games, third-party apps, or application links from the Windows Store for the signed-in user. Some default Apps will be inaccessible (eg. Phone Link).",
-    "category": "Essential Tweaks",
+    "Content": "减少推荐应用和推广内容",
+    "Description": "尝试关闭 Windows 的消费者体验与推荐内容；效果取决于系统版本和组织策略。不会卸载现有应用，可恢复本次修改前的注册表值。",
+    "category": "常用设置（按需选择）",
     "panel": "1",
     "registry": [
       {
@@ -18,10 +35,7 @@ description: ""
         "OriginalValue": "<RemoveEntry>"
       }
     ],
+    "link": "https://winutil.christitus.com/dev/tweaks/essential-tweaks/consumerfeatures"
+  }
+}
 ```
-
-## Registry Changes
-
-Applications and System Components store and retrieve configuration data to modify Windows settings, so we can use the registry to change many settings in one place.
-
-You can find information about the registry on [Wikipedia](https://en.wikipedia.org/wiki/Windows_Registry) and [Microsoft's Website](https://learn.microsoft.com/en-us/windows/win32/sysinfo/registry).

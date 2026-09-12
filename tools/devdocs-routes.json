@@ -1,0 +1,631 @@
+{
+  "schemaVersion": 1,
+  "description": "Stable item IDs and existing documentation URLs. Category translations must not change routes. Legacy hashes identify the original generated pages during migration.",
+  "routes": [
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksActivity",
+      "path": "tweaks/Essential-Tweaks/Activity.md",
+      "legacySha256": "685bcae7ca7e637752fa05b522b3210eae10264ef05a7b5e434caf80d832e52c"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksHiber",
+      "path": "tweaks/Essential-Tweaks/Hiber.md",
+      "legacySha256": "bb051cda4ecc56b57d2c9d7e9d9ff8f1ea5e3c7aeec402964024cd51a7ebb9ad"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksWidget",
+      "path": "tweaks/Essential-Tweaks/Widget.md",
+      "legacySha256": "45df39941266793a14ad5e5b12792a8340efc66042f8c98472cf28ca58c807dd"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksRevertStartMenu",
+      "path": "tweaks/Essential-Tweaks/RevertStartMenu.md",
+      "legacySha256": "27ec95f8e7fbe3f19eab351393f667195f3b4b79e59a6f413cf49766ac025a84"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksDisableStoreSearch",
+      "path": "tweaks/Essential-Tweaks/DisableStoreSearch.md",
+      "legacySha256": "70c4f55de2dbd20c9700179c6fe1f3d23bf4cde55433d756fd49a6948b35ee27"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksLocation",
+      "path": "tweaks/Essential-Tweaks/Location.md",
+      "legacySha256": "aeae155c874f73dcfe747464029066d4229d382f7d5bc9d48356f4185b88f800"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksServices",
+      "path": "tweaks/Essential-Tweaks/Services.md",
+      "legacySha256": "4731b959f07f268de6bae80912fc820e9a4c990d9d1fa62e62087833e37fe176"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksBraveDebloat",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/BraveDebloat.md",
+      "legacySha256": "e666d64401160c435e957a4b70591b0d9f3fa55dbc6cf5ae0af0873f99016da3"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksDisableWarningForUnsignedRdp",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/DisableWarningForUnsignedRdp.md",
+      "legacySha256": "39112bc8fd565c6e6a1e88942e5293d3773eed03a63a6a8b0c19066c98fce4a6"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksEdgeDebloat",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/EdgeDebloat.md",
+      "legacySha256": "516d6edfcd87fc9e2c63b1ea891c00ac9d2537172b91666a241eacb29cda8bcd"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksConsumerFeatures",
+      "path": "tweaks/Essential-Tweaks/ConsumerFeatures.md",
+      "legacySha256": "2e73b15c403da90bd8cdf1d3896b063bcb1eefb68489d16298b5859a59aeecb8"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksTelemetry",
+      "path": "tweaks/Essential-Tweaks/Telemetry.md",
+      "legacySha256": "d1d7af1f8ecda4506ed333789507585e80b671a5cb1b2792a967e4e640982042"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksDeliveryOptimization",
+      "path": "tweaks/Essential-Tweaks/DeliveryOptimization.md",
+      "legacySha256": "ba6e6dd921a6f711c415ae364ddec3060ca22eba57a829ddecea680220f2f946"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksRemoveEdge",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/RemoveEdge.md",
+      "legacySha256": "23f4e6e37c94d34bfb5f07d33f7c548c0d19364e2439d6fb191ad87503d229a9"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksDisableBitLocker",
+      "path": "tweaks/Essential-Tweaks/DisableBitLocker.md",
+      "legacySha256": "ec62f790d47fb7cfbb910ff3ea9cc500692b305a2c7f6d2641bfb35cf2a5cfce"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksUTC",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/UTC.md",
+      "legacySha256": "d2b8670cc3b02413ca0d1c6c83640d549e3f6f17cca1def116fa7af40fd6ebe1"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksRemoveOneDrive",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/RemoveOneDrive.md",
+      "legacySha256": "63aef1d61c71325e24a568598f898e472e8ec4e2ad744b2f64fff41deb0d7980"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksRemoveHomeAndGallery",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/RemoveHomeAndGallery.md",
+      "legacySha256": "7b04045ccc28e81beb601fb13e42347f581de0d18ed09d69a571c90093b7e5b0"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksDisplay",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/Display.md",
+      "legacySha256": "aeb60ed8d62939f7a327724b34f73f71c2a394b3f141e8704048fc6ca4826d8a"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksXboxRemoval",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/XboxRemoval.md",
+      "legacySha256": "1b33fc0486b3fa634f6003850a2b0b851466c0683646d11de5821b0e48029427"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksDeBloat",
+      "path": "tweaks/Essential-Tweaks/DeBloat.md",
+      "legacySha256": "e54bdf097a49bfe453a6a1821bd5ce3b76c37a7a3d1a4fa12562143e34e654c9"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksRestorePoint",
+      "path": "tweaks/Essential-Tweaks/RestorePoint.md",
+      "legacySha256": "20bbe4e614bfe3348ac8ad32ab05e7ba946c1418001d5a65a6cb42a8e97b229e"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksEndTaskOnTaskbar",
+      "path": "tweaks/Essential-Tweaks/EndTaskOnTaskbar.md",
+      "legacySha256": "c4a82b655d8b7f3d9fbea1f74bb1e90a33ec10ab6de94e8b62c5c5f80efcde4f"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksStorage",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/Storage.md",
+      "legacySha256": "8f9775252840733f576a6822c05fc476a821a4f2279c35bc3bbcc23e352012eb"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksWindowsAI",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/WindowsAI.md",
+      "legacySha256": "ce368a206989a09f6464a7c6366595f658d24d3be5c952e33303fc8de1e8d8f8"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksWPBT",
+      "path": "tweaks/Essential-Tweaks/WPBT.md",
+      "legacySha256": "07ad57f7a34f5325f760ef02d805b3dc30d5d12f247b36e999b8795569bdabe8"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksRazerBlock",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/RazerBlock.md",
+      "legacySha256": "0bbf693a7a86701b4d3b9759aabbaae3ffdaf7444b3b8bdc8439d1e27a867039"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksDisableNotifications",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/DisableNotifications.md",
+      "legacySha256": "320d8e4b8136ece34d0bf788f5b877a8e4a67c2cec9bd01122895c5b2134f6ee"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksBlockAdobeNet",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/BlockAdobeNet.md",
+      "legacySha256": "5b34a1bae95169e02f803b7688e5b58ab7d7b21dacb5fa44eb87df9c97c7f589"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksRightClickMenu",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/RightClickMenu.md",
+      "legacySha256": "763d0a405af4c047fdb29df4e300c15c255e836e68b1eafe692d6624958edcf0"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksDiskCleanup",
+      "path": "tweaks/Essential-Tweaks/DiskCleanup.md",
+      "legacySha256": "cbb23a500333622af41f8776228af2cdef6555c36fb7bae1ffe4611bfb2b3ea4"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksDeleteTempFiles",
+      "path": "tweaks/Essential-Tweaks/DeleteTempFiles.md",
+      "legacySha256": "76597d0661084b74b0599755c0ebd1d66e4f4abe95f9c66e81da6fe4bc223a8e"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksIPv46",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/IPv46.md",
+      "legacySha256": "3858619ee8a929fdba0bae685a9683617a1673b29d2a3e102d9a2f952a83ae98"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksTeredo",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/Teredo.md",
+      "legacySha256": "f104abb4140c7b706c3ed3f51180e0d33822c370ca29909110ac659005150bcf"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksDisableIPv6",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/DisableIPv6.md",
+      "legacySha256": "f53a4280ea96ef811ebb63173796aa1785c0ce8cf84e54b237c1f7e964757f69"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksDisableBGapps",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/DisableBGapps.md",
+      "legacySha256": "88b8c6a3aa957bdb3a1735ac7f6df947cec733acd0547821a79eef6a47617b35"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksDisableFSO",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/DisableFSO.md",
+      "legacySha256": "27ea3a11565fee53b2c5445ef7651b959568397b1f5989db36c46ddd3880ae27"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFTweaksDisableExplorerAutoDiscovery",
+      "path": "tweaks/Essential-Tweaks/DisableExplorerAutoDiscovery.md",
+      "legacySha256": "f14e47d60de8a96e2a7a832bc257f4a9573f45feead8bcb0685a442be13f849b"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleDetailedBSoD",
+      "path": "tweaks/Customize-Preferences/DetailedBSoD.md",
+      "legacySha256": "bfac9ef947b889edbb4b8a25850f63983e1998f6d0777dd9b1229056f70b0e0c"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleBatteryPercentage",
+      "path": "tweaks/Customize-Preferences/BatteryPercentage.md",
+      "legacySha256": "967dbc4253fe6f4f593dcee9066457612965b842cec04bc6c3d2b11d54620bb8"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleDarkMode",
+      "path": "tweaks/Customize-Preferences/DarkMode.md",
+      "legacySha256": "799e1f2b459aea24f29c5020a71b569edee53c564556bef4b151097c79bccd9e"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleShowExt",
+      "path": "tweaks/Customize-Preferences/ShowExt.md",
+      "legacySha256": "9e5582d8c0732a11db66b9981f50bd8d04f10c72b17f8b81863e0d6a0d476d39"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleHiddenFiles",
+      "path": "tweaks/Customize-Preferences/HiddenFiles.md",
+      "legacySha256": "9084af91235bf5ef26a879a2345f65d10d16116f16d9cca9137456b8799d0729"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleVerboseLogon",
+      "path": "tweaks/Customize-Preferences/VerboseLogon.md",
+      "legacySha256": "5e3222aedb0c54294c1b35c09ab33a7525cd8659583421a88ff88e15507c61ae"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleNewOutlook",
+      "path": "tweaks/Customize-Preferences/NewOutlook.md",
+      "legacySha256": "d0d5028e0fdbfbdc654f5087ecfcc1fda6e37dc2d00b61f40f84841b3711e4d1"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleScrollbars",
+      "path": "tweaks/Customize-Preferences/Scrollbars.md",
+      "legacySha256": "0b0ab896b2937ba157e01aca5535c8575ecff8673c25718adb75dece2ef0bbcd"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleMultiplaneOverlay",
+      "path": "tweaks/Customize-Preferences/MultiplaneOverlay.md",
+      "legacySha256": "2965405176ff1e337067d8846ee079b68b2f741240bb5cc8cd989dbedfbe14bf"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleMouseAcceleration",
+      "path": "tweaks/Customize-Preferences/MouseAcceleration.md",
+      "legacySha256": "c60536bc0a0abe501ae606f30441c0843c6faf143b42e1a729f845e7289e7961"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleNumLock",
+      "path": "tweaks/Customize-Preferences/NumLock.md",
+      "legacySha256": "14d9dc53183fdcaced5e50d328037a17b2c4a8336d5a56279af89c808c909aee"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleStandbyFix",
+      "path": "tweaks/Customize-Preferences/StandbyFix.md",
+      "legacySha256": "08cae2ee3f4f00f03726628ea4ba9297ac30012f20c6071af6867e7f879bde28"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleS3Sleep",
+      "path": "tweaks/Customize-Preferences/S3Sleep.md",
+      "legacySha256": "d17f70b016233887cc1fb770335474d38ac76b6943a9fdf854a27032ef43d7f2"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleHideSettingsHome",
+      "path": "tweaks/Customize-Preferences/HideSettingsHome.md",
+      "legacySha256": "a4011dff5d2c12cf6d0214593bd08ca2c18e3e6c4a6e3a6f4a0249008fd1cd7c"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleBingSearch",
+      "path": "tweaks/Customize-Preferences/BingSearch.md",
+      "legacySha256": "b17757cb9edde07e438a79c560d234a179fc61f66a959de9902fae2ff8a29c39"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleLoginBlur",
+      "path": "tweaks/Customize-Preferences/LoginBlur.md",
+      "legacySha256": "bf9c5fe333ebdf3b1cc14b2e87bd13f942054c5ae49528cca596cff105feb44c"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleStartMenuRecommendations",
+      "path": "tweaks/Customize-Preferences/StartMenuRecommendations.md",
+      "legacySha256": "bf67bbdf54aa5f8b80cbf49509f9a86c97b49ff129de25780ab236e306a2fcea"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleStickyKeys",
+      "path": "tweaks/Customize-Preferences/StickyKeys.md",
+      "legacySha256": "4ad1a9811b890531fac9782cee7c5c59c127034d60768b1053be4e9bc37d3afe"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleTaskbarAlignment",
+      "path": "tweaks/Customize-Preferences/TaskbarAlignment.md",
+      "legacySha256": "7fb93502093385419ae0c9c0b1551ad33f0576e3c213941b82133e2c18dfe5b7"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleTaskbarSearch",
+      "path": "tweaks/Customize-Preferences/TaskbarSearch.md",
+      "legacySha256": "95b3fb22dfb4bfbce5497f62e560795048cebbde16eafb80b4b3d07d14f45d71"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleTaskView",
+      "path": "tweaks/Customize-Preferences/TaskView.md",
+      "legacySha256": "b09e4a357e98192f807a9d5b27e9918f8e9cf0fae374634be06ab5c7e2675db1"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleGameMode",
+      "path": "tweaks/Customize-Preferences/GameMode.md",
+      "legacySha256": "17ed60861123f3c7b07dccd72327df94cc1a778d11eba591e1666bc8d2f6fd88"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFToggleLongPaths",
+      "path": "tweaks/Customize-Preferences/LongPaths.md",
+      "legacySha256": "035e5c19b2669e808eeeaf9d4cd7391e5262d7925095e5097140e8d4b53df302"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFOOSUbutton",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/OOSUbutton.md",
+      "legacySha256": "424aae4783bba32990269159967066338eeda3cab748f1857fac5fdbdb785c0e",
+      "handler": "Invoke-WPFOOSU"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFDNSRegion",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/DNSRegion.md"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFchangedns",
+      "path": "tweaks/z--Advanced-Tweaks---CAUTION/changedns.md",
+      "legacySha256": "a7b6d3a9a356829e21f71b77d9a37dcc91f6f9890640ea601041c450d05bd2ab"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFAddUltPerf",
+      "path": "tweaks/Performance-Plans/AddUltPerf.md",
+      "aliases": [
+        "/dev/tweaks/performance-plans---not-for-laptops/addultperf/"
+      ],
+      "handler": "Invoke-WPFUltimatePerformance"
+    },
+    {
+      "source": "tweaks",
+      "id": "WPFRemoveUltPerf",
+      "path": "tweaks/Performance-Plans/RemoveUltPerf.md",
+      "aliases": [
+        "/dev/tweaks/performance-plans---not-for-laptops/removeultperf/"
+      ],
+      "handler": "Invoke-WPFUltimatePerformance"
+    },
+    {
+      "source": "features",
+      "id": "WPFFeaturesdotnet",
+      "path": "features/Features/dotnet.md",
+      "legacySha256": "d694b04d6bd3f1ad95c7cb03ef47b46f203e677ab4ac1a873edc700029d114c7"
+    },
+    {
+      "source": "features",
+      "id": "WPFFixesNTPPool",
+      "path": "features/Fixes/NTPPool.md",
+      "legacySha256": "a2d296749054d3fe34b37e0b83e3eaca2f08299fd7bfd29baa14d88c977ab5ed"
+    },
+    {
+      "source": "features",
+      "id": "WPFFeatureshyperv",
+      "path": "features/Features/hyperv.md",
+      "legacySha256": "07f4451d1ac47b01eefdaabe8e1baaf4ed52d828cefd3f1985a8050f46cbc73a"
+    },
+    {
+      "source": "features",
+      "id": "WPFFeatureslegacymedia",
+      "path": "features/Features/legacymedia.md",
+      "legacySha256": "29733f06bda0f0201a28396d20070e81b3792899ae508621a2d68cbfb25222d6"
+    },
+    {
+      "source": "features",
+      "id": "WPFFeaturewsl",
+      "path": "features/Features/wsl.md",
+      "legacySha256": "1e53fc756a28df4699567d65a13d8a1281c5b4ca46f8c58f5be5c05193a94a91"
+    },
+    {
+      "source": "features",
+      "id": "WPFFeaturenfs",
+      "path": "features/Features/nfs.md",
+      "legacySha256": "610f05622b0a59b2de4e74874ba98ad71557e365a2b38e12071a15546ef6cfb5"
+    },
+    {
+      "source": "features",
+      "id": "WPFFeatureRegBackup",
+      "path": "features/Features/RegBackup.md",
+      "legacySha256": "7796917e0dff2c3fea46cecd4f7a437dcce5b7b27740a9e6170a57987999a790"
+    },
+    {
+      "source": "features",
+      "id": "WPFFeatureEnableLegacyRecovery",
+      "path": "features/Features/EnableLegacyRecovery.md",
+      "legacySha256": "fcec78e536b5c89b55894f24a0f4d04e88ed6807a86357913b015cab1d9baecf"
+    },
+    {
+      "source": "features",
+      "id": "WPFFeatureDisableLegacyRecovery",
+      "path": "features/Features/DisableLegacyRecovery.md",
+      "legacySha256": "ba9684a6c655fd3859bd6c44fa240c159277f0ae3b05aab2b89159e83c6cd931"
+    },
+    {
+      "source": "features",
+      "id": "WPFFeaturesSandbox",
+      "path": "features/Features/Sandbox.md",
+      "legacySha256": "8e69b6654cd47df74beaeac97a38cc3899ace13c29dd423aba20c62abdf5f493"
+    },
+    {
+      "source": "features",
+      "id": "WPFFeatureInstall",
+      "path": "features/Features/Install.md"
+    },
+    {
+      "source": "features",
+      "id": "WPFPanelAutologin",
+      "path": "features/Fixes/Autologin.md",
+      "legacySha256": "b67e4110983530a40ee51f7768cde5f5d8c15be2551118820278df41158e89ea"
+    },
+    {
+      "source": "features",
+      "id": "WPFFixesUpdate",
+      "path": "features/Fixes/Update.md",
+      "legacySha256": "1e20c54358ba75d6903537fef964dd347dce2a2866123a875d5888a8331ec164"
+    },
+    {
+      "source": "features",
+      "id": "WPFFixesNetwork",
+      "path": "features/Fixes/Network.md",
+      "legacySha256": "6d197e78e16b2e5eb01b4e6f043618c620589e341967bb8a4d56537b5a43009c"
+    },
+    {
+      "source": "features",
+      "id": "WPFPanelDISM",
+      "path": "features/Fixes/DISM.md",
+      "legacySha256": "3a2be224e42dd74d6b92cb8df8ac17496c875ab8ddf136e599725e128c13edae"
+    },
+    {
+      "source": "features",
+      "id": "WPFFixesWinget",
+      "path": "features/Fixes/Winget.md",
+      "legacySha256": "bca9c2e9b7badd53ed7e5b083dc91fd19581cf40f23c8b67e5bb0d8a00b1c06f"
+    },
+    {
+      "source": "features",
+      "id": "WPFPanelControl",
+      "path": "features/Legacy-Windows-Panels/Control.md",
+      "legacySha256": "51da4f59a101c529255cf99d9962586d322991ed46fe004746b16f01b6b2a1c1"
+    },
+    {
+      "source": "features",
+      "id": "WPFPanelComputer",
+      "path": "features/Legacy-Windows-Panels/Computer.md",
+      "legacySha256": "1c02b5ad44bb2d17d4c999213172c55918dfd8cc11db06541ac6a97bfdbbab7a"
+    },
+    {
+      "source": "features",
+      "id": "WPFPanelNetwork",
+      "path": "features/Legacy-Windows-Panels/Network.md",
+      "legacySha256": "4005b750eff728152cc5407a852dfa078131ee3c51b387083ab814e2a7e5d129"
+    },
+    {
+      "source": "features",
+      "id": "WPFPanelPower",
+      "path": "features/Legacy-Windows-Panels/Power.md",
+      "legacySha256": "3f139c77cbcd2a9950638afe924166500e9721e739b91fd17f34ae5ad6535da3"
+    },
+    {
+      "source": "features",
+      "id": "WPFPanelPrinter",
+      "path": "features/Legacy-Windows-Panels/Printer.md",
+      "legacySha256": "55135698173147399f22535928f28f5125c58d88e1e8731d51a4cd4e3cc039e3"
+    },
+    {
+      "source": "features",
+      "id": "WPFPanelRegion",
+      "path": "features/Legacy-Windows-Panels/Region.md",
+      "legacySha256": "0b6e2fbbcba5941d92cfa60a84eb1f769a50ee1d3614f0f361cd61a877b1964d"
+    },
+    {
+      "source": "features",
+      "id": "WPFPanelRestore",
+      "path": "features/Legacy-Windows-Panels/Restore.md",
+      "legacySha256": "fb9c22f9e69bc300a3513815a571a4972f27cd06cbe32496e1ea2c7f04845f55"
+    },
+    {
+      "source": "features",
+      "id": "WPFPanelSound",
+      "path": "features/Legacy-Windows-Panels/Sound.md",
+      "legacySha256": "2bf5e2baed16e370e54d89ccf14dd4e85b7aee44f47fa178fb51d5743d2ff631"
+    },
+    {
+      "source": "features",
+      "id": "WPFPanelSystem",
+      "path": "features/Legacy-Windows-Panels/System.md",
+      "legacySha256": "4a5d86b90adc12c0bd6280be4fc2619754cecb7908f50a8c7e77d7bc5703be5b"
+    },
+    {
+      "source": "features",
+      "id": "WPFPanelTimedate",
+      "path": "features/Legacy-Windows-Panels/Timedate.md",
+      "legacySha256": "eb37a5a34e86b906c2ac008772e9b08a29a5e8a944ad482714438dc1c31ff240"
+    },
+    {
+      "source": "features",
+      "id": "WPFWinUtilInstallPSProfile",
+      "path": "features/Powershell-Profile-Powershell-7--Only/InstallPSProfile.md",
+      "legacySha256": "507b945bf6926f29eb3346c8a1fea41948753ba1e3720f6a47696ccaf4347a4e"
+    },
+    {
+      "source": "features",
+      "id": "WPFWinUtilUninstallPSProfile",
+      "path": "features/Powershell-Profile-Powershell-7--Only/UninstallPSProfile.md",
+      "legacySha256": "c8d4def1cbe3063eb6af93cee74c0d5ca5958b0c47c321e43afe801759cc462b"
+    },
+    {
+      "source": "features",
+      "id": "WPFWinUtilSSHServer",
+      "path": "features/Remote-Access/SSHServer.md",
+      "legacySha256": "750c815a6eb6c3851e2e65ac64d282d980a0ab9dd8b854c196fdb479f2939f32"
+    },
+    {
+      "source": "features",
+      "id": "WPFFeatureMirrorPipCN",
+      "path": "features/Mirrors/MirrorPipCN.md"
+    },
+    {
+      "source": "features",
+      "id": "WPFFeatureMirrorNpmCN",
+      "path": "features/Mirrors/MirrorNpmCN.md"
+    },
+    {
+      "source": "features",
+      "id": "WPFFeatureMirrorYarnCN",
+      "path": "features/Mirrors/MirrorYarnCN.md"
+    },
+    {
+      "source": "features",
+      "id": "WPFFeatureMirrorCondaCN",
+      "path": "features/Mirrors/MirrorCondaCN.md"
+    },
+    {
+      "source": "features",
+      "id": "WPFFeatureMirrorGoCN",
+      "path": "features/Mirrors/MirrorGoCN.md"
+    },
+    {
+      "source": "features",
+      "id": "WPFFeatureMirrorPipReset",
+      "path": "features/Mirrors/MirrorPipReset.md"
+    },
+    {
+      "source": "features",
+      "id": "WPFFeatureMirrorNpmReset",
+      "path": "features/Mirrors/MirrorNpmReset.md"
+    },
+    {
+      "source": "features",
+      "id": "WPFFeatureMirrorYarnReset",
+      "path": "features/Mirrors/MirrorYarnReset.md"
+    },
+    {
+      "source": "features",
+      "id": "WPFFeatureMirrorCondaReset",
+      "path": "features/Mirrors/MirrorCondaReset.md"
+    },
+    {
+      "source": "features",
+      "id": "WPFFeatureMirrorGoReset",
+      "path": "features/Mirrors/MirrorGoReset.md"
+    }
+  ]
+}

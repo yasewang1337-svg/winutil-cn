@@ -1,8 +1,9 @@
-baseURL = "https://winutil.christitus.com/"
-languageCode = "en-us"
-title = "Winutil Documentation"
+baseURL = "/"
+languageCode = "zh-cn"
+defaultContentLanguage = "zh-cn"
+title = "WinUtil CN 中文文档"
 enableGitInfo = true
-canonifyURLs = true
+canonifyURLs = false
 
 [[module.mounts]]
   source = "assets"
@@ -13,62 +14,62 @@ path = "github.com/imfing/hextra"
 
 [[menu.main]]
 identifier = "userguide"
-name = "User Guides"
+name = "用户指南"
 pageRef = "/userguide"
 weight = 1
 
 [[menu.main]]
 identifier = "documentation"
-name = "Developer Documentation"
+name = "开发文档"
 weight = 2
 
 [[menu.main]]
 identifier = "contribution-guides"
-name = "Contribution Guides"
+name = "贡献指南"
 pageRef = "CONTRIBUTING.md"
 weight = 1
 parent = "documentation"
 
 [[menu.main]]
 identifier = "developer-documentation"
-name = "Developer Docs"
+name = "开发者参考"
 pageRef = "/dev"
 weight = 2
 parent = "documentation"
 
 [[menu.main]]
 identifier = "help"
-name = "Help"
+name = "帮助"
 weight = 3
 
 [[menu.main]]
 identifier = "faq"
-name = "FAQ"
+name = "常见问题"
 pageRef = "faq.md"
 weight = 1
 parent = "help"
 
 [[menu.main]]
 identifier = "known-issues"
-name = "Known Issues"
+name = "已知问题"
 pageRef = "KnownIssues.md"
 weight = 2
 parent = "help"
 
 [[menu.main]]
 identifier = "forums"
-name = "Forums"
-url = "https://forum.christitus.com/"
+name = "问题反馈"
+url = "https://github.com/yasewang1337-svg/winutil-cn/issues"
 weight = 3
 parent = "help"
 
 [[menu.main]]
-name = "Store"
-url = "https://christitus.com/downloads/"
+name = "下载中文版"
+url = "https://github.com/yasewang1337-svg/winutil-cn/releases/latest"
 weight = 5
 
 [[menu.main]]
-name = "Search"
+name = "搜索"
 weight = 6
 
   [menu.main.params]
@@ -77,13 +78,13 @@ weight = 6
 [[menu.main]]
 name = "GitHub"
 weight = 7
-url = "https://github.com/christitustech/Winutil"
+url = "https://github.com/yasewang1337-svg/winutil-cn"
 
   [menu.main.params]
   icon = "github"
 
 [params]
-description = "Chris Titus Tech's Windows Utility - Install Programs, Tweaks, Fixes, and Updates"
+description = "WinUtil CN 中文装机与维护助手：软件选择、操作结果与设置历史"
 displayUpdatedDate = true
 dateFormat = "January 2, 2006"
 
@@ -118,19 +119,19 @@ display = "hover"
 [menu]
 
   [[menu.sidebar]]
-  name = "Links"
+  name = "项目链接"
   weight = 1
     [menu.sidebar.params]
     type = "separator"
 
   [[menu.sidebar]]
-  name = "Github Repo ↗"
-  url = "https://github.com/ChrisTitusTech/winutil"
+  name = "中文仓库 ↗"
+  url = "https://github.com/yasewang1337-svg/winutil-cn"
   weight = 2
 
   [[menu.sidebar]]
-  name = "Discord Server ↗"
-  url = "https://discord.gg/RUbZUZyByQ"
+  name = "上游项目 ↗"
+  url = "https://github.com/ChrisTitusTech/winutil"
   weight = 3
 
 
