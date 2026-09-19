@@ -12,11 +12,11 @@ toc: true
 你不需要卸载 Winutil。因为它以 PowerShell 脚本的形式运行，只在打开时被加载进内存。一旦关闭，它就从内存中移除，不会在你的系统上留下安装痕迹。
 
 ### Winutil 用起来安全吗？
-安全。Winutil 是开源的，代码公开在 GitHub 上，每天有成千上万的用户在使用。不过，就像任何系统修改工具一样，你应该：
+WinUtil CN 是开源的系统管理工具，但开源不等于没有风险。使用时应该：
 - 以管理员身份运行（必需）
 - 在做重大改动前创建系统还原点
 - 弄清楚你正在套用的是什么优化项
-- 只从[官方来源](https://github.com/ChrisTitusTech/winutil/)运行
+- 只使用[本项目发布页](https://github.com/yasewang1337-svg/winutil-cn/releases)的附件，核对版本与 SHA256
 
 ### 我需要一直开着 Winutil 吗？
 不需要。一旦你套用了优化项或安装了应用，就可以关闭 Winutil。改动在关闭后依然生效。只有当你想再做改动或撤销优化项时，才需要重新运行 Winutil。
@@ -24,50 +24,24 @@ toc: true
 ### Winutil 需要联网吗？
 - **下载软件时**：需要，安装应用需要联网
 - **套用优化项时**：不需要，大多数优化项可离线工作
-- **首次运行时**：需要，用于拉取最新脚本
+- **打开 EXE 时**：脚本已内嵌，不下载远程脚本；准备包管理器等功能仍需要联网
 
 ### Winutil 多久更新一次？
-Winutil 处于活跃维护中，更新频繁。新功能、Bug 修复和新增应用都会定期发布。每次运行时，脚本都会自动下载最新版本。
+修复和功能更新会发布到本项目 Releases。已下载的 EXE 内嵌固定版本脚本，不会在每次打开时自动下载新版。
 
 ## 安装与运行
 
 ### 怎么运行 Winutil？
-1. 以管理员身份打开 PowerShell
-2. 运行：`irm "https://christitus.com/win" | iex`
-3. 等待图形界面出现
+从[本项目最新发布页](https://github.com/yasewang1337-svg/winutil-cn/releases/latest)下载 `WinUtil-CN.exe` 并核对 SHA256，再双击打开。脚本用法见[快速上手](/userguide/getting-started/)。
 
 ### 为什么需要管理员权限？
 Winutil 会进行系统级改动（注册表编辑、服务修改、软件安装），这些都需要提升权限。没有管理员权限，大多数功能都无法工作。
 
 ### 脚本下载不下来，怎么办？
-按顺序尝试以下方案：
-
-1. **使用 GitHub 直链**：
-   ```powershell
-   irm https://github.com/ChrisTitusTech/Winutil/releases/latest/download/Winutil.ps1 | iex
-   ```
-
-2. **强制启用 TLS 1.2**：
-   ```powershell
-   [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-   irm "https://christitus.com/win" | iex
-   ```
-
-   > [!NOTE]
-   > 在 Windows 11 上，你通常不需要 TLS 1.2 那条命令。只有当你遇到下载或安全协议错误时才用它。
-
-3. **更换 DNS** 到 Cloudflare（1.1.1.1）或 Google（8.8.8.8）
-
-4. 如果 GitHub 在你所在地区被封锁，**使用 VPN**
+先确认浏览器能访问本项目发布页及附件，记录具体网络错误；重新下载同一版本并核对哈希。如果是安全软件拦截，保留告警并按下方说明处理，不要换成来源不明的镜像脚本。
 
 ### 我遇到了「Execution Policy（执行策略）」错误，怎么修？
-先运行这条命令来允许脚本执行：
-```powershell
-Set-ExecutionPolicy Unrestricted -Scope Process -Force
-irm "https://christitus.com/win" | iex
-```
-
-这只影响当前 PowerShell 会话，是安全的。
+先用 `Get-ExecutionPolicy -List` 确认拦截来源。下载的未签名 PS1 在 `RemoteSigned` 下也可能被阻止；组织策略应联系管理员处理。详见[安全告警说明](https://github.com/yasewang1337-svg/winutil-cn/blob/main/docs/SECURITY.md)，不要改成 Bypass/Unrestricted 来处理告警。
 
 ## 优化项与修改
 
@@ -151,13 +125,13 @@ Winutil 主要专注于安装和管理应用，并没有提供一个能卸载每
 
 ### 运行命令后 Winutil 打不开
 可能的原因：
-1. **杀毒软件拦截**：为 PowerShell 添加例外
+1. **杀毒软件拦截**：记录威胁名称、文件哈希和发生步骤，提交复核
 2. **没以管理员身份运行**：以管理员身份重新打开 PowerShell
 3. **下载损坏**：关闭 PowerShell，重新打开，再试一次
-4. **Windows Defender**：放行该脚本
+4. **执行策略或应用控制**：查看具体提示，受组织管理的电脑联系管理员
 
 ### 我的杀毒软件把 Winutil 标记为恶意
-这是误报。Winutil 会进行系统改动，杀毒程序可能因此将其标记。代码是开源且经过审计的。如有需要，添加一个例外即可。
+先保留完整告警并核对该版本附件 SHA256，不能仅凭开源或系统工具身份断定是误报。不要关闭防护或添加排除项。详细步骤、SmartScreen 与病毒检测的区别、厂商复核入口见[安全告警说明](https://github.com/yasewang1337-svg/winutil-cn/blob/main/docs/SECURITY.md)。
 
 ### 某个应用安装失败
 故障排查步骤：

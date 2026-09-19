@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFTweaksServices`
 - 当前分类：z__高级设置 - 先了解影响
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`e2ce1bf52cefe360a765bdcbde469664139ec732c332661c9bfdfeb383e10959`
+- 源配置 SHA-256：`3e7f3f2dc0b37b3a858d3faf8151aa53c1ffd5a9bc1baa24e82ad364a5a28952`
 
 禁用离线文件、诊断跟踪和网络连接共享等服务，并将部分服务改为手动。可能影响企业离线文件、热点/共享和相关功能；不会默认勾选。注册表脚本的附加改动不在历史恢复范围内。
 

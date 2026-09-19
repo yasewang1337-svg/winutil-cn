@@ -33,7 +33,21 @@ $xaml = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'xaml/inputXML.xaml') 
 $null = [xml]$xaml
 $parts.Add("`$inputXML = @'`r`n$xaml`r`n'@")
 $autounattendXml = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'tools/autounattend.xml') -Raw -Encoding UTF8
-$null = [xml]$autounattendXml
+$autounattendDocument = [xml]$autounattendXml
+# The installed-image entry point must ship the same verifier as the desktop UI.
+# Small build fixtures without the production helper do not need this extension.
+$verifiedToolSource = Join-Path $PSScriptRoot 'functions/private/Invoke-WinUtilVerifiedTool.ps1'
+if (Test-Path -LiteralPath $verifiedToolSource -PathType Leaf) {
+    $verifiedToolNodes = @($autounattendDocument.SelectNodes('//*[local-name()="File" and @path="C:\Windows\Setup\Scripts\WinUtilVerifiedTool.ps1"]'))
+    if ($verifiedToolNodes.Count -ne 1) {
+        throw '无人值守模板缺少唯一的工具校验脚本，请先运行 tools/Sync-VerifiedToolTemplate.ps1。'
+    }
+    $expectedVerifier = (Get-Content -LiteralPath $verifiedToolSource -Raw -Encoding UTF8).Replace("`r`n", "`n").Trim()
+    $embeddedVerifier = $verifiedToolNodes[0].InnerText.Replace("`r`n", "`n").Trim()
+    if ($embeddedVerifier -cne $expectedVerifier) {
+        throw '无人值守模板的工具校验脚本与源码不同，请先运行 tools/Sync-VerifiedToolTemplate.ps1。'
+    }
+}
 $parts.Add("`$WinUtilAutounattendXml = @'`r`n$autounattendXml`r`n'@")
 $parts.Add((Get-Content -LiteralPath (Join-Path $PSScriptRoot 'scripts/main.ps1') -Raw -Encoding UTF8))
 $script = $parts -join "`r`n"

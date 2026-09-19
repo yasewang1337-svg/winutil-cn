@@ -1,5 +1,5 @@
 ---
-title: "安装 CTT PowerShell 配置文件"
+title: "查看 CTT PowerShell 配置指南"
 description: "当前源配置生成的开发参考"
 generated: true
 ---
@@ -11,20 +11,23 @@ generated: true
 - 稳定 ID：`WPFWinUtilInstallPSProfile`
 - 当前分类：PowerShell 配置文件(仅 7+)
 - 源配置：`config/feature.json`
-- 源配置 SHA-256：`9f9acba26432ca25eb2203ca70cec15563c7a3a4e0d5fa1dc795f149ac77c374`
+- 源配置 SHA-256：`ac97f75eddfb3fc5f085b8dd9b8faa5467671ba7e138c2d4785df4b54416e7fd`
+
+打开 CTT PowerShell 配置文件的官方项目指南，请阅读说明后按需安装。
 
 ## 配置定义
 
 ```json
 {
   "WPFWinUtilInstallPSProfile": {
-    "Content": "安装 CTT PowerShell 配置文件",
+    "Content": "查看 CTT PowerShell 配置指南",
+    "Description": "打开 CTT PowerShell 配置文件的官方项目指南，请阅读说明后按需安装。",
     "category": "PowerShell 配置文件(仅 7+)",
     "panel": "2",
     "Type": "Button",
     "ButtonWidth": "300",
     "function": "Invoke-WinUtilInstallPSProfile",
-    "link": "https://winutil.christitus.com/dev/features/powershell-profile-powershell-7--only/installpsprofile"
+    "link": "https://github.com/ChrisTitusTech/powershell-profile"
   }
 }
 ```
@@ -35,18 +38,11 @@ generated: true
 
 ```powershell
 function Invoke-WinUtilInstallPSProfile {
-    if (-not (Get-Command wt)) {
-        Write-Host "Windows Terminal not found installing..."
-        Install-WinUtilWinget
-        winget install Microsoft.WindowsTerminal --source winget --silent
+    $guideUrl = 'https://github.com/ChrisTitusTech/powershell-profile'
+    try {
+        Start-Process -FilePath $guideUrl -ErrorAction Stop
+    } catch {
+        throw "无法打开 PowerShell 配置指南，请手动访问 $guideUrl 。$($_.Exception.Message)"
     }
-
-    if (-not (Get-Command pwsh)) {
-        Write-Host "Powershell 7 not found installing..."
-        Install-WinUtilWinget
-        winget install Microsoft.PowerShell --source winget --silent
-    }
-
-    wt new-tab pwsh -NoExit -Command "irm https://github.com/ChrisTitusTech/powershell-profile/raw/main/setup.ps1 | iex"
 }
 ```

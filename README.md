@@ -67,11 +67,13 @@
 <details>
 <summary><b>习惯命令行？使用 PowerShell 启动</b></summary>
 
-在**管理员 PowerShell**中运行最新中文脚本，也可在发布页下载 `winutil-cn.ps1` 后本地运行：
+从同一[发布页](https://github.com/yasewang1337-svg/winutil-cn/releases/latest)下载 `winutil-cn.ps1` 与 `SHA256SUMS.txt`，先计算哈希并核对清单：
 
 ```powershell
-irm https://github.com/yasewang1337-svg/winutil-cn/releases/latest/download/winutil-cn.ps1 | iex
+Get-FileHash .\winutil-cn.ps1 -Algorithm SHA256
 ```
+
+核对来源、内容和哈希后，在管理员 PowerShell 中运行 `& .\winutil-cn.ps1`。执行策略或杀软拦截的处理见[安全告警说明](docs/SECURITY.md)；不要通过关闭防护或添加排除项启动。
 
 </details>
 
@@ -80,6 +82,7 @@ irm https://github.com/yasewang1337-svg/winutil-cn/releases/latest/download/winu
 - **选择之后再执行。** 确认软件组合只加入清单；图形界面导入清单只替换勾选，不自动安装或修改系统。组合中的安装状态来自会话缓存，“尚未确认”不等于未安装。
 - **恢复有范围。** 设置历史可恢复有记录的注册表值和服务启动配置；已删除应用、清理文件及脚本的其他改动不在完整恢复范围内，也不能替代个人文件备份。
 - **全部升级有区别。** “查看全部升级操作”覆盖包管理器可识别的软件，只提供整批结果与日志；不提供逐软件待更新清单或软件版本回退。
+- **优先使用默认 WinGet。** 如果改用 Chocolatey，请先按其官方说明完成安装；本工具不再下载并直接执行 Chocolatey 初始化脚本。自动登录与 PowerShell 配置安装入口改为打开官方指南。
 
 具体步骤和边界见[中文上手指南](docs/content/userguide/getting-started/_index.md)。
 
@@ -94,6 +97,8 @@ irm https://github.com/yasewang1337-svg/winutil-cn/releases/latest/download/winu
 | 了解构建方式与上游同步 | [EXE 启动器](tools/launcher/README.md) · [维护说明](docs/MAINTENANCE.md) · [上游同步进度 #5](https://github.com/yasewang1337-svg/winutil-cn/issues/5) |
 
 ## 遇到问题
+
+出现杀毒告警或“Windows 已保护你的电脑”时，先按[安全告警说明](docs/SECURITY.md)区分检测类型、核对文件哈希并保留告警记录。开源、数字签名或单次扫描通过都不能保证没有问题。
 
 先查看软件结果窗口中的原因，通过 **打开日志文件夹** 获取详细记录，再到[本项目 Issues](https://github.com/yasewang1337-svg/winutil-cn/issues/new/choose)反馈。请附上 **项目版本、Windows 版本、启动方式、复现步骤和相关错误段落**。
 

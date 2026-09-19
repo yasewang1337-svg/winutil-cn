@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFTweaksRevertStartMenu`
 - 当前分类：z__高级设置 - 先了解影响
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`e2ce1bf52cefe360a765bdcbde469664139ec732c332661c9bfdfeb383e10959`
+- 源配置 SHA-256：`3e7f3f2dc0b37b3a858d3faf8151aa53c1ffd5a9bc1baa24e82ad364a5a28952`
 
 把 25H2 新版开始菜单恢复为逐步推送前的旧布局。
 
@@ -27,10 +27,10 @@ generated: true
     "category": "z__高级设置 - 先了解影响",
     "panel": "1",
     "InvokeScript": [
-      "\r\n      Invoke-WebRequest https://github.com/thebookisclosed/ViVe/releases/download/v0.3.4/ViVeTool-v0.3.4-IntelAmd.zip -OutFile ViVeTool.zip\r\n\r\n      Expand-Archive ViVeTool.zip\r\n      Remove-Item ViVeTool.zip\r\n\r\n      Start-Process 'ViVeTool\\ViVeTool.exe' -ArgumentList '/disable /id:47205210' -Wait -NoNewWindow\r\n\r\n      Remove-Item ViVeTool -Recurse\r\n\r\n      Write-Host 'Old start menu reverted. Please restart your computer to take effect.'\r\n      Write-Host 'On newer versions of windows !!THIS TWEAK WILL NOT WORK!!.'\r\n      "
+      "$null = Invoke-WinUtilVerifiedTool -Tool ViVeTool -Action Disable -ErrorAction Stop\r\nWrite-Host '已应用恢复旧版开始菜单设置，请重启电脑。部分较新 Windows 版本可能不支持此设置。'"
     ],
     "UndoScript": [
-      "\r\n      Invoke-WebRequest https://github.com/thebookisclosed/ViVe/releases/download/v0.3.4/ViVeTool-v0.3.4-IntelAmd.zip -OutFile ViVeTool.zip\r\n\r\n      Expand-Archive ViVeTool.zip\r\n      Remove-Item ViVeTool.zip\r\n\r\n      Start-Process 'ViVeTool\\ViVeTool.exe' -ArgumentList '/enable /id:47205210' -Wait -NoNewWindow\r\n\r\n      Remove-Item ViVeTool -Recurse\r\n\r\n      Write-Host 'New start menu reverted. Please restart your computer to take effect.'\r\n      "
+      "$null = Invoke-WinUtilVerifiedTool -Tool ViVeTool -Action Enable -ErrorAction Stop\r\nWrite-Host '已应用新版开始菜单设置，请重启电脑。'"
     ],
     "link": "https://winutil.christitus.com/dev/tweaks/essential-tweaks/revertstartmenu"
   }

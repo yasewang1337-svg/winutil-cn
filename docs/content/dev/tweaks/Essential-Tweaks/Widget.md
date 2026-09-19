@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFTweaksWidget`
 - 当前分类：z__高级设置 - 先了解影响
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`e2ce1bf52cefe360a765bdcbde469664139ec732c332661c9bfdfeb383e10959`
+- 源配置 SHA-256：`3e7f3f2dc0b37b3a858d3faf8151aa53c1ffd5a9bc1baa24e82ad364a5a28952`
 
 移除任务栏左下角的小组件及相关组件。
 

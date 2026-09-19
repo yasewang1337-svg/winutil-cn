@@ -4,8 +4,8 @@
 
 | 类别 | 文件 | 触发与作用 |
 | --- | --- | --- |
-| 正式发布 | [release-cn.yaml](workflows/release-cn.yaml) | main 的相关代码改动或手动触发；双 PowerShell 测试通过后构建中文 PS1/EXE、扫描、附校验和并发布 |
-| 回归 | [unittests.yaml](workflows/unittests.yaml) | main、PR、手动和可复用调用；Windows PowerShell 5.1 / PowerShell 7 |
+| 正式发布 | [release-cn.yaml](workflows/release-cn.yaml) | main 的相关代码改动或手动触发；测试通过后构建中文 PS1/EXE、分别扫描；未完成扫描则停止，成功时附扫描报告与校验和 |
+| 回归 | [unittests.yaml](workflows/unittests.yaml) | main、PR、手动和可复用调用；双 PowerShell 回归及无害夹具启动器测试 |
 | 构建检查 | [compile-check.yaml](workflows/compile-check.yaml) | main、PR、手动和可复用调用；中文脚本构建及双版本语法/BOM |
 | 仓库整洁 | [remove-winutil.yaml](workflows/remove-winutil.yaml) | push 与 PR；检查生成文件没有入库，仅报告失败，不再自动删文件并提交 |
 | MCP 发布 | [publish-mcp.yaml](workflows/publish-mcp.yaml) | mcp-v* 标签或手动；单独构建发布 Node 包，需要 NPM_TOKEN |

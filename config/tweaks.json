@@ -74,10 +74,10 @@
     "category": "z__高级设置 - 先了解影响",
     "panel": "1",
     "InvokeScript": [
-      "\r\n      Invoke-WebRequest https://github.com/thebookisclosed/ViVe/releases/download/v0.3.4/ViVeTool-v0.3.4-IntelAmd.zip -OutFile ViVeTool.zip\r\n\r\n      Expand-Archive ViVeTool.zip\r\n      Remove-Item ViVeTool.zip\r\n\r\n      Start-Process 'ViVeTool\\ViVeTool.exe' -ArgumentList '/disable /id:47205210' -Wait -NoNewWindow\r\n\r\n      Remove-Item ViVeTool -Recurse\r\n\r\n      Write-Host 'Old start menu reverted. Please restart your computer to take effect.'\r\n      Write-Host 'On newer versions of windows !!THIS TWEAK WILL NOT WORK!!.'\r\n      "
+      "$null = Invoke-WinUtilVerifiedTool -Tool ViVeTool -Action Disable -ErrorAction Stop\r\nWrite-Host '已应用恢复旧版开始菜单设置，请重启电脑。部分较新 Windows 版本可能不支持此设置。'"
     ],
     "UndoScript": [
-      "\r\n      Invoke-WebRequest https://github.com/thebookisclosed/ViVe/releases/download/v0.3.4/ViVeTool-v0.3.4-IntelAmd.zip -OutFile ViVeTool.zip\r\n\r\n      Expand-Archive ViVeTool.zip\r\n      Remove-Item ViVeTool.zip\r\n\r\n      Start-Process 'ViVeTool\\ViVeTool.exe' -ArgumentList '/enable /id:47205210' -Wait -NoNewWindow\r\n\r\n      Remove-Item ViVeTool -Recurse\r\n\r\n      Write-Host 'New start menu reverted. Please restart your computer to take effect.'\r\n      "
+      "$null = Invoke-WinUtilVerifiedTool -Tool ViVeTool -Action Enable -ErrorAction Stop\r\nWrite-Host '已应用新版开始菜单设置，请重启电脑。'"
     ],
     "link": "https://winutil.christitus.com/dev/tweaks/essential-tweaks/revertstartmenu"
   },
@@ -430,7 +430,7 @@
   },
   "WPFTweaksTelemetry": {
     "Content": "禁用遥测",
-    "Description": "关闭 Microsoft 遥测与部分相关数据收集。",
+    "Description": "关闭 Microsoft 遥测与部分相关数据收集；保留 Defender 自动样本提交设置。",
     "category": "z__高级设置 - 先了解影响",
     "panel": "1",
     "registry": [
@@ -520,10 +520,10 @@
       }
     ],
     "InvokeScript": [
-      "\r\n      # Disable Defender Auto Sample Submission\r\n      Set-MpPreference -SubmitSamplesConsent 2\r\n\r\n      # Disable (Connected User Experiences and Telemetry) Service\r\n      Set-Service -Name diagtrack -StartupType Disabled\r\n\r\n      # Disable (Windows Error Reporting Manager) Service\r\n      Set-Service -Name wermgr -StartupType Disabled\r\n\r\n      # Disable PowerShell 7 telemetry\r\n      [Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', '1', 'Machine')\r\n\r\n      Remove-ItemProperty -Path \"HKCU:\\Software\\Microsoft\\Siuf\\Rules\" -Name PeriodInNanoSeconds\r\n      "
+      "\r\n      # Disable (Connected User Experiences and Telemetry) Service\r\n      Set-Service -Name diagtrack -StartupType Disabled\r\n\r\n      # Disable (Windows Error Reporting Manager) Service\r\n      Set-Service -Name wermgr -StartupType Disabled\r\n\r\n      # Disable PowerShell 7 telemetry\r\n      [Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', '1', 'Machine')\r\n\r\n      Remove-ItemProperty -Path \"HKCU:\\Software\\Microsoft\\Siuf\\Rules\" -Name PeriodInNanoSeconds\r\n      "
     ],
     "UndoScript": [
-      "\r\n      # Enable Defender Auto Sample Submission\r\n      Set-MpPreference -SubmitSamplesConsent 1\r\n\r\n      # Enable (Connected User Experiences and Telemetry) Service\r\n      Set-Service -Name diagtrack -StartupType Automatic\r\n\r\n      # Enable (Windows Error Reporting Manager) Service\r\n      Set-Service -Name wermgr -StartupType Automatic\r\n\r\n      # Enable PowerShell 7 telemetry\r\n      [Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', '', 'Machine')\r\n      "
+      "\r\n      # Enable (Connected User Experiences and Telemetry) Service\r\n      Set-Service -Name diagtrack -StartupType Automatic\r\n\r\n      # Enable (Windows Error Reporting Manager) Service\r\n      Set-Service -Name wermgr -StartupType Automatic\r\n\r\n      # Enable PowerShell 7 telemetry\r\n      [Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', '', 'Machine')\r\n      "
     ],
     "link": "https://winutil.christitus.com/dev/tweaks/essential-tweaks/telemetry"
   },

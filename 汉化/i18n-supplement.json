@@ -66,7 +66,7 @@
     },
     "WPFTweaksTelemetry": {
       "Content": "禁用遥测",
-      "Description": "关闭 Microsoft 遥测与部分相关数据收集。"
+      "Description": "关闭 Microsoft 遥测与部分相关数据收集；保留 Defender 自动样本提交设置。"
     },
     "WPFTweaksDeBloat": {
       "Content": "批量卸载内置应用（谨慎）",

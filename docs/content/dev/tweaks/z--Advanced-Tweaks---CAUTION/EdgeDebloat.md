@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFTweaksEdgeDebloat`
 - 当前分类：z__高级优化 - 谨慎
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`e2ce1bf52cefe360a765bdcbde469664139ec732c332661c9bfdfeb383e10959`
+- 源配置 SHA-256：`3e7f3f2dc0b37b3a858d3faf8151aa53c1ffd5a9bc1baa24e82ad364a5a28952`
 
 对 Edge 做“降打扰”设置：减少遥测、推荐、弹窗等（不卸载 Edge）。
 

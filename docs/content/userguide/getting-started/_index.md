@@ -50,7 +50,7 @@ EXE 内嵌本版本脚本，使用 Windows 自带的 PowerShell 5.1。首次准�
 
 ## 读懂软件操作结果
 
-安装或卸载所选软件前，会显示名称、软件包 ID 和使用的包管理器。安装、更新会联网，首次使用还可能需要准备包管理器；确认窗口会说明这些操作。
+安装或卸载所选软件前，会显示名称、软件包 ID 和使用的包管理器。安装、更新会联网，首次使用 WinGet 还可能需要准备包管理器；确认窗口会说明这些操作。选择 Chocolatey 时须先按[官方指南](https://chocolatey.org/install)完成安装，本工具不再自动执行其远程初始化脚本；已有 Chocolatey 的软件管理功能保留。
 
 完成后的 **软件操作结果** 会分别显示成功、失败、已跳过、需要重启，以及中文原因、退出码和日志路径。有失败项时，可以选择 **仅重试失败项**；重试会创建新的日志目录。
 
@@ -94,13 +94,15 @@ EXE 内嵌本版本脚本，使用 Windows 自带的 PowerShell 5.1。首次准�
 
 ## 脚本与自动化入口
 
-已经习惯命令行的用户，可以在管理员 PowerShell 中运行最新版中文脚本：
+已经习惯命令行的用户，可以从同一发布页下载 `winutil-cn.ps1` 与 `SHA256SUMS.txt`，先计算脚本哈希，与清单对应条目核对：
 
 ```powershell
-irm https://github.com/yasewang1337-svg/winutil-cn/releases/latest/download/winutil-cn.ps1 | iex
+Get-FileHash .\winutil-cn.ps1 -Algorithm SHA256
 ```
 
-也可以从发布页下载 winutil-cn.ps1 后在本地运行。命令行 `-Preset` / `-Config` 用于执行配置，使用前先检查内容；自动模式仅支持软件操作及可记录的基础注册表设置（含受支持的开关）；脚本、服务、预装应用移除（Appx）、DNS 和系统功能等复杂操作需要回图形界面核对。执行失败会报告错误，不会显示全部完成。
+确认来源、内容和哈希后，在管理员 PowerShell 中运行 `& .\winutil-cn.ps1`。遇到策略拦截或杀毒告警时，先看[安全告警说明](https://github.com/yasewang1337-svg/winutil-cn/blob/main/docs/SECURITY.md)。非管理员会话中的远程内存脚本不再自动下载后提权。
+
+命令行 `-Preset` / `-Config` 用于执行配置，使用前先检查内容；自动模式仅支持软件操作及可记录的基础注册表设置（含受支持的开关）；脚本、服务、预装应用移除（Appx）、DNS 和系统功能等复杂操作需要回图形界面核对。执行失败会报告错误，不会显示全部完成。
 
 英文上游入口和开发信息见 [ChrisTitusTech/winutil](https://github.com/ChrisTitusTech/winutil)，中文版本的默认下载与问题反馈均在本仓库。
 

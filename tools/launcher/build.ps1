@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     编译 WinUtil-CN 自包含启动器：把 winutil-cn.ps1 作为嵌入资源打进单个 EXE。
 

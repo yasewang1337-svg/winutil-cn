@@ -14,6 +14,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace WinUtilCN;
@@ -28,7 +29,11 @@ internal static class Launcher
         string? scriptPath = null;
         try
         {
-            scriptPath = ExtractScript();
+            // Keep the extracted file open for read-only sharing until PowerShell exits.
+            // Another process must not replace its contents between extraction and execution.
+            using var script = ExtractScript();
+            scriptPath = script.Name;
+            Console.WriteLine("[WinUtil-CN] 本地脚本：" + scriptPath);
             return RunPowerShell(scriptPath, args);
         }
         catch (Exception ex)
@@ -44,22 +49,45 @@ internal static class Launcher
     }
 
     // 把嵌入的 winutil-cn.ps1 原样释放到临时文件（保留 UTF-8 BOM，供 PowerShell 5.1 正确解码中文）。
-    private static string ExtractScript()
+    private static FileStream ExtractScript()
     {
         var asm = Assembly.GetExecutingAssembly();
         using var res = asm.GetManifestResourceStream(ScriptResource)
             ?? throw new InvalidOperationException("EXE 内未找到嵌入的 winutil-cn.ps1 资源。");
 
         string path = Path.Combine(Path.GetTempPath(), $"winutil-cn-{Guid.NewGuid():N}.ps1");
-        using var fs = new FileStream(path, FileMode.CreateNew, FileAccess.Write);
-        res.CopyTo(fs);
-        return path;
+        FileStream? script = null;
+        try
+        {
+            using var sha = SHA256.Create();
+            string expectedHash = Convert.ToBase64String(sha.ComputeHash(res));
+            res.Position = 0;
+            using (var output = new FileStream(path, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            {
+                res.CopyTo(output);
+                output.Flush(true);
+            }
+
+            // PowerShell needs a read-only handle. Verify after acquiring the
+            // execution lock so a replacement during the reopen gap cannot run.
+            script = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+            if (Convert.ToBase64String(sha.ComputeHash(script)) != expectedHash)
+                throw new InvalidDataException("释放的脚本与内嵌资源不一致，已停止启动。");
+            script.Position = 0;
+            return script;
+        }
+        catch
+        {
+            script?.Dispose();
+            TryDelete(path);
+            throw;
+        }
     }
 
     // 用 Windows PowerShell 5.1 运行脚本，并透传本进程收到的命令行参数。
     private static int RunPowerShell(string scriptPath, string[] args)
     {
-        var cmd = new StringBuilder("-NoProfile -ExecutionPolicy Bypass -File ");
+        var cmd = new StringBuilder("-NoProfile -STA -ExecutionPolicy RemoteSigned -File ");
         cmd.Append(QuoteArg(scriptPath));
         foreach (var a in args)
         {
@@ -80,12 +108,12 @@ internal static class Launcher
         return p.ExitCode;
     }
 
-    // 定位系统自带的 Windows PowerShell 5.1；找不到则退回 PATH 查找。
+    // 仅使用系统自带的 Windows PowerShell 5.1，避免 PATH 中的同名程序被提权执行。
     private static string ResolvePowerShell()
     {
         string system = Environment.GetFolderPath(Environment.SpecialFolder.System);
         string ps = Path.Combine(system, @"WindowsPowerShell\v1.0\powershell.exe");
-        return File.Exists(ps) ? ps : "powershell.exe";
+        return File.Exists(ps) ? ps : throw new FileNotFoundException("未找到系统 Windows PowerShell。", ps);
     }
 
     // 按 Windows 命令行规则给单个参数加引号（正确处理空格、引号、反斜杠）。

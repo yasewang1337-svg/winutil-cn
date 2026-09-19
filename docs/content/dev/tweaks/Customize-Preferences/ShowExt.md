@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFToggleShowExt`
 - 当前分类：自定义偏好
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`e2ce1bf52cefe360a765bdcbde469664139ec732c332661c9bfdfeb383e10959`
+- 源配置 SHA-256：`3e7f3f2dc0b37b3a858d3faf8151aa53c1ffd5a9bc1baa24e82ad364a5a28952`
 
 在资源管理器中显示文件扩展名（推荐，防止伪装文件）。
 

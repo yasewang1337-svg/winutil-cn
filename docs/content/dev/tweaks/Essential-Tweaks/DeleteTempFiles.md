@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFTweaksDeleteTempFiles`
 - 当前分类：常用设置（按需选择）
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`e2ce1bf52cefe360a765bdcbde469664139ec732c332661c9bfdfeb383e10959`
+- 源配置 SHA-256：`3e7f3f2dc0b37b3a858d3faf8151aa53c1ffd5a9bc1baa24e82ad364a5a28952`
 
 删除用户临时目录与系统临时目录中的文件，用于快速释放空间（可能删掉某些软件的临时缓存）。
 

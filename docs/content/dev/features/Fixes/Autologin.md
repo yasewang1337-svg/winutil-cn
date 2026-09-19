@@ -1,5 +1,5 @@
 ---
-title: "设置自动登录"
+title: "自动登录（微软官方说明）"
 description: "当前源配置生成的开发参考"
 generated: true
 ---
@@ -11,14 +11,14 @@ generated: true
 - 稳定 ID：`WPFPanelAutologin`
 - 当前分类：修复
 - 源配置：`config/feature.json`
-- 源配置 SHA-256：`9f9acba26432ca25eb2203ca70cec15563c7a3a4e0d5fa1dc795f149ac77c374`
+- 源配置 SHA-256：`ac97f75eddfb3fc5f085b8dd9b8faa5467671ba7e138c2d4785df4b54416e7fd`
 
 ## 配置定义
 
 ```json
 {
   "WPFPanelAutologin": {
-    "Content": "设置自动登录",
+    "Content": "自动登录（微软官方说明）",
     "category": "修复",
     "panel": "1",
     "Type": "Button",
@@ -35,7 +35,10 @@ generated: true
 
 ```powershell
 function Invoke-WPFPanelAutologin {
-    Invoke-WebRequest -Uri https://live.sysinternals.com/Autologon.exe -OutFile "$Env:Temp\autologin.exe"
-    Start-Process -FilePath "$Env:Temp\autologin.exe" -ArgumentList /accepteula
+    <#
+    .SYNOPSIS
+        Opens Microsoft's Autologon documentation and download page for review.
+    #>
+    Start-Process 'https://learn.microsoft.com/sysinternals/downloads/autologon' -ErrorAction Stop
 }
 ```

@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFFeatureInstall`
 - 当前分类：功能
 - 源配置：`config/feature.json`
-- 源配置 SHA-256：`9f9acba26432ca25eb2203ca70cec15563c7a3a4e0d5fa1dc795f149ac77c374`
+- 源配置 SHA-256：`ac97f75eddfb3fc5f085b8dd9b8faa5467671ba7e138c2d4785df4b54416e7fd`
 
 ## 配置定义
 

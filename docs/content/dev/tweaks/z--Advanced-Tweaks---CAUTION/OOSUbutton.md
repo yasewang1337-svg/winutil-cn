@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFOOSUbutton`
 - 当前分类：z__高级优化 - 谨慎
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`e2ce1bf52cefe360a765bdcbde469664139ec732c332661c9bfdfeb383e10959`
+- 源配置 SHA-256：`3e7f3f2dc0b37b3a858d3faf8151aa53c1ffd5a9bc1baa24e82ad364a5a28952`
 
 本页描述实现，不代表推荐勾选。历史恢复仅覆盖工具实际记录的设置；配置中的 OriginalValue / OriginalType 不等于这台电脑的修改前状态。应用、文件及脚本其他改动不保证可恢复。
 
@@ -35,15 +35,47 @@ generated: true
 
 ```powershell
 function Invoke-WPFOOSU {
+    if ($sync.OOSURunning) {
+        Write-Warning 'O&O ShutUp10++ 正在准备或运行，请先关闭已打开的工具。'
+        return
+    }
+
+    # Create the delegate on the UI runspace; workers pass an immutable error snapshot.
+    $sync.OOSUErrorAction = [action[string]] {
+        param($Message)
+        $null = Show-WinUtilTweakDialog -Title 'O&O ShutUp10++ 启动失败' -Message $Message
+    }
+    # Reserve only this tool before dispatch so rapid clicks cannot start another copy.
+    $sync.OOSURunning = $true
     try {
-        $ProgressPreference = 'SilentlyContinue'
-
-        Invoke-WebRequest -Uri https://dl5.oo-software.com/files/ooshutup10/OOSU10.exe -OutFile "$Env:Temp\ooshutup10.exe"
-        Start-Process -FilePath "$Env:Temp\ooshutup10.exe"
-
-        $ProgressPreference = 'Continue'
+        $null = Invoke-WPFRunspace -ErrorAction Stop -ScriptBlock {
+            try {
+                Write-Host '正在下载并验证 O&O ShutUp10++；验证通过后将打开工具。'
+                $null = Invoke-WinUtilVerifiedTool -Tool OOSU -ErrorAction Stop
+            } catch {
+                $message = "O&O ShutUp10++ 未成功完成。`r`n$($_.Exception.Message)"
+                Write-Warning $message
+                if ($sync.Form) {
+                    try {
+                        # Do not make a worker wait for a dialog or a closing UI thread.
+                        $null = $sync.Form.Dispatcher.BeginInvoke(
+                            [action[string]]$sync.OOSUErrorAction, [object[]]@($message)
+                        )
+                    } catch {
+                        Write-Warning "无法显示 O&O 错误窗口：$($_.Exception.Message)"
+                    }
+                }
+            } finally {
+                $sync.OOSURunning = $false
+            }
+        }
     } catch {
-        Write-Error "Couldn't download O&O ShutUp10. Please make sure you have an active internet connection."
+        $sync.OOSURunning = $false
+        $message = "无法启动 O&O ShutUp10++ 后台任务。`r`n$($_.Exception.Message)"
+        Write-Warning $message
+        if ($sync.Form) {
+            $null = Show-WinUtilTweakDialog -Title 'O&O ShutUp10++ 启动失败' -Message $message
+        }
     }
 }
 ```
