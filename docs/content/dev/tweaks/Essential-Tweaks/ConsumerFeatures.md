@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFTweaksConsumerFeatures`
 - 当前分类：常用设置（按需选择）
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`e2ce1bf52cefe360a765bdcbde469664139ec732c332661c9bfdfeb383e10959`
+- 源配置 SHA-256：`3e7f3f2dc0b37b3a858d3faf8151aa53c1ffd5a9bc1baa24e82ad364a5a28952`
 
 尝试关闭 Windows 的消费者体验与推荐内容；效果取决于系统版本和组织策略。不会卸载现有应用，可恢复本次修改前的注册表值。
 

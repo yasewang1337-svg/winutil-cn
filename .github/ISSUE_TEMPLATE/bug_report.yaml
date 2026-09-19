@@ -48,6 +48,11 @@ body:
       description: 启动异常请提供 %TEMP%\winutil-cn-error.log；完整运行日志在 %LOCALAPPDATA%\winutil\logs。仅提供相关错误段落即可。
       render: text
   - type: textarea
+    id: security_alert
+    attributes:
+      label: 安全软件告警（如有）
+      description: 请提供安全软件名称及版本、病毒库版本、完整威胁名称、被拦截文件名、SHA256、发生阶段（下载/启动/具体功能）。截图可遮去个人路径。不要关闭防护或添加排除项来复现。
+  - type: textarea
     id: changes
     attributes:
       label: 出错前应用过的优化或配置（如有）

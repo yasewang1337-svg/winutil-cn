@@ -12,6 +12,7 @@
 | assets/images/archive | 未被当前文档引用的历史图片 | 保留来源，不作为当前界面的证据 |
 | hugo.toml、layouts、static、go.mod/go.sum | Hugo 本地预览配置与资源 | 当前为中文预览配置，baseURL 为相对根路径 |
 | MAINTENANCE.md | 构建、测试、发布及上游迁移边界 | 维护者更新 |
+| SECURITY.md | 安全告警、哈希核对、厂商复核和签名边界 | 随发布安全流程更新 |
 
 ## 刷新开发参考
 

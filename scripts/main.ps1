@@ -337,6 +337,11 @@ $sync["Form"].title = $sync["Form"].title + " " + $sync.version
 # Set the commands that will run when the form is closed
 $sync["Form"].Add_Closing({
     param($sender, $eventArgs)
+    if ($sync.OOSURunning) {
+        $eventArgs.Cancel = $true
+        [void][Windows.MessageBox]::Show('O&O 隐私工具仍在运行，请先关闭 O&O 窗口，再关闭 WinUtil。', 'WinUtil CN')
+        return
+    }
     if ($sync.ProcessRunning) {
         $eventArgs.Cancel = $true
         [void][Windows.MessageBox]::Show('当前任务仍在执行，请等待结果后关闭窗口。', 'WinUtil CN')

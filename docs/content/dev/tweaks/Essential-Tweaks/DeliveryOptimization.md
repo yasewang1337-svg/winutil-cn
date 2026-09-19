@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFTweaksDeliveryOptimization`
 - 当前分类：常用设置（按需选择）
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`e2ce1bf52cefe360a765bdcbde469664139ec732c332661c9bfdfeb383e10959`
+- 源配置 SHA-256：`3e7f3f2dc0b37b3a858d3faf8151aa53c1ffd5a9bc1baa24e82ad364a5a28952`
 
 将更新下载设为 HTTP 模式，停止与其他电脑对等分享更新；Windows 更新仍可联网下载。可恢复本次修改前的注册表值。
 

@@ -1,15 +1,14 @@
-function Install-WinUtilChoco {
+﻿function Install-WinUtilChoco {
 
     <#
 
     .SYNOPSIS
-        Installs Chocolatey if it is not already installed
+        Checks Chocolatey availability and directs missing installations to the official guide
 
     #>
     if ((Test-WinUtilPackageManager -choco) -eq "installed") {
         return
     }
 
-    Write-Host "Chocolatey is not installed. Installing now..."
-    Invoke-WebRequest -Uri https://community.chocolatey.org/install.ps1 -UseBasicParsing | Invoke-Expression
+    throw '未安装 Chocolatey。请按官方说明手动安装：https://chocolatey.org/install ，安装后重启 WinUtil；也可以在设置中改用默认的 WinGet 软件包管理器。'
 }

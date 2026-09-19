@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFTweaksRazerBlock`
 - 当前分类：z__高级优化 - 谨慎
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`e2ce1bf52cefe360a765bdcbde469664139ec732c332661c9bfdfeb383e10959`
+- 源配置 SHA-256：`3e7f3f2dc0b37b3a858d3faf8151aa53c1ffd5a9bc1baa24e82ad364a5a28952`
 
 阻止 Razer 相关软件/驱动的自动安装（硬件通常仍可用）。注意：也可能影响部分第三方驱动安装流程。
 

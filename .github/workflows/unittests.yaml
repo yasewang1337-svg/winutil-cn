@@ -35,3 +35,13 @@ jobs:
         if: matrix.shell == 'powershell'
         shell: powershell
         run: ./tools/Invoke-Tests.ps1 -PesterModule "$env:PESTER_MODULE_PATH"
+
+  launcher:
+    name: Launcher fixture regression (Windows PowerShell 5.1)
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build and test launcher with harmless fixture only
+        shell: powershell
+        run: ./tools/Test-Launcher.ps1

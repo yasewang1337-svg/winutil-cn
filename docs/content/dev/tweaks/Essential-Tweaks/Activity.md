@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFTweaksActivity`
 - 当前分类：常用设置（按需选择）
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`e2ce1bf52cefe360a765bdcbde469664139ec732c332661c9bfdfeb383e10959`
+- 源配置 SHA-256：`3e7f3f2dc0b37b3a858d3faf8151aa53c1ffd5a9bc1baa24e82ad364a5a28952`
 
 关闭 Windows 活动历史的记录/同步相关策略。仅修改对应策略，不清理现有文件；效果取决于系统版本。可恢复本次修改前的注册表值。
 

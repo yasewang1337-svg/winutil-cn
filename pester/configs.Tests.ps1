@@ -14,6 +14,14 @@
 }
 
 Describe 'Release configuration consistency' {
+    It 'does not change antivirus preferences through tweak or undo scripts' {
+        foreach ($tweak in $script:configs.tweaks.PSObject.Properties) {
+            foreach ($code in @($tweak.Value.InvokeScript) + @($tweak.Value.UndoScript)) {
+                $code | Should -Not -Match '(?i)\b(?:Set|Add|Remove)-MpPreference\b' -Because $tweak.Name
+            }
+        }
+    }
+
     It 'loads every configuration as valid JSON' {
         $script:configs.Count | Should -BeGreaterThan 0
         foreach ($name in $script:configs.Keys) { $script:configs[$name] | Should -Not -BeNullOrEmpty -Because $name }

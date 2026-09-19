@@ -8,6 +8,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net48</TargetFramework>
+    <Prefer32Bit>false</Prefer32Bit>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
@@ -21,7 +22,7 @@
     <!-- 不把 git 提交哈希追加到产品版本，保持版本号干净 -->
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 
-    <!-- 程序集元数据：右键属性→详细信息 / UAC 弹窗 显示的品牌信息(完整元数据也利于杀软信任) -->
+    <!-- 程序集元数据用于文件属性和程序名称；可信发布者身份必须由代码签名验证。 -->
     <!-- AssemblyTitle → Win32 FileDescription：UAC 弹窗与任务管理器显示此名，故用干净的产品名 -->
     <AssemblyTitle>WinUtil 中文汉化版</AssemblyTitle>
     <Product>WinUtil 中文汉化版</Product>

@@ -44,7 +44,7 @@
       "Content": "安装/启用所选功能"
     },
     "WPFPanelAutologin": {
-      "Content": "设置自动登录"
+      "Content": "自动登录（微软官方说明）"
     },
     "WPFFixesUpdate": {
       "Content": "重置 Windows 更新组件"
@@ -89,7 +89,8 @@
       "Content": "日期和时间"
     },
     "WPFWinUtilInstallPSProfile": {
-      "Content": "安装 CTT PowerShell 配置文件"
+      "Content": "查看 CTT PowerShell 配置指南",
+      "Description": "打开 CTT PowerShell 配置文件的官方项目指南，请阅读说明后按需安装。"
     },
     "WPFWinUtilUninstallPSProfile": {
       "Content": "卸载 CTT PowerShell 配置文件"
@@ -145,7 +146,7 @@
     },
     "WPFTweaksTelemetry": {
       "Content": "禁用遥测",
-      "Description": "关闭 Microsoft 遥测与部分相关数据收集。"
+      "Description": "关闭 Microsoft 遥测与部分相关数据收集；保留 Defender 自动样本提交设置。"
     },
     "WPFTweaksRemoveEdge": {
       "Content": "卸载 Microsoft Edge",

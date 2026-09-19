@@ -7,12 +7,13 @@
 | 原则 | 做法 |
 |---|---|
 | **自包含** | 脚本作为嵌入资源打进 EXE，运行时释放到临时目录执行——离线、不联网、不下载远程代码 |
-| **透明** | 不加壳、不混淆、不用 `-EncodedCommand`；只做「释放脚本 → 调用系统 PowerShell → 清理」，尽量少触发杀软启发式 |
+| **透明** | 不加壳、不混淆；只做「释放脚本 → 调用系统 PowerShell → 清理」，采用进程级 `RemoteSigned`，不修改持久执行策略 |
 | **零依赖** | 目标 net48：.NET Framework 4.x 在所有 Windows 10/11 上预装，产物开箱即跑、无需安装运行时 |
 | **现代工具链** | 用最新 .NET SDK 的 Roslyn 编译器（`LangVersion=latest` → 最新 C#），SDK 风格 `.csproj` 工程 |
 | **可靠** | `app.manifest` 强制管理员权限（弹 UAC）；透传 `-Preset` / `-Config` 参数；等待退出、透传退出码、清理临时文件 |
+| **完整性** | 释放脚本后持有只允许共享读取的文件句柄，直到子进程退出；仅调用系统目录内的 PowerShell，不回退 PATH |
 
-> 为何编译器用最新 C#、目标却锁 net48？——语言/编译器越新越好；但目标框架若上 .NET 9/10，用户要么得装运行时、要么走 Native AOT（原生未知 EXE 反而更易触发杀软启发式）。net48 是唯一「全 Windows 预装 + 零安装 + 已验证 Defender-clean」的落点。
+目标 net48 是为了复用 Windows 自带的 .NET Framework 运行环境。框架选择不代表杀毒检测结论；每个发布产物仍需独立扫描。64 位系统优先使用 64 位进程。
 
 ## 文件
 
@@ -32,8 +33,12 @@ pwsh -File tools\launcher\build.ps1 -ScriptPath .\winutil-cn.ps1 -OutFile .\WinU
 
 需要 [.NET SDK](https://dotnet.microsoft.com/download)（任意现代版本，≥ .NET 8 即可；越新支持的 C# 语法越全）。
 
-发布时由 `.github/workflows/release-cn.yaml` 自动完成编译、Defender 自检与附件上传。
+发布时由 `.github/workflows/release-cn.yaml` 自动完成编译、EXE/PS1 分别扫描及附件上传。扫描未完成或检测到威胁都会中止发布，`security-scan.json` 保存对应哈希、签名和扫描证据。
+
+`tools/Test-Launcher.ps1` 在临时副本中构建只内嵌无害参数回显脚本的启动器，再通过反射验证文件锁、参数及退出码；不启动正式应用、不触发 UAC。
 
 ## 关于杀毒误报
 
-未签名的 EXE 可能被杀软误报，这是「未签名 + 调用 PowerShell」这一组合的通病，非本程序行为所致。缓解手段：代码签名（根治）、向厂商提交误报申诉、随发布附上 [VirusTotal](https://www.virustotal.com/) 多引擎扫描链接自证。源码完全公开，可自行审阅与复现编译。
+当前没有配置可信发布者签名。未签名、应用信誉、脚本行为都可能影响检测，但没有具体告警记录不能确定原因。可信代码签名有助于确认发布者及积累信誉，不能保证消除告警；多引擎扫描也不是安全证明。
+
+详细的哈希核对、告警分类、厂商复核和后续签名顺序见[安全告警说明](../../docs/SECURITY.md)。不得通过关闭防护、添加排除项、混淆或改变打包方式来躲过检测。

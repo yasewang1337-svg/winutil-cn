@@ -24,35 +24,38 @@ if ($ExecutionContext.SessionState.LanguageMode -ne 'FullLanguage') {
 }
 
 if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    Write-Output "WinUtil needs to be run as Administrator. Attempting to relaunch."
-    $argList = @()
+    if (-not $PSCommandPath) {
+        Write-Warning "请从项目发布页下载本地版 WinUtil-CN，再右键选择以管理员身份运行。当前在线脚本调用不会自动下载或提权。"
+        return
+    }
 
-    $PSBoundParameters.GetEnumerator() | ForEach-Object {
-        $argList += if ($_.Value -is [switch] -and $_.Value) {
-            "-$($_.Key)"
-        } elseif ($_.Value -is [array]) {
-            "-$($_.Key) $($_.Value -join ',')"
-        } elseif ($_.Value) {
-            "-$($_.Key) '$([string]$_.Value -replace "'", "''")'"
+    # Start-Process joins ArgumentList into a Windows command line. Quote each
+    # value using the native argument rules, never as executable PowerShell text.
+    function ConvertTo-WinUtilStartupArgument {
+        param([AllowEmptyString()][string]$Value)
+        '"' + ($Value -replace '(\\*)"', '$1$1\"' -replace '(\\+)$', '$1$1') + '"'
+    }
+
+    $powershellName = if ($PSVersionTable.PSEdition -eq 'Core') { 'pwsh.exe' } else { 'powershell.exe' }
+    $powershellPath = Join-Path $PSHOME $powershellName
+    $argList = @('-NoProfile', '-ExecutionPolicy', 'RemoteSigned', '-File', (ConvertTo-WinUtilStartupArgument $PSCommandPath))
+    foreach ($name in @('Config', 'Preset')) {
+        if ($PSBoundParameters.ContainsKey($name)) {
+            $argList += "-$name"
+            $argList += ConvertTo-WinUtilStartupArgument ([string]$PSBoundParameters[$name])
         }
     }
-
-    $script = if ($PSCommandPath) {
-        "& { & '$($PSCommandPath -replace "'", "''")' $($argList -join ' ') }"
-    } else {
-        "&([ScriptBlock]::Create((irm https://github.com/yasewang1337-svg/winutil-cn/releases/latest/download/winutil-cn.ps1))) $($argList -join ' ')"
+    if ($PSBoundParameters.ContainsKey('Offline') -and $PSBoundParameters['Offline']) {
+        $argList += '-Offline'
     }
 
-    $powershellCmd = if (Get-Command pwsh -ErrorAction SilentlyContinue) { "pwsh" } else { "powershell" }
-    $processCmd = if (Get-Command wt.exe -ErrorAction SilentlyContinue) { "wt.exe" } else { "$powershellCmd" }
-
-    if ($processCmd -eq "wt.exe") {
-        Start-Process $processCmd -ArgumentList "$powershellCmd -ExecutionPolicy Bypass -NoProfile -Command `"$script`"" -Verb RunAs
-    } else {
-        Start-Process $processCmd -ArgumentList "-ExecutionPolicy Bypass -NoProfile -Command `"$script`"" -Verb RunAs
+    Write-Output "WinUtil 需要管理员权限，正在请求启动本地脚本。"
+    try {
+        Start-Process -FilePath $powershellPath -ArgumentList ($argList -join ' ') -Verb RunAs -ErrorAction Stop
+    } catch {
+        Write-Warning "未能以管理员身份启动 WinUtil。请确认启动请求并检查文件权限或系统策略。$($_.Exception.Message)"
     }
-
-    break
+    return
 }
 
 # Load DLLs

@@ -1,4 +1,4 @@
-function Invoke-WinUtilPackageOperation {
+﻿function Invoke-WinUtilPackageOperation {
     param([Parameter(Mandatory)][AllowEmptyCollection()][object[]]$Plan, [switch]$NonInteractive)
     if ($sync.ProcessRunning) {
         if ($NonInteractive -or -not $sync.form) { Write-Warning '当前有任务正在运行，未启动新的软件操作。' }
@@ -34,7 +34,10 @@ function Invoke-WinUtilPackageOperation {
             $executable = if ($_ -eq 'Choco') { 'choco.exe' } else { 'winget.exe' }
             -not (Get-Command $executable -CommandType Application -ErrorAction SilentlyContinue)
         })
-        if ($missing.Count) { $description += "`r`n首次使用将先联网准备软件包管理器：$($missing -join '、')。" }
+        if ('Winget' -in $missing) { $description += "`r`n首次使用将先联网准备 WinGet 软件包管理器。" }
+        if ('Choco' -in $missing) {
+            $description += "`r`nChocolatey 未安装：请按官方说明 https://chocolatey.org/install 手动安装，或在设置中改用默认 WinGet。继续执行时，依赖 Chocolatey 的软件将报告失败。"
+        }
     }
     if ((Show-WinUtilPackageDialog -Title '确认软件操作' -Description $description -Details $details) -ne 'Primary') { return }
     Initialize-WinUtilPackageUiCallbacks

@@ -453,13 +453,10 @@ $scripts = @(
         }
     };
     {
-        $viveDir = Join-Path $env:TEMP 'ViVeTool';
-        $viveZip = Join-Path $env:TEMP 'ViVeTool.zip';
-        Invoke-WebRequest 'https://github.com/thebookisclosed/ViVe/releases/download/v0.3.4/ViVeTool-v0.3.4-IntelAmd.zip' -OutFile $viveZip;
-        Expand-Archive -Path $viveZip -DestinationPath $viveDir -Force;
-        Remove-Item -Path $viveZip -Force;
-        Start-Process -FilePath (Join-Path $viveDir 'ViVeTool.exe') -ArgumentList '/disable /id:47205210' -Wait -NoNewWindow;
-        Remove-Item -Path $viveDir -Recurse -Force;
+        $ErrorActionPreference = 'Stop';
+        . (Join-Path $PSScriptRoot 'WinUtilVerifiedTool.ps1');
+        $null = Invoke-WinUtilVerifiedTool -Tool ViVeTool -Action Disable -ErrorAction Stop;
+        Write-Output '已应用恢复旧版开始菜单设置，请重启电脑。';
     };
     {
         Start-Process C:\Windows\System32\OneDriveSetup.exe -ArgumentList /uninstall
@@ -479,6 +476,7 @@ $scripts = @(
 &amp; {
   [float]$complete = 0;
   [float]$increment = 100 / $scripts.Count;
+  $hadFailures = $false;
   foreach( $script in $scripts ) {
     Write-Progress -Id 0 -Activity 'Running scripts to finalize your Windows installation. Do not close this window.' -PercentComplete $complete;
     '*** Will now execute command &#xAB;{0}&#xBB;.' -f $(
@@ -491,12 +489,204 @@ $scripts = @(
       }
     );
     $start = [datetime]::Now;
-    &amp; $script;
-    '*** Finished executing command after {0:0} ms.' -f [datetime]::Now.Subtract( $start ).TotalMilliseconds;
+    try {
+      &amp; $script;
+      '*** Finished executing command after {0:0} ms.' -f [datetime]::Now.Subtract( $start ).TotalMilliseconds;
+    } catch {
+      $hadFailures = $true;
+      Write-Error ( '*** FAILED: {0}' -f $_.Exception.Message ) -ErrorAction Continue;
+    }
     "`r`n" * 3;
     $complete += $increment;
   }
+  if( $hadFailures ) {
+    Write-Error 'FirstLogon 部分步骤失败；请查看上述错误，不能确认失败步骤已完成。' -ErrorAction Continue;
+  }
 } *&gt;&amp;1 | Out-String -Width 1KB -Stream &gt;&gt; "C:\Windows\Setup\Scripts\FirstLogon.log";
+        </File>
+        <File path="C:\Windows\Setup\Scripts\WinUtilVerifiedTool.ps1">
+function New-WinUtilToolWorkspace {
+    &lt;# .SYNOPSIS Creates an isolated tool directory writable only by elevated administrators and SYSTEM. #&gt;
+    [CmdletBinding()]
+    param()
+
+    $root = [Environment]::GetFolderPath(&apos;CommonApplicationData&apos;)
+    if (-not $root) { throw &apos;无法定位公共应用数据目录。&apos; }
+    $path = Join-Path $root (&apos;WinUtil-Tool-&apos; + [guid]::NewGuid().ToString(&apos;N&apos;))
+    if (Test-Path -LiteralPath $path) { throw &apos;工具临时目录已存在，已中止。&apos; }
+    $acl = [Security.AccessControl.DirectorySecurity]::new()
+    $acl.SetAccessRuleProtection($true, $false)
+    $admins = [Security.Principal.SecurityIdentifier]::new(&apos;S-1-5-32-544&apos;)
+    $acl.SetOwner($admins)
+    foreach ($sid in @($admins, [Security.Principal.SecurityIdentifier]::new(&apos;S-1-5-18&apos;))) {
+        $rule = [Security.AccessControl.FileSystemAccessRule]::new(
+            $sid, &apos;FullControl&apos;, &apos;ContainerInherit, ObjectInherit&apos;, &apos;None&apos;, &apos;Allow&apos;)
+        $acl.AddAccessRule($rule)
+    }
+    # Apply the DACL at creation, before any downloaded content exists.
+    $directory = [IO.DirectoryInfo]::new($path)
+    if ($PSVersionTable.PSVersion.Major -ge 6) {
+        [IO.FileSystemAclExtensions]::Create($directory, $acl)
+    } else {
+        $directory.Create($acl)
+    }
+    return $path
+}
+
+function Remove-WinUtilToolWorkspace {
+    [CmdletBinding()]
+    param([Parameter(Mandatory)][string]$Path)
+
+    $full = [IO.Path]::GetFullPath($Path)
+    $root = [Environment]::GetFolderPath(&apos;CommonApplicationData&apos;).TrimEnd(&apos;\&apos;, &apos;/&apos;)
+    if ([IO.Path]::GetDirectoryName($full) -ne $root -or
+        [IO.Path]::GetFileName($full) -notmatch &apos;^WinUtil-Tool-[a-f0-9]{32}$&apos;) {
+        throw &quot;工具目录不在允许清理的范围内：$full&quot;
+    }
+    if (-not (Test-Path -LiteralPath $full)) { return }
+    $directory = Get-Item -LiteralPath $full -Force -ErrorAction Stop
+    if ($directory.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw &apos;工具目录是链接，未清理。&apos; }
+    # Tools use a flat directory. Never follow or recursively remove tool-created subdirectories.
+    $items = @(Get-ChildItem -LiteralPath $full -Force -ErrorAction Stop)
+    if (@($items | Where-Object { $_.PSIsContainer -or ($_.Attributes -band [IO.FileAttributes]::ReparsePoint) }).Count) {
+        throw &quot;工具目录包含子目录或链接，保留以供检查：$full&quot;
+    }
+    foreach ($item in $items) { Remove-Item -LiteralPath $item.FullName -Force -ErrorAction Stop }
+    Remove-Item -LiteralPath $full -Force -ErrorAction Stop
+}
+
+function Invoke-WinUtilVerifiedTool {
+    &lt;#
+    .SYNOPSIS Downloads a known tool, verifies its integrity, and retains read locks until it exits.
+    .DESCRIPTION
+    ViVeTool is pinned to the SHA256 of the official v0.3.4 release ZIP for each architecture.
+    O&amp;O uses its official rolling URL and must have a valid O&amp;O Software GmbH signature.
+    This source is also embedded in autounattend.xml; sync it with tools/Sync-VerifiedToolTemplate.ps1.
+    #&gt;
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)][ValidateSet(&apos;ViVeTool&apos;, &apos;OOSU&apos;)][string]$Tool,
+        [ValidateSet(&apos;Disable&apos;, &apos;Enable&apos;)][string]$Action = &apos;Disable&apos;
+    )
+
+    $ErrorActionPreference = &apos;Stop&apos;
+    $previousProgress = $ProgressPreference
+    $ProgressPreference = &apos;SilentlyContinue&apos;
+    $workspace = $null
+    $locks = [Collections.Generic.List[IDisposable]]::new()
+    $stage = &apos;创建受保护的临时目录&apos;
+    try {
+        $workspace = New-WinUtilToolWorkspace
+        $isArm64 = $env:PROCESSOR_ARCHITECTURE -eq &apos;ARM64&apos; -or $env:PROCESSOR_ARCHITEW6432 -eq &apos;ARM64&apos;
+        if ($Tool -eq &apos;ViVeTool&apos;) {
+            $uri = &apos;https://github.com/thebookisclosed/ViVe/releases/download/v0.3.4/ViVeTool-v0.3.4-IntelAmd.zip&apos;
+            $expectedZipHash = &apos;CC27F073F3FE5DD2C3D947FAF558FD4B2F8E34454F812689B0D65EE8A52E4147&apos;
+            if ($isArm64) {
+                $uri = &apos;https://github.com/thebookisclosed/ViVe/releases/download/v0.3.4/ViVeTool-v0.3.4-SnapdragonArm64.zip&apos;
+                $expectedZipHash = &apos;30AD9A4912686355BFCE60E1D7BEF608735475B7E2160D67418EED8F5E3BA8C7&apos;
+            }
+            $download = Join-Path $workspace &apos;ViVeTool.zip&apos;
+        } else {
+            $uri = &apos;https://dl5.oo-software.com/files/ooshutup10/OOSU10.exe&apos;
+            if ($isArm64) { $uri = &apos;https://dl5.oo-software.com/files/ooshutup10/OOSU10-arm64.exe&apos; }
+            elseif (-not [Environment]::Is64BitOperatingSystem) { $uri = &apos;https://dl5.oo-software.com/files/ooshutup10/OOSU10-x86.exe&apos; }
+            $download = Join-Path $workspace &apos;OOSU10.exe&apos;
+        }
+        $stage = &apos;下载&apos;
+        Invoke-WebRequest -Uri $uri -OutFile $download -UseBasicParsing -TimeoutSec 120 -ErrorAction Stop
+        $downloadLock = [IO.File]::Open($download, &apos;Open&apos;, &apos;Read&apos;, &apos;Read&apos;)
+        $locks.Add($downloadLock)
+
+        if ($Tool -eq &apos;ViVeTool&apos;) {
+            $stage = &apos;校验下载包 SHA256&apos;
+            $actualHash = (Get-FileHash -InputStream $downloadLock -Algorithm SHA256 -ErrorAction Stop).Hash
+            if ($actualHash -ne $expectedZipHash) { throw &apos;下载包与固定版本的可信哈希不符，已拒绝执行。&apos; }
+            $downloadLock.Position = 0
+            $stage = &apos;解压并校验工具文件&apos;
+            Add-Type -AssemblyName System.IO.Compression -ErrorAction Stop
+            $archive = [IO.Compression.ZipArchive]::new($downloadLock, [IO.Compression.ZipArchiveMode]::Read, $true)
+            try {
+                $expectedNames = @(&apos;Albacore.ViVe.dll&apos;, &apos;FeatureDictionary.pfs&apos;, &apos;Newtonsoft.Json.dll&apos;, &apos;ViVeTool.exe&apos;)
+                if ($archive.Entries.Count -ne $expectedNames.Count) { throw &apos;下载包的文件清单异常。&apos; }
+                $seen = @{}
+                foreach ($entry in $archive.Entries) {
+                    if ($entry.FullName -cnotin $expectedNames -or $seen.ContainsKey($entry.FullName) -or
+                        $entry.Length -le 0 -or $entry.Length -gt 20MB) { throw &apos;下载包包含异常文件。&apos; }
+                    $seen[$entry.FullName] = $true
+                    $target = Join-Path $workspace $entry.FullName
+                    $source = $entry.Open()
+                    try {
+                        $destination = [IO.File]::Open($target, &apos;CreateNew&apos;, &apos;Write&apos;, &apos;None&apos;)
+                        try { $source.CopyTo($destination) } finally { $destination.Dispose() }
+                    } finally { $source.Dispose() }
+                    # Lock first, then compare the locked bytes with the verified archive entry.
+                    $fileLock = [IO.File]::Open($target, &apos;Open&apos;, &apos;Read&apos;, &apos;Read&apos;)
+                    $locks.Add($fileLock)
+                    $source = $entry.Open()
+                    try {
+                        $expectedHash = (Get-FileHash -InputStream $source -Algorithm SHA256 -ErrorAction Stop).Hash
+                        $fileHash = (Get-FileHash -InputStream $fileLock -Algorithm SHA256 -ErrorAction Stop).Hash
+                        if ($fileHash -ne $expectedHash) { throw &quot;解压后的文件校验失败：$($entry.FullName)&quot; }
+                    } finally { $source.Dispose() }
+                }
+            } finally { $archive.Dispose() }
+            $executable = Join-Path $workspace &apos;ViVeTool.exe&apos;
+            $arguments = @(&apos;/&apos; + $Action.ToLowerInvariant(), &apos;/id:47205210&apos;)
+        } else {
+            $stage = &apos;校验数字签名及发布者&apos;
+            $signature = Get-AuthenticodeSignature -LiteralPath $download -ErrorAction Stop
+            if ($signature.Status -ne &apos;Valid&apos; -or -not $signature.SignerCertificate) {
+                throw &apos;O&amp;O 数字签名无效或无法确认，已拒绝执行。&apos;
+            }
+            $publisher = $signature.SignerCertificate.GetNameInfo([Security.Cryptography.X509Certificates.X509NameType]::SimpleName, $false)
+            if ($publisher -cne &apos;O&amp;O Software GmbH&apos;) { throw &apos;数字签名的发布者不是 O&amp;O Software GmbH，已拒绝执行。&apos; }
+            $executable = $download
+        }
+
+        $stage = &apos;运行&apos;
+        $startParameters = @{
+            FilePath = $executable; WorkingDirectory = $workspace
+            Wait = $true; PassThru = $true; ErrorAction = &apos;Stop&apos;
+        }
+        if ($Tool -eq &apos;ViVeTool&apos;) {
+            $startParameters.ArgumentList = $arguments
+            $startParameters.NoNewWindow = $true
+            $stdoutPath = Join-Path $workspace &apos;stdout.log&apos;
+            $stderrPath = Join-Path $workspace &apos;stderr.log&apos;
+            $startParameters.RedirectStandardOutput = $stdoutPath
+            $startParameters.RedirectStandardError = $stderrPath
+        }
+        $process = Start-Process @startParameters
+        if ($null -eq $process -or $null -eq $process.ExitCode) { throw &apos;未取得工具退出码，无法确认执行完成。&apos; }
+        if ($process.ExitCode -ne 0) { throw &quot;工具报告失败，退出码：$($process.ExitCode)。&quot; }
+        if ($Tool -eq &apos;ViVeTool&apos;) {
+            # v0.3.4 Main returns void even when setting a feature fails. Exit 0 alone is insufficient.
+            $stage = &apos;确认工具执行结果&apos;
+            $stdout = [IO.File]::ReadAllText($stdoutPath)
+            $stderr = [IO.File]::ReadAllText($stderrPath)
+            # This pinned release writes warnings/errors to stdout too, sometimes before its success line.
+            $lines = @($stdout -split &apos;\r?\n&apos; | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+            if ($lines.Count -ne 2 -or
+                $lines[0] -cne &apos;ViVeTool v0.3.4 - Windows feature configuration tool&apos; -or
+                $lines[1] -cne &apos;Successfully set feature configuration(s)&apos; -or
+                -not [string]::IsNullOrWhiteSpace($stderr)) {
+                $detail = ($stdout + &quot;`n&quot; + $stderr).Trim()
+                if ($detail.Length -gt 2000) { $detail = $detail.Substring(0, 2000) }
+                throw &quot;ViVeTool 未确认设置成功；退出码为 0 也可能表示设置失败。输出：$detail&quot;
+            }
+        }
+        return [pscustomobject]@{ Tool = $Tool; ExitCode = $process.ExitCode }
+    } catch {
+        throw &quot;$Tool $stage 失败：$($_.Exception.Message)&quot;
+    } finally {
+        for ($i = $locks.Count - 1; $i -ge 0; $i--) { $locks[$i].Dispose() }
+        if ($workspace) {
+            try { Remove-WinUtilToolWorkspace -Path $workspace }
+            catch { Write-Warning &quot;工具临时目录清理失败：$workspace。$($_.Exception.Message)&quot; }
+        }
+        $ProgressPreference = $previousProgress
+    }
+}
         </File>
     </Extensions>
 </unattend>
