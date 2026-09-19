@@ -8,6 +8,8 @@
 
 用户随后明确要求“生成吧 然后把GitHub上的更新了”，已授权提交、合并并发布此轮修复。采用分支PR及GitHub CI正常构建、双版本回归和Defender扫描；任何检查或扫描失败均停止发布。合并及正式发布的实际结果待本轮完成后写回。不会改变本机防护来生成产物。
 
+发布推进：PR #11，分支 `codex/security-download-hardening`。首轮远端完整PS1构建及双版本311项测试通过；启动器夹具在英文Windows暴露 `tools/launcher/build.ps1` 缺少UTF-8 BOM的解析错误，已补BOM及编码断言，本地无害夹具复测通过，待远端重跑。原始失败日志 `.artifacts/security-fix/pr-ci-failure.log`，修复验证 `launcher-encoding-test.log`。
+
 ### 最新修复与验证（06:45）
 
 - 共用 `Invoke-WinUtilVerifiedTool`：O&O 必须通过有效 Authenticode 签名及精确发布者检查；ViVeTool v0.3.4 两架构包先验固定 SHA256，哈希与官方包和 Microsoft WinGet 清单一致，再校验 ZIP 文件清单及全部解压文件。

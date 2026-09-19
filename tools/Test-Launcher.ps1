@@ -61,6 +61,8 @@ try {
     foreach ($file in @('Launcher.cs', 'WinUtilCN.Launcher.csproj', 'app.manifest', 'icon.ico', 'build.ps1')) {
         Copy-Item -LiteralPath (Join-Path $source $file) -Destination (Join-Path $project $file)
     }
+    $buildBytes = [IO.File]::ReadAllBytes((Join-Path $project 'build.ps1'))
+    Assert-LauncherTest ($buildBytes.Length -ge 3 -and ($buildBytes[0..2] -join ',') -eq '239,187,191') 'The build script must retain a UTF-8 BOM for Windows PowerShell 5.1 on non-UTF8 Windows installations.'
     $fixtureBytes = [IO.File]::ReadAllBytes($fixture)
     Assert-LauncherTest ($fixtureBytes.Length -ge 3 -and ($fixtureBytes[0..2] -join ',') -eq '239,187,191') 'The fixture must retain a UTF-8 BOM for Windows PowerShell 5.1.'
 
