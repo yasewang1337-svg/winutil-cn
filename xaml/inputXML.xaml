@@ -1226,10 +1226,10 @@
                         <TextBlock Text="&#xE895;" FontFamily="Segoe MDL2 Assets" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         <TextBlock Name="WPFTab4Label" Grid.Column="1" Text="Windows 更新" FontSize="{DynamicResource TabButtonFontSize}" VerticalAlignment="Center" Margin="8,0,0,0" TextTrimming="CharacterEllipsis"/>
                     </Grid>
-                </ToggleButton>                <ToggleButton Name="WPFTab5BT" Style="{StaticResource NavigationButtonStyle}" ToolTip="Win11 镜像" AutomationProperties.Name="Win11 镜像">
+                </ToggleButton>                <ToggleButton Name="WPFTab5BT" Style="{StaticResource NavigationButtonStyle}" ToolTip="Windows 镜像" AutomationProperties.Name="Windows 镜像">
                     <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="32"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                         <TextBlock Text="&#xE958;" FontFamily="Segoe MDL2 Assets" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <TextBlock Name="WPFTab5Label" Grid.Column="1" Text="Win11 镜像" FontSize="{DynamicResource TabButtonFontSize}" VerticalAlignment="Center" Margin="8,0,0,0" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Name="WPFTab5Label" Grid.Column="1" Text="Windows 镜像" FontSize="{DynamicResource TabButtonFontSize}" VerticalAlignment="Center" Margin="8,0,0,0" TextTrimming="CharacterEllipsis"/>
                     </Grid>
                 </ToggleButton>
             </StackPanel>
@@ -1316,412 +1316,194 @@
                 </ScrollViewer>
             </TabItem>
             <TabItem Header="更新" Visibility="Collapsed" Name="WPFTab4">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="{DynamicResource TabContentMargin}">
-                    <Grid Background="Transparent" MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>  <!-- Row for the 3 columns -->
-                            <RowDefinition Height="Auto"/>  <!-- Row for Windows Version -->
-                        </Grid.RowDefinitions>
+                <TabItem.Resources>
+                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                        <Setter Property="Width" Value="Auto"/>
+                        <Setter Property="Height" Value="Auto"/>
+                        <Setter Property="MinWidth" Value="132"/>
+                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                        <Setter Property="Padding" Value="12,8"/>
+                        <Setter Property="Margin" Value="0,12,0,0"/>
+                        <Setter Property="FontSize" Value="{DynamicResource ConfigTabButtonFontSize}"/>
+                        <Setter Property="ContentTemplate">
+                            <Setter.Value>
+                                <DataTemplate><TextBlock Text="{Binding}" TextWrapping="Wrap" FontSize="{DynamicResource ConfigTabButtonFontSize}" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/></DataTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                    <Style x:Key="UpdatePolicyText" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                        <Setter Property="TextWrapping" Value="Wrap"/>
+                        <Setter Property="Foreground" Value="{DynamicResource SecondaryForegroundColor}"/>
+                        <Setter Property="Margin" Value="0,6,0,0"/>
+                    </Style>
+                </TabItem.Resources>
+                <ScrollViewer Name="WPFUpdatesScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,10,12">
+                    <StackPanel Name="WPFUpdatesSettingsList" HorizontalAlignment="Stretch">
+                        <TextBlock Style="{StaticResource UpdatePolicyText}" Text="选择需要的更新策略。点击下方按钮会立即修改设置；部分改动需要重启后生效。" Margin="0,0,0,12"/>
 
-                        <!-- Three columns container -->
-                        <Grid Grid.Row="0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
+                        <Border Style="{StaticResource BorderStyle}" Margin="0,0,0,12" Padding="16">
+                            <StackPanel>
+                                <TextBlock Name="WPFUpdatesDefaultTitle" Text="恢复更新配置" FontSize="{DynamicResource HeaderFontSize}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                <TextBlock Style="{StaticResource UpdatePolicyText}" Text="清理 Windows Update、驱动搜索和传递优化相关配置，重新启用更新服务及计划任务，并恢复设置中的 Windows 更新入口。"/>
+                                <TextBlock Style="{StaticResource UpdatePolicyText}" Text="会移除相关策略分支及设置页可见性策略，可能影响已有自定义配置；不会重置整个 Windows，也不能还原原先的自定义值。"/>
+                                <Button Name="WPFUpdatesdefault" Content="恢复更新配置"/>
+                            </StackPanel>
+                        </Border>
 
-                            <!-- Default Settings -->
-                            <Border Grid.Column="0" Style="{StaticResource BorderStyle}">
-                                <StackPanel>
-                                    <Button Name="WPFUpdatesdefault"
-                                            FontSize="{DynamicResource ConfigTabButtonFontSize}"
-                                            Content="默认设置"
-                                            Margin="10,5"
-                                            Padding="10"/>
-                                    <TextBlock Margin="10"
-                                             TextWrapping="Wrap"
-                                             Foreground="{DynamicResource MainForegroundColor}">
-                                        <Run FontWeight="Bold">默认 Windows 更新配置</Run>
-                                        <LineBreak/>
-                                         - 不改动 Windows 默认设置
-                                        <LineBreak/>
-                                         - 清除所有自定义的更新设置
-                                        <LineBreak/><LineBreak/>
-                                        <Run FontStyle="Italic" FontSize="11">说明:这会把你的 Windows 更新设置恢复到出厂默认状态,清除对 Windows 更新做过的任何策略或自定义。</Run>
-                                    </TextBlock>
-                                </StackPanel>
-                            </Border>
+                        <Border Style="{StaticResource BorderStyle}" Margin="0,0,0,12" Padding="16">
+                            <StackPanel>
+                                <TextBlock Name="WPFUpdatesSecurityTitle" Text="延迟更新" FontSize="{DynamicResource HeaderFontSize}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                <TextBlock Style="{StaticResource UpdatePolicyText}" Text="写入功能更新延迟 365 天、质量更新延迟 4 天的配置，并限制通过 Windows Update 提供驱动。质量更新包含安全修复。"/>
+                                <TextBlock Style="{StaticResource UpdatePolicyText}" Text="同时写入用户登录时不自动重启的更新策略。实际效果取决于 Windows 版本、策略支持情况及组织配置；延迟天数并不保证在所有系统上生效。"/>
+                                <Button Name="WPFUpdatessecurity" Content="应用延迟策略"/>
+                            </StackPanel>
+                        </Border>
 
-                            <!-- Security Settings -->
-                            <Border Grid.Column="1" Style="{StaticResource BorderStyle}">
-                                <StackPanel>
-                                    <Button Name="WPFUpdatessecurity"
-                                            FontSize="{DynamicResource ConfigTabButtonFontSize}"
-                                            Content="安全设置"
-                                            Margin="10,5"
-                                            Padding="10"/>
-                                    <TextBlock Margin="10"
-                                             TextWrapping="Wrap"
-                                             Foreground="{DynamicResource MainForegroundColor}">
-                                        <Run FontWeight="Bold">均衡安全配置</Run>
-                                        <LineBreak/>
-                                         - 功能更新延迟 365 天
-                                        <LineBreak/>
-                                         - 安全更新延迟 4 天后安装
-                                        <LineBreak/>
-                                         - 阻止 Windows 更新自动安装驱动
-                                        <LineBreak/><LineBreak/>
-                                        <Run FontWeight="SemiBold">功能更新:</Run> 新特性,也可能带来新 bug
-                                        <LineBreak/>
-                                        <Run FontWeight="SemiBold">安全更新:</Run> 关键安全补丁
-                                    <LineBreak/><LineBreak/>
-                                    <Run FontStyle="Italic" FontSize="11">说明:仅对可使用组策略的专业版(Pro)系统生效。</Run>
-                                    </TextBlock>
-                                </StackPanel>
-                            </Border>
-
-                            <!-- Disable Updates -->
-                            <Border Grid.Column="2" Style="{StaticResource BorderStyle}">
-                                <StackPanel>
-                                    <Button Name="WPFUpdatesdisable"
-                                            FontSize="{DynamicResource ConfigTabButtonFontSize}"
-                                            Content="禁用所有更新"
-                                            Foreground="Red"
-                                            Margin="10,5"
-                                            Padding="10"/>
-                                    <TextBlock Margin="10"
-                                             TextWrapping="Wrap"
-                                             Foreground="{DynamicResource MainForegroundColor}">
-                                        <Run FontWeight="Bold" Foreground="Red">!! 不推荐 !!</Run>
-                                        <LineBreak/>
-                                         - 禁用所有 Windows 更新
-                                        <LineBreak/>
-                                         - 增加安全风险
-                                        <LineBreak/>
-                                         - 仅适用于隔离(离线)系统
-                                        <LineBreak/><LineBreak/>
-                                        <Run FontStyle="Italic" FontSize="11">警告:没有安全更新,你的系统将变得脆弱、易受攻击。</Run>
-                                    </TextBlock>
-                                </StackPanel>
-                            </Border>
-                        </Grid>
-
-                        <!-- Future Implementation: Add Windows Version to updates panel -->
-                        <Grid Name="updatespanel" Grid.Row="1" Background="Transparent">
-                        </Grid>
-                    </Grid>
+                        <Border Style="{StaticResource BorderStyle}" Margin="0,0,0,12" Padding="16">
+                            <StackPanel>
+                                <TextBlock Name="WPFUpdatesDisableTitle" Text="禁用更新（不推荐）" FontSize="{DynamicResource HeaderFontSize}" FontWeight="SemiBold" Foreground="{DynamicResource DangerForegroundColor}" TextWrapping="Wrap"/>
+                                <TextBlock Style="{StaticResource UpdatePolicyText}" Text="禁用更新相关服务和计划任务，清理更新下载缓存，并隐藏设置中的 Windows 更新入口。不是临时暂停，也不保证系统或组织策略不会重新启用更新。"/>
+                                <TextBlock Style="{StaticResource UpdatePolicyText}" Text="会妨碍安全修复的获取，只应在明确了解影响时使用。需要恢复时，可选择上方“恢复更新配置”。"/>
+                                <Button Name="WPFUpdatesdisable" Content="禁用更新" Foreground="{DynamicResource DangerForegroundColor}"/>
+                            </StackPanel>
+                        </Border>
+                        <Grid Name="updatespanel" Background="Transparent"/>
+                    </StackPanel>
                 </ScrollViewer>
             </TabItem>
-            <TabItem Header="Win11 镜像" Visibility="Collapsed" Name="WPFTab5">
+            <TabItem Header="Windows 镜像" Visibility="Collapsed" Name="WPFTab5">
                 <Grid Name="Win11ISOPanel" Margin="{DynamicResource TabContentMargin}" Background="Transparent">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>  <!-- Steps 1-4 -->
-                        <RowDefinition Height="*"/>     <!-- Log / Status -->
-                    </Grid.RowDefinitions>
-
-                    <!-- Steps 1-4 -->
-                    <StackPanel Grid.Row="0">
-
-                            <!-- ─── STEP 1 : Select Windows 11 ISO ─────────────── -->
-                            <Grid Name="WPFWin11ISOSelectSection" Margin="5" HorizontalAlignment="Left" MinWidth="{DynamicResource ButtonWidth}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-
-                                <!-- Left: File Selector -->
-                                <StackPanel Grid.Column="0" Margin="5,5,15,5">
-                                    <TextBlock FontSize="{DynamicResource FontSize}" FontWeight="Bold"
-                                               Foreground="{DynamicResource MainForegroundColor}" Margin="0,0,0,8">
-                                        第 1 步 - 选择 Windows 11 ISO
-                                    </TextBlock>
-                                    <TextBlock FontSize="{DynamicResource FontSize}" Foreground="{DynamicResource MainForegroundColor}"
-                                               TextWrapping="Wrap" Margin="0,0,0,6">
-                                        浏览选择你本地保存的 Windows 11 ISO 文件。仅支持从微软官方
-                                        下载的原版 ISO。
-                                    </TextBlock>
-                                    <TextBlock FontSize="{DynamicResource FontSize}" Foreground="{DynamicResource MainForegroundColor}"
-                                               TextWrapping="Wrap" Margin="0,0,0,12" FontStyle="Italic">
-                                        <Run FontWeight="Bold">注意:</Run> 此功能仅用于全新安装 Windows。
-                                    </TextBlock>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBox Grid.Column="0"
-                                                 Name="WPFWin11ISOPath"
-                                                 IsReadOnly="True"
-                                                 VerticalAlignment="Center"
-                                                 Padding="6,4"
-                                                 Margin="0,0,6,0"
-                                                 Text="未选择 ISO..."
-                                                 Foreground="{DynamicResource MainForegroundColor}"
-                                                 Background="{DynamicResource MainBackgroundColor}"/>
-                                        <Button Grid.Column="1"
-                                                Name="WPFWin11ISOBrowseButton"
-                                                Content="浏览"
-                                                Width="Auto" Padding="12,0"
-                                                Height="{DynamicResource ButtonHeight}"/>
-                                    </Grid>
-                                    <TextBlock Name="WPFWin11ISOFileInfo"
-                                               FontSize="{DynamicResource FontSize}"
-                                               Foreground="{DynamicResource MainForegroundColor}"
-                                               Margin="0,8,0,0"
-                                               TextWrapping="Wrap"
-                                               Visibility="Collapsed"/>
-                                </StackPanel>
-
-                                <!-- Right: Download guidance -->
-                                <Border Grid.Column="1"
-                                        Background="{DynamicResource MainBackgroundColor}"
-                                        BorderBrush="{DynamicResource BorderColor}"
-                                        BorderThickness="1" CornerRadius="5"
-                                        Margin="5" Padding="15">
-                                    <StackPanel>
-                                        <TextBlock FontSize="{DynamicResource FontSize}" FontWeight="Bold"
-                                                   Foreground="OrangeRed" Margin="0,0,0,10">
-                                            !! 警告 !! 必须使用微软官方原版 ISO
-                                        </TextBlock>
-                                        <TextBlock FontSize="{DynamicResource FontSize}"
-                                                   Foreground="{DynamicResource MainForegroundColor}"
-                                                   TextWrapping="Wrap" Margin="0,0,0,8">
-                                            请直接从 Microsoft.com 下载 Windows 11 ISO。
-                                            第三方、预改版或非官方镜像均不受支持,
-                                            可能导致制作失败。
-                                        </TextBlock>
-                                        <TextBlock FontSize="{DynamicResource FontSize}"
-                                                   Foreground="{DynamicResource MainForegroundColor}"
-                                                   TextWrapping="Wrap" Margin="0,0,0,6">
-                                            在微软下载页面上,选择:
-                                        </TextBlock>
-                                        <TextBlock FontSize="{DynamicResource FontSize}"
-                                                   Foreground="{DynamicResource MainForegroundColor}"
-                                                   TextWrapping="Wrap" Margin="12,0,0,12">
-                                            - 版本    : Windows 11
-                                            <LineBreak/>- 语言    : 你偏好的语言
-                                            <LineBreak/>- 架构    : 64 位 (x64)
-                                        </TextBlock>
-                                        <Button Name="WPFWin11ISODownloadLink"
-                                                Content="打开微软下载页面"
-                                                HorizontalAlignment="Left"
-                                                Width="Auto" Padding="12,0"
-                                                Height="{DynamicResource ButtonHeight}"/>
-                                    </StackPanel>
-                                </Border>
-                            </Grid>
-
-                            <!-- ─── STEP 2 : Mount & Verify ISO ──────────────────── -->
-                            <Grid Name="WPFWin11ISOMountSection"
-                                  Margin="5"
-                                  Visibility="Collapsed"
-                                  HorizontalAlignment="Left" MinWidth="{DynamicResource ButtonWidth}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-
-                                <StackPanel Grid.Column="0" Margin="0,0,20,0" VerticalAlignment="Top">
-                                    <TextBlock FontSize="{DynamicResource FontSize}" FontWeight="Bold"
-                                               Foreground="{DynamicResource MainForegroundColor}" Margin="0,0,0,8">
-                                        第 2 步 - 挂载并校验 ISO
-                                    </TextBlock>
-                                    <TextBlock FontSize="{DynamicResource FontSize}"
-                                               Foreground="{DynamicResource MainForegroundColor}"
-                                               TextWrapping="Wrap" Margin="0,0,0,12" MaxWidth="320">
-                                        在任何修改之前,先挂载 ISO 并确认其中
-                                        包含有效的 Windows 11 install.wim。
-                                    </TextBlock>
-                                    <Button Name="WPFWin11ISOMountButton"
-                                            Content="挂载并校验 ISO"
-                                            HorizontalAlignment="Left"
-                                            Width="Auto" Padding="12,0"
-                                            Height="{DynamicResource ButtonHeight}"/>
-                                    <CheckBox Name="WPFWin11ISOInjectDrivers"
-                                              Content="注入当前系统驱动"
-                                              FontSize="{DynamicResource FontSize}"
-                                              Foreground="{DynamicResource MainForegroundColor}"
-                                              IsChecked="False"
-                                              Margin="0,8,0,0"
-                                              ToolTip="从本机导出所有驱动并注入 install.wim 与 boot.wim。适用于 NVMe 或网卡不受支持的系统。"/>
-                                </StackPanel>
-
-                                <!-- Verification results panel -->
-                                <Border Grid.Column="1"
-                                        Name="WPFWin11ISOVerifyResultPanel"
-                                        Background="{DynamicResource MainBackgroundColor}"
-                                        BorderBrush="{DynamicResource BorderColor}"
-                                        BorderThickness="1" CornerRadius="5"
-                                        Padding="12" Margin="0,0,0,0"
-                                        Visibility="Collapsed">
-                                    <StackPanel>
-                                        <TextBlock Name="WPFWin11ISOMountDriveLetter"
-                                                   FontSize="{DynamicResource FontSize}"
-                                                   Foreground="{DynamicResource MainForegroundColor}"
-                                                   Margin="0,0,0,4"/>
-                                        <TextBlock Name="WPFWin11ISOArchLabel"
-                                                   FontSize="{DynamicResource FontSize}"
-                                                   Foreground="{DynamicResource MainForegroundColor}"
-                                                   Margin="0,0,0,4"/>
-                                        <TextBlock FontSize="{DynamicResource FontSize}" FontWeight="Bold"
-                                                   Foreground="{DynamicResource MainForegroundColor}"
-                                                   Margin="0,6,0,4">
-                                            选择版本:
-                                        </TextBlock>
-                                        <ComboBox Name="WPFWin11ISOEditionComboBox"
-                                                  FontSize="{DynamicResource FontSize}"
-                                                  Foreground="{DynamicResource MainForegroundColor}"
-                                                  Background="{DynamicResource MainBackgroundColor}"
-                                                  HorizontalAlignment="Left"
-                                                  Margin="0,0,0,0"/>
-                                    </StackPanel>
-                                </Border>
-                            </Grid>
-
-                            <!-- ─── STEP 3 : Modify install.wim ───────────────────── -->
-                            <StackPanel Name="WPFWin11ISOModifySection"
-                                        Margin="5"
-                                        Visibility="Collapsed"
-                                        HorizontalAlignment="Left" MinWidth="{DynamicResource ButtonWidth}">
-                                <TextBlock FontSize="{DynamicResource FontSize}" FontWeight="Bold"
-                                           Foreground="{DynamicResource MainForegroundColor}" Margin="0,0,0,8">
-                                    第 3 步 - 修改 install.wim
-                                </TextBlock>
-                                <TextBlock FontSize="{DynamicResource FontSize}"
-                                           Foreground="{DynamicResource MainForegroundColor}"
-                                           TextWrapping="Wrap" Margin="0,0,0,12">
-                                    ISO 内容会被解压到临时工作目录,
-                                    install.wim 将被修改(移除组件、应用优化),
-                                    然后重新打包。视你的硬件性能,此过程可能需要几分钟。
-                                </TextBlock>
-                                <Button Name="WPFWin11ISOModifyButton"
-                                        Content="运行 Windows ISO 修改与制作"
-                                        HorizontalAlignment="Left"
-                                        Width="Auto" Padding="12,0"
-                                        Height="{DynamicResource ButtonHeight}"/>
-                            </StackPanel>
-
-                            <!-- ─── STEP 4 : Output Options ───────────────────────── -->
-                            <StackPanel Name="WPFWin11ISOOutputSection"
-                                        Margin="5"
-                                        Visibility="Collapsed"
-                                        HorizontalAlignment="Left" MinWidth="{DynamicResource ButtonWidth}">
-                                <!-- Header row: title + Clean & Reset button -->
-                                <Grid Margin="0,0,0,12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" FontSize="{DynamicResource FontSize}" FontWeight="Bold"
-                                               Foreground="{DynamicResource MainForegroundColor}"
-                                               VerticalAlignment="Center">
-                                        第 4 步 - 输出:你想如何处理修改后的镜像?
-                                    </TextBlock>
-                                    <Button Grid.Column="1"
-                                            Name="WPFWin11ISOCleanResetButton"
-                                            Content="清理并重置"
-                                            Foreground="OrangeRed"
-                                            Width="Auto" Padding="12,0"
-                                            Height="{DynamicResource ButtonHeight}"
-                                            ToolTip="删除临时工作目录并将界面重置回第 1 步"
-                                            Margin="12,0,0,0"/>
-                                </Grid>
-
-                                <!-- ── Choice prompt buttons ── -->
-                                <Grid Margin="0,0,0,12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="16"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Button Grid.Column="0"
-                                            Name="WPFWin11ISOChooseISOButton"
-                                            Content="保存为 ISO 文件"
-                                            HorizontalAlignment="Stretch"
-                                            Width="Auto" Padding="12,0"
-                                            Height="{DynamicResource ButtonHeight}"/>
-                                    <Button Grid.Column="2"
-                                            Name="WPFWin11ISOChooseUSBButton"
-                                            Content="直接写入 U 盘(会擦除磁盘)"
-                                            Foreground="OrangeRed"
-                                            HorizontalAlignment="Stretch"
-                                            Width="Auto" Padding="12,0"
-                                            Height="{DynamicResource ButtonHeight}"/>
-                                </Grid>
-
-                                <!-- ── USB write sub-panel (revealed on USB choice) ── -->
-                                <Border Name="WPFWin11ISOOptionUSB"
-                                        Style="{StaticResource BorderStyle}"
-                                        Visibility="Collapsed"
-                                        Margin="0,8,0,0">
-                                    <StackPanel>
-                                        <TextBlock FontSize="{DynamicResource FontSize}"
-                                                   Foreground="{DynamicResource MainForegroundColor}"
-                                                   TextWrapping="Wrap" Margin="0,0,0,8">
-                                            <Run FontWeight="Bold" Foreground="OrangeRed">!! 所选 U 盘上的所有数据将被永久擦除 !!</Run>
-                                            <LineBreak/>
-                                            在下方选择一个可移动 U 盘,然后点击「擦除并写入」。
-                                        </TextBlock>
-                                        <!-- USB drive selector row -->
-                                        <Grid Margin="0,0,0,8">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            <ComboBox Grid.Column="0"
-                                                      Name="WPFWin11ISOUSBDriveComboBox"
-                                                      Foreground="{DynamicResource MainForegroundColor}"
-                                                      Background="{DynamicResource MainBackgroundColor}"
-                                                      VerticalAlignment="Center"
-                                                      Margin="0,0,6,0"/>
-                                            <Button Grid.Column="1"
-                                                    Name="WPFWin11ISORefreshUSBButton"
-                                                    Content="刷新"
-                                                    Width="Auto" Padding="8,0"
-                                                    Height="{DynamicResource ButtonHeight}"/>
+                    <Grid.Resources>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                            <Setter Property="Width" Value="Auto"/>
+                            <Setter Property="Height" Value="Auto"/>
+                            <Setter Property="MinHeight" Value="{DynamicResource ButtonHeight}"/>
+                            <Setter Property="Padding" Value="12,8"/>
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="ContentTemplate">
+                                <Setter.Value><DataTemplate><TextBlock Text="{Binding}" TextWrapping="Wrap" TextAlignment="Center"/></DataTemplate></Setter.Value>
+                            </Setter>
+                        </Style>
+                        <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+                            <Setter Property="FontSize" Value="{DynamicResource FontSize}"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ComboBox">
+                                        <Grid>
+                                            <Border Name="ISOComboBorder" Background="{TemplateBinding Background}" BorderBrush="{DynamicResource BorderColor}" BorderThickness="1" CornerRadius="4">
+                                                <Grid>
+                                                    <ToggleButton Name="ToggleButton" Focusable="False" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press">
+                                                        <ToggleButton.Template><ControlTemplate TargetType="ToggleButton"><Border Background="Transparent"/></ControlTemplate></ToggleButton.Template>
+                                                    </ToggleButton>
+                                                    <Grid IsHitTestVisible="False" Margin="8,6">
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="24"/></Grid.ColumnDefinitions>
+                                                        <TextBlock Name="ISOSelectionText" Text="{TemplateBinding SelectionBoxItem}" TextWrapping="Wrap" FontSize="{TemplateBinding FontSize}" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center"/>
+                                                        <Path Name="ISOSelectionArrow" Grid.Column="1" Data="M 0,0 L 8,0 L 4,5 Z" Fill="{TemplateBinding Foreground}" Width="8" Height="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                    </Grid>
+                                                </Grid>
+                                            </Border>
+                                            <Popup Name="PART_Popup" IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" AllowsTransparency="True" Focusable="False">
+                                                <Border Background="{TemplateBinding Background}" BorderBrush="{DynamicResource BorderColor}" BorderThickness="1" CornerRadius="4" MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                                    <ScrollViewer MaxHeight="320" CanContentScroll="True"><ItemsPresenter Margin="4"/></ScrollViewer>
+                                                </Border>
+                                            </Popup>
                                         </Grid>
-                                        <Button Name="WPFWin11ISOWriteUSBButton"
-                                                Content="擦除并写入 U 盘"
-                                                Foreground="OrangeRed"
-                                                HorizontalAlignment="Stretch"
-                                                Width="Auto" Padding="12,0"
-                                                Height="{DynamicResource ButtonHeight}"
-                                                Margin="0,0,0,10"/>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.55"/></Trigger>
+                                            <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="ISOComboBorder" Property="BorderBrush" Value="{DynamicResource AccentColor}"/></Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                        <Style TargetType="ComboBoxItem">
+                            <Setter Property="FontSize" Value="{DynamicResource FontSize}"/>
+                        </Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="TextWrapping" Value="Wrap"/>
+                            <Setter Property="FontSize" Value="{DynamicResource FontSize}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource MainForegroundColor}"/>
+                        </Style>
+                    </Grid.Resources>
+                    <ScrollViewer Name="WPFWindowsISOScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel MaxWidth="1000" HorizontalAlignment="Stretch" Margin="0,0,12,16">
+                            <StackPanel Name="WPFWin11ISOSelectSection">
+                                <TextBlock Text="准备 Windows 安装镜像" FontSize="{DynamicResource HeaderFontSize}" FontWeight="SemiBold"/>
+                                <TextBlock Text="使用微软原版 Windows 10 或 Windows 11 的 x64 ISO，制作供全新安装使用的镜像。系统与版本会在读取 ISO 后自动识别。" Foreground="{DynamicResource SecondaryForegroundColor}" Margin="0,6,0,16"/>
+                                <Border BorderBrush="{DynamicResource BorderColor}" BorderThickness="0,0,0,1" Padding="0,0,0,18" Margin="0,0,0,18">
+                                    <StackPanel>
+                                        <TextBlock Text="还没有 ISO？" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                        <WrapPanel>
+                                            <ComboBox Name="WPFWindowsISODownloadVersion" SelectedIndex="0" MinWidth="{DynamicResource ButtonWidth}" Margin="0,0,8,8" VerticalAlignment="Center" AutomationProperties.Name="要下载的 Windows 系统">
+                                                <ComboBoxItem Content="Windows 11（x64）" Tag="Windows11"/>
+                                                <ComboBoxItem Content="Windows 10 22H2（x64）" Tag="Windows10"/>
+                                            </ComboBox>
+                                            <Button Name="WPFWin11ISODownloadLink" Content="打开微软下载页" Margin="0,0,0,8"/>
+                                        </WrapPanel>
+                                        <TextBlock Name="WPFWindowsISODownloadHint" Text="在微软网页选择语言和 64 位 ISO；Windows 10 页面也可能提供媒体创建工具。" Foreground="{DynamicResource SecondaryForegroundColor}"/>
+                                    </StackPanel>
+                                </Border>
+                                <TextBlock Text="1. 选择本地 ISO" FontSize="{DynamicResource HeaderFontSize}" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <TextBox Name="WPFWin11ISOPath" IsReadOnly="True" VerticalAlignment="Center" Padding="8,6" Margin="0,0,8,0" Text="未选择 ISO..." AutomationProperties.Name="所选 ISO 文件"/>
+                                    <Button Grid.Column="1" Name="WPFWin11ISOBrowseButton" Content="选择文件…"/>
+                                </Grid>
+                                <TextBlock Name="WPFWin11ISOFileInfo" Margin="0,8,0,0" Visibility="Collapsed"/>
+                            </StackPanel>
+
+                            <StackPanel Name="WPFWin11ISOMountSection" Visibility="Collapsed" Margin="0,24,0,0">
+                                <TextBlock Text="2. 读取镜像与选择版本" FontSize="{DynamicResource HeaderFontSize}" FontWeight="SemiBold"/>
+                                <TextBlock Text="挂载 ISO，检查 install.wim / install.esd 中的系统、架构及版本。此步骤不安装 Windows，也不会修改原始 ISO。" Foreground="{DynamicResource SecondaryForegroundColor}" Margin="0,6,0,10"/>
+                                <Button Name="WPFWin11ISOMountButton" Content="读取镜像信息"/>
+                                <Border Name="WPFWin11ISOVerifyResultPanel" BorderBrush="{DynamicResource BorderColor}" BorderThickness="1" CornerRadius="4" Padding="14" Margin="0,12,0,0" Visibility="Collapsed">
+                                    <StackPanel>
+                                        <TextBlock Name="WPFWin11ISOMountDriveLetter" Margin="0,0,0,4"/>
+                                        <TextBlock Name="WPFWin11ISOArchLabel" Margin="0,0,0,10"/>
+                                        <TextBlock Text="要制作的版本" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                                        <ComboBox Name="WPFWin11ISOEditionComboBox" MinWidth="0" HorizontalAlignment="Stretch" AutomationProperties.Name="要制作的 Windows 版本"/>
                                     </StackPanel>
                                 </Border>
                             </StackPanel>
 
-                    </StackPanel>
+                            <StackPanel Name="WPFWin11ISOModifySection" Visibility="Collapsed" Margin="0,24,0,0">
+                                <TextBlock Text="3. 制作安装镜像" FontSize="{DynamicResource HeaderFontSize}" FontWeight="SemiBold"/>
+                                <TextBlock Name="WPFWindowsISOProfileSummary" Text="在独立临时目录中复制文件，移除预装应用并应用镜像设置。Windows 10 和 Windows 11 使用各自的安装配置，原始 ISO 保持不变。" Foreground="{DynamicResource SecondaryForegroundColor}" Margin="0,6,0,10"/>
+                                <CheckBox Name="WPFWin11ISOInjectDrivers" IsChecked="False" Margin="0,2,0,12">
+                                    <TextBlock Text="加入本机驱动（仅用于同一台电脑或相同硬件）"/>
+                                </CheckBox>
+                                <Button Name="WPFWin11ISOModifyButton" Content="开始制作"/>
+                            </StackPanel>
 
-                    <!-- Status Log (fills remaining height) -->
-                    <Grid Grid.Row="1" Margin="5">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0"
-                                   FontSize="{DynamicResource FontSize}" FontWeight="Bold"
-                                   Foreground="{DynamicResource MainForegroundColor}"
-                                   Margin="0,0,0,4">
-                            状态日志
-                        </TextBlock>
-                        <TextBox Grid.Row="1"
-                                 Name="WPFWin11ISOStatusLog"
-                                 IsReadOnly="True"
-                                 TextWrapping="Wrap"
-                                 VerticalScrollBarVisibility="Visible"
-                                 VerticalAlignment="Stretch"
-                                 Padding="6"
-                                 Background="{DynamicResource MainBackgroundColor}"
-                                 Foreground="{DynamicResource MainForegroundColor}"
-                                 BorderBrush="{DynamicResource BorderColor}"
-                                 BorderThickness="1"
-                                 Text="就绪。请选择一个 Windows 11 ISO 开始。"/>
-                    </Grid>
+                            <StackPanel Name="WPFWin11ISOOutputSection" Visibility="Collapsed" Margin="0,24,0,0">
+                                <TextBlock Text="4. 保存或写入 U 盘" FontSize="{DynamicResource HeaderFontSize}" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                                <WrapPanel>
+                                    <Button Name="WPFWin11ISOChooseISOButton" Content="保存为 ISO 文件…" Margin="0,0,8,8"/>
+                                    <Button Name="WPFWin11ISOChooseUSBButton" Content="写入 U 盘…" Margin="0,0,8,8"/>
+                                </WrapPanel>
+                                <Border Name="WPFWin11ISOOptionUSB" BorderBrush="{DynamicResource BorderColor}" BorderThickness="1" CornerRadius="4" Padding="14" Margin="0,4,0,0" Visibility="Collapsed">
+                                    <StackPanel>
+                                        <TextBlock Text="写入会擦除所选 U 盘的全部数据。请先备份，并核对磁盘名称与容量。" FontWeight="SemiBold" Foreground="{DynamicResource DangerForegroundColor}" Margin="0,0,0,10"/>
+                                        <Grid Margin="0,0,0,10">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                            <ComboBox Name="WPFWin11ISOUSBDriveComboBox" MinWidth="0" Margin="0,0,8,0" VerticalAlignment="Center" AutomationProperties.Name="要写入的 U 盘"/>
+                                            <Button Grid.Column="1" Name="WPFWin11ISORefreshUSBButton" Content="刷新"/>
+                                        </Grid>
+                                        <Button Name="WPFWin11ISOWriteUSBButton" Content="擦除并写入 U 盘"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
 
+                            <Button Name="WPFWin11ISOCleanResetButton" Content="清理并重新开始" ToolTip="删除本次临时工作目录，再选择其他 ISO。" Margin="0,24,0,0"/>
+                            <Expander Header="制作日志" IsExpanded="True" Margin="0,12,0,0" Foreground="{DynamicResource MainForegroundColor}" FontSize="{DynamicResource FontSize}">
+                                <TextBox Name="WPFWin11ISOStatusLog" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Height="150" Padding="8" Margin="0,8,0,0" Text="就绪。请选择 Windows 10 或 Windows 11 ISO。" AutomationProperties.Name="镜像制作日志"/>
+                            </Expander>
+                        </StackPanel>
+                    </ScrollViewer>
                 </Grid>
             </TabItem>
+
             <TabItem Header="首页" Visibility="Collapsed" Name="WPFTab6">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,12,16">
                     <StackPanel MaxWidth="900" Width="{Binding ViewportWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer}}" HorizontalAlignment="Left">

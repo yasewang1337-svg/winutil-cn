@@ -90,153 +90,67 @@ winutil/
 - 复选框（用于选项）
 - 列表框（用于选择）
 
-## Win11 创建器架构
+## Windows 镜像子系统
 
-**Win11 创建器（Win11 Creator）** 是 Winutil 内部一个专门的子系统，用于创建自定义的 Windows 11 ISO。它独立于主体的软件包安装与优化项系统运行。
+Windows 镜像页用于制作 Windows 10 / 11 x64 客户端安装介质，独立于软件包与系统设置任务运行。**WinUtil 的宿主支持范围仍为 Windows 11**；制作目标支持 Windows 10 不等于工具可以在 Windows 10 上运行。本段按 2026-10-09 的实现核对。
 
-### Win11 创建器组件
+### 组件与职责
 
-**核心函数**（`functions/private/`）：
-- `Invoke-WinUtilISO.ps1`：主编排器，包含所有 Win11 创建器函数
-  - `Invoke-WinUtilISOBrowse`：ISO 文件选择对话框
-  - `Invoke-WinUtilISOMountAndVerify`：校验并挂载 ISO，确认它是官方 Windows 11
-  - `Invoke-WinUtilISOModify`：在后台运行空间（runspace）中启动修改
-  - `Invoke-WinUtilISOExport`：处理 ISO 和 U 盘导出
-  - `Invoke-WinUtilISOCheckExistingWork`：恢复未完成的工作会话
-  - `Invoke-WinUtilISOCleanAndReset`：清理临时目录并重置界面
+核心函数位于 `functions/private/`：
 
-- `Invoke-WinUtilISOScript.ps1`：对已挂载的 install.wim 应用修改
-  - 移除预置的 AppX 包（40 多个捆绑应用）
-  - （可选）从当前系统注入驱动
-  - 移除 OneDrive 安装文件
-  - 应用离线注册表优化（硬件绕过、隐私、遥测、OOBE）
-  - 删除遥测计划任务定义
-  - 预置来自 autounattend.xml 的安装脚本
-  - 移除未使用的 Windows 版本
-  - 通过 DISM 清理组件存储
+| 文件 | 职责 |
+| --- | --- |
+| `Initialize-WinUtilISOControls.ps1` | 初始化微软下载页的 Windows 10 / 11 选择与按钮事件。现有 `WPFWin11ISO*` 控件名保留，用于兼容事件分发。 |
+| `Invoke-WinUtilISO.ps1` | 选择与挂载源 ISO、读取版本、启动制作运行空间、导出 ISO、清理本次工作目录。 |
+| `Get-WinUtilISOImageProfile.ps1` | 从详细 DISM 元数据判断系统、架构、版本与索引；检查可选驱动注入的宿主代际；统一检查原生程序退出码。 |
+| `New-WinUtilISOWorkspace.ps1` | 创建受保护的独立工作目录，读写制作状态清单，校验后清理本次目录。 |
+| `Initialize-WinUtilISOContents.ps1` | 复制安装文件，把所选 WIM / ESD 版本导出为可修改、只有索引 1 的 `install.wim`。 |
+| `Install-WinUtilISOAnswerFile.ps1` | 校验应答 XML 的架构与脚本路径，写入 ISO 应答文件及受限路径内的安装脚本。 |
+| `Invoke-WinUtilISOScript.ps1` | 对已挂载的镜像应用对应 Windows 版本的配置；可选注入同代际本机驱动。 |
+| `Invoke-WinUtilISOUSB.ps1` | 列出 USB 数据盘、确认擦除、创建 GPT / FAT32 安装介质并复制文件。 |
+| `Assert-WinUtilISOUSBTarget.ps1` | 写入前复核磁盘身份、系统盘标记、可写状态、容量和 FAT32 单文件限制。 |
 
-### Win11 创建器数据流
+`Compile.ps1` 把 `tools/autounattend.xml` 与 `tools/autounattend-win10.xml` 分别嵌入生成脚本；汉化构建也将两个模板纳入独立构建目录。制作运行空间会显式载入所需辅助函数，不依赖调用者会话自动继承函数定义。
 
-```
-User selects official Windows 11 ISO
+### 输入与版本分流
+
+工具读取每个安装版本的详细元数据，接受 x64 客户端镜像：Windows 10 为 19041–19045 版本族（2004–22H2），Windows 11 构建号为 22000 及以后。x86、ARM64、Windows Server、名称与版本不匹配、混合 Windows 10 / 11 的安装镜像会被拒绝。还会检查安装 WIM / ESD、`boot.wim` 与启动文件是否存在。
+
+这些检查用于避免选错制作方案，**不证明 ISO 来自微软或未被修改**。用户仍需从官方渠道下载并核对哈希；单凭名称、元数据或文件布局无法鉴定来源。
+
+- **Windows 10**：写入独立、精简的 amd64 应答配置，保留预装应用、离线注册表与计划任务，不执行 Windows 11 的硬件检查、任务栏、AppX 精简或组件存储清理方案。
+- **Windows 11**：使用现有应答模板，按源码名单移除部分预装应用，写入安装脚本，应用离线注册表与任务调整，并清理组件存储。此方案包含硬件检查、本地账户、隐私与设备加密等设置；具体效果取决于源镜像版本。
+- **驱动注入**：默认关闭。开启后导出当前主机驱动，注入 `install.wim` 和 `boot.wim` 索引 2；要求主机与目标同属 Windows 10 或 Windows 11 且均为 x64。因此在当前受支持的 Windows 11 主机上制作 Windows 10 镜像时，应保持关闭。
+
+Windows 11 离线注册表以每次独立的 `HKLM\WinUtilISO_<GUID>_<Hive>` 名称挂载，在 `finally` 中逐一卸载，避免固定名称与其他任务冲突。工具不承诺这些修改可以完整撤销；需要重新选择源 ISO 制作其他方案。
+
+### 制作与导出流程
+
+```text
+选择源 ISO → 挂载并读取全部版本元数据 → 选择版本
     ↓
-Invoke-WinUtilISOBrowse → OpenFileDialog, validates file size
+创建 %ProgramData%\WinUtil-Tool-<GUID>
+写入 winutil-iso.json，状态 Preparing
     ↓
-Invoke-WinUtilISOMountAndVerify
-    ├─ Mount ISO via Mount-DiskImage
-    ├─ Verify install.wim or install.esd exists
-    ├─ Check for "Windows 11" in image metadata
-    ├─ Extract available editions (Home, Pro, Enterprise, etc.)
-    └─ Store ISO path, drive letter, WIM path, image info in $sync
+复制安装文件（跳过原 install.wim / install.esd / install*.swm）
+导出所选版本 → sources\install.wim，索引 1
     ↓
-User optionally enables the Driver Injection checkbox
-    ↓
-Invoke-WinUtilISOModify (runs in background runspace)
-    ├─ Create work directory: ~WinUtil_Win11ISO_[timestamp]
-    ├─ Copy ISO contents to disk (~5-6 GB)
-    ├─ Mount install.wim at selected edition/index
-    ├─ Invoke-WinUtilISOScript:
-    │   ├─ Remove 40+ bloat AppX packages
-    │   ├─ Export and inject drivers (if enabled)
-    │   ├─ Remove OneDrive setup
-    │   ├─ Load offline registry hives
-    │   ├─ Apply 50+ registry tweaks (hardware bypass, privacy, telemetry, OOBE, etc.)
-    │   ├─ Delete telemetry scheduled task files
-    │   ├─ Pre-stage setup scripts from autounattend.xml to C:\Windows\Setup\Scripts\
-    │   └─ Unload registry hives
-    ├─ DISM /Cleanup-Image /StartComponentCleanup /ResetBase (saves 300-800 MB)
-    ├─ Dismount and save the modified install.wim (~10+ minutes, slowest step)
-    ├─ Export selected edition only (removes all other editions, saves 1-2 GB each)
-    ├─ Dismount source ISO
-    └─ Report completion, enable export options
-    ↓
-Invoke-WinUtilISOExport (user chooses output)
-    ├─ Option 1: Save as ISO
-    │   ├─ Build bootable ISO via oscdimg.exe (BIOS/UEFI dual-boot)
-    │   └─ Output: Win11_Modified_[date].iso (2.5-3.5 GB)
-    │
-    └─ Option 2: Write to USB
-        ├─ Format USB as GPT
-        ├─ Create 512 MB EFI partition
-        ├─ Copy modified ISO contents
-        └─ Output: Bootable USB (minimum 8 GB)
-    ↓
-Invoke-WinUtilISOCleanAndReset (optional)
-    └─ Delete temp working directory (~10-15 GB)
-    └─ Reset UI to initial state
+挂载索引 1 → Windows 10 或 Windows 11 配置 → 保存并卸载
+    ├─ 失败：标记 Failed，保留工作目录和日志，可清理后重新开始
+    └─ 成功：标记 Completed，开放保存 ISO / 写入 U 盘
+            ↓
+       保存 ISO 或写入 U 盘 → 用户确认后清理本次目录
 ```
 
-### Win11 创建器的校验与安全
+工作目录复用 `New-WinUtilToolWorkspace` 的管理员 / SYSTEM 访问控制。清单记录源 ISO、目标系统、版本索引、架构、创建时间与状态；修改日志写入目录内的 `WinUtil_ISO.log`。所需空间与耗时取决于源镜像、展开后的镜像、驱动和输出文件，没有固定的压缩后容量或节省空间保证。
 
-**ISO 校验**：
-- 只接受官方微软 Windows 11 ISO
-- 校验 install.wim 或 install.esd 是否存在
-- 检查镜像元数据中是否含有 "Windows 11" 字样
-- 拒绝自定义、修改过或非 Windows 11 的 ISO
+`Invoke-WinUtilISOCheckExistingWork` 只检查**当前会话已持有且标记 Completed 的工作目录**。工具不再扫描旧 TEMP 目录推断任务归属或完成状态。制作失败后保留目录供检查，清理入口独立于成功输出区域；清理只卸载本次 `wim_mount` / `boot_mount`，校验目录、清单与链接后删除本次工作副本。程序只主动卸载本次自行挂载的源 ISO。
 
-**工作会话恢复**：
-- 自动检测上次会话遗留的未完成工作
-- 允许直接恢复到第 4 步（导出），而无需重跑第 1–3 步
-- 防止重复修改
+保存 ISO 前再次检查 Completed 状态，禁止覆盖源 ISO 或把输出写进将被清理的工作目录。工具优先查找本机 OSCDIMG，缺失时询问是否通过 WinGet 安装；成功要求进程退出码为 0 且输出文件非空。默认文件名为 `Win10_Modified_yyyyMMdd.iso` 或 `Win11_Modified_yyyyMMdd.iso`。
 
-**修改安全性**：
-- 所有注册表改动都记录在脚本中（可逆）
-- 原始 ISO 从不被修改；只操作工作副本
-- 记录到 `WinUtil_Win11ISO.log` 以便调试
-- DISM 负责镜像卸载，出错时自动清理
+写入 U 盘前检查当前磁盘的 UniqueId、序列号、编号、容量、USB 类型与系统 / 启动盘标记，并要求用户确认擦除。随后创建 GPT 和不超过约 32 GB 的 FAT32 分区，面向 UEFI 启动；较大的 `install.wim` 分割为 SWM，其余超过 FAT32 单文件限制的文件会在擦除前拒绝。原生复制与格式化操作会检查退出码，容量检查同时在擦除前和复制前进行。
 
-### Win11 创建器的注册表优化
-
-`Invoke-WinUtilISOScript` 函数会应用 **50 多项离线注册表优化**：
-
-**硬件绕过**：
-- 绕过 TPM 2.0 检查
-- 绕过安全启动要求
-- 绕过 CPU 兼容性检查
-- 绕过内存要求
-- 绕过存储检查
-
-**隐私与遥测**：
-- 禁用广告 ID
-- 禁用量身定制的体验
-- 禁用输入个性化
-- 禁用语音在线隐私
-- 禁用云内容建议
-- 禁用应用建议订阅
-- 移除 CEIP、Appraiser、WaaSMedic 等
-
-**OOBE 与安装**：
-- 启用本地账户设置
-- 跳过微软账户要求
-- 默认深色模式
-- 空的任务栏和开始菜单
-
-**安装后的安装项**：
-- 阻止 DevHome 自动安装
-- 阻止新版 Outlook 邮件应用安装
-- 阻止 Teams 自动安装
-
-**系统功能**：
-- 禁用 BitLocker 和设备加密
-- 从任务栏禁用聊天图标
-- 禁用 OneDrive 文件夹备份
-- 禁用 Copilot
-- 在 OOBE 期间禁用 Windows 更新（首次登录时重新启用）
-
-### 驱动注入功能
-
-**可选增强**：启用后，会从正在运行的系统导出所有驱动，并注入到以下两处：
-- `install.wim`（主操作系统镜像）
-- `boot.wim` 索引 2（Windows 安装 PE 环境）
-
-**使用场景**：在缺少驱动的系统上启用离线安装。
-
-### 磁盘空间要求
-
-- **临时工作目录**：约 10-15 GB
-- **原始 ISO**：4-6 GB
-- **修改后的 ISO**：2.5-3.5 GB
-- **总共需要**：约 25 GB 以保证操作安全
+以上描述是代码路径与保护措施；静态校验、模拟测试及界面预览不能替代真实镜像导出、USB 启动和目标设备安装验证。用户操作说明见 [Windows 10 / 11 镜像指南](https://github.com/yasewang1337-svg/winutil-cn/blob/main/docs/content/userguide/win11Creator/_index.md)。
 
 ## 数据流
 
@@ -614,10 +528,10 @@ Invoke-Pester
 
 ## 相关文档
 
-- [贡献指南](../../contributing/) —— 如何贡献代码
-- [用户指南](../../userguide/) —— 面向最终用户的文档
-- [Win11 创建器指南](../../userguide/win11creator/) —— 构建自定义 Windows 11 ISO
-- [FAQ](../../faq/) —— 常见问题
+- [贡献指南](https://github.com/yasewang1337-svg/winutil-cn/blob/main/docs/content/CONTRIBUTING.md) —— 如何贡献代码
+- [用户指南](https://github.com/yasewang1337-svg/winutil-cn/blob/main/docs/content/userguide/_index.md) —— 面向最终用户的文档
+- [Windows 镜像指南](https://github.com/yasewang1337-svg/winutil-cn/blob/main/docs/content/userguide/win11Creator/_index.md) —— 制作 Windows 10 / 11 x64 安装介质
+- [FAQ](https://github.com/yasewang1337-svg/winutil-cn/blob/main/docs/content/faq.md) —— 常见问题
 
 ## 更多资源
 

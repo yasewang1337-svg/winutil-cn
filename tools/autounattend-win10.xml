@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Windows 10 x64: keep disk, language, licence and account choices interactive.
+     No Windows 11 requirement bypass, feature tools or post-install scripts. -->
+<unattend xmlns="urn:schemas-microsoft-com:unattend">
+    <settings pass="oobeSystem">
+        <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+            <OOBE>
+                <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
+            </OOBE>
+        </component>
+    </settings>
+</unattend>

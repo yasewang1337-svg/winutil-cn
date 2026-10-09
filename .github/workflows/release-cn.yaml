@@ -16,6 +16,7 @@ on:
       - '汉化/**'
       - 'tools/launcher/**'
       - 'tools/autounattend.xml'
+      - 'tools/autounattend-win10.xml'
       - 'tools/Sync-VerifiedToolTemplate.ps1'
       - 'tools/Test-ReleaseSecurity.ps1'
       - 'pester/release-security.Tests.ps1'
@@ -115,7 +116,13 @@ jobs:
 
           EXE 内嵌本版本脚本，使用 Windows 自带 PowerShell 5.1。首次准备包管理器、下载安装软件和更新仍需要联网；单文件启动不等于离线安装所有软件。
 
-          ## 本版使用体验
+          ## 功能与使用方式
+
+          - 软件管理提供名称与用途列表，整行悬停显示完整介绍；操作前核对选择清单
+          - Windows 更新页使用自适应标题与按钮，支持窄窗口和放大字号
+          - Windows 镜像页支持 Windows 10 / 11 x64，提供微软官方下载入口；根据镜像元数据识别系统和版本
+          - Windows 10 使用独立安装配置，保留默认应用和设置；Windows 11 使用现有定制流程。WIM / ESD 均先导出所选版本，不修改原始 ISO
+          - 镜像制作使用独立工作目录；完整安装启动、驱动与 U 盘写入仍需在测试设备验收
 
           - 第三方工具下载后先校验：O&O 验证签名及发布者，ViVeTool 验证固定版本哈希；失败会停止并明确报告
           - 工具使用独立受保护目录，执行期间防止文件被替换；无人值守安装使用同一校验逻辑
@@ -128,7 +135,7 @@ jobs:
           - 基础和标准方案不含批量卸载应用或禁用服务；修改设置前展示影响和恢复范围
           - 有记录的注册表值和服务启动配置可按历史恢复；无记录的旧改动、已删除应用、清理文件及脚本其他效果不能完整恢复
 
-          [中文上手指南](https://github.com/$repo/blob/$sha/docs/content/userguide/getting-started/_index.md) · [软件组合说明](https://github.com/$repo/blob/$sha/docs/content/userguide/recommendations/_index.md)
+          [界面预览与下载说明](https://github.com/$repo/blob/$sha/README.md) · [中文上手指南](https://github.com/$repo/blob/$sha/docs/content/userguide/getting-started/_index.md) · [镜像制作指南](https://github.com/$repo/blob/$sha/docs/content/userguide/win11Creator/_index.md)
 
           ## PowerShell 入口
 

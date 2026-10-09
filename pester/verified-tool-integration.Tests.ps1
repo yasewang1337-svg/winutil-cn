@@ -178,6 +178,7 @@ Describe 'Verifier template synchronization and build drift guard' {
         $script:harmlessSource = 'function Invoke-WinUtilVerifiedTool { ''harmless <&> 中文'' }'
         [IO.File]::WriteAllText($script:fixtureSource, $script:harmlessSource, [Text.UTF8Encoding]::new($true))
         [IO.File]::WriteAllText($script:fixtureTemplate, "<unattend>`r`n    <Extensions>`r`n    </Extensions>`r`n</unattend>", [Text.UTF8Encoding]::new($false))
+        Copy-Item -LiteralPath (Join-Path $script:integrationRoot 'tools/autounattend-win10.xml') -Destination (Join-Path $script:fixtureRoot 'tools/autounattend-win10.xml')
         Copy-Item -LiteralPath (Join-Path $script:integrationRoot 'Compile.ps1') -Destination $script:fixtureCompile
         Set-Content -LiteralPath (Join-Path $script:fixtureRoot 'scripts/start.ps1') -Value '$sync = @{ configs = @{} }' -Encoding UTF8
         Set-Content -LiteralPath (Join-Path $script:fixtureRoot 'scripts/main.ps1') -Value '# Harmless fixture; never run compiled output.' -Encoding UTF8

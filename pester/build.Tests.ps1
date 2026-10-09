@@ -15,6 +15,7 @@ Describe 'Validated build output' {
         Set-Content (Join-Path $script:fixture 'config/applications.json') '{"example":{"content":"中文"}}' -Encoding UTF8
         Set-Content (Join-Path $script:fixture 'xaml/inputXML.xaml') '<Window />' -Encoding UTF8
         Set-Content (Join-Path $script:fixture 'tools/autounattend.xml') '<unattend />' -Encoding UTF8
+        Set-Content (Join-Path $script:fixture 'tools/autounattend-win10.xml') '<unattend><settings pass="oobeSystem" /></unattend>' -Encoding UTF8
         $script:buildScript = Join-Path $script:fixture 'Compile.ps1'
         $script:buildOutput = Join-Path $script:fixture 'winutil.ps1'
     }
@@ -26,6 +27,7 @@ Describe 'Validated build output' {
         $content = Get-Content $script:buildOutput -Raw -Encoding UTF8
         $content | Should -Match 'WPFInstallexample'
         $content | Should -Match '中文'
+        $content | Should -Match '\$WinUtilWindows10AutounattendXml ='
         $errors = $null
         $null = [System.Management.Automation.Language.Parser]::ParseInput($content, [ref]$null, [ref]$errors)
         $errors.Count | Should -Be 0
@@ -56,6 +58,20 @@ Describe 'Validated build output' {
 
     It 'rejects malformed XAML before writing output' {
         Set-Content (Join-Path $script:fixture 'xaml/inputXML.xaml') '<Window>'
+        { & $script:buildScript } | Should -Throw
+        Test-Path $script:buildOutput | Should -BeFalse
+    }
+
+    It 'rejects a missing Windows 10 answer file without replacing the last build' {
+        & $script:buildScript
+        $hash = (Get-FileHash $script:buildOutput).Hash
+        Remove-Item -LiteralPath (Join-Path $script:fixture 'tools/autounattend-win10.xml')
+        { & $script:buildScript } | Should -Throw
+        (Get-FileHash $script:buildOutput).Hash | Should -Be $hash
+    }
+
+    It 'rejects a malformed Windows 10 answer file before writing output' {
+        Set-Content (Join-Path $script:fixture 'tools/autounattend-win10.xml') '<unattend>' -Encoding UTF8
         { & $script:buildScript } | Should -Throw
         Test-Path $script:buildOutput | Should -BeFalse
     }

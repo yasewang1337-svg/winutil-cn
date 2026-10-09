@@ -1,7 +1,7 @@
 function Invoke-WinUtilISOScript {
     <#
     .SYNOPSIS
-        Applies WinUtil modifications to a mounted Windows 11 install.wim image.
+        Applies the matching Windows 10 or Windows 11 profile to a mounted x64 image.
 
     .DESCRIPTION
         Removes AppX bloatware and OneDrive, optionally injects all drivers exported from
@@ -55,25 +55,35 @@ function Invoke-WinUtilISOScript {
         [Parameter(Mandatory)][string]$ScratchDir,
         [string]$ISOContentsDir = "",
         [string]$AutoUnattendXml = "",
+        [Parameter(Mandatory)][ValidateSet('Windows10','Windows11')][string]$WindowsVersion,
+        [Parameter(Mandatory)][string]$WorkDirectory,
         [bool]$InjectCurrentSystemDrivers = $false,
         [scriptblock]$Log = { param($m) Write-Output $m }
     )
 
-    $adminSID   = New-Object System.Security.Principal.SecurityIdentifier('S-1-5-32-544')
-    $adminGroup = $adminSID.Translate([System.Security.Principal.NTAccount])
+    $null = Assert-WinUtilISOWorkspace -Path $WorkDirectory
+    $workRoot = [IO.Path]::GetFullPath($WorkDirectory).TrimEnd('\') + '\'
+    foreach ($path in @($ScratchDir, $ISOContentsDir)) {
+        if (-not [IO.Path]::GetFullPath($path).StartsWith($workRoot, [StringComparison]::OrdinalIgnoreCase)) { throw '离线镜像路径不在本次工作目录内。' }
+    }
+    Install-WinUtilISOAnswerFile -ScratchDir $ScratchDir -ISOContentsDir $ISOContentsDir -Xml $AutoUnattendXml -WindowsVersion $WindowsVersion
+    $hivePrefix = 'WinUtilISO_' + [guid]::NewGuid().ToString('N') + '_'
 
     function Set-ISOScriptReg {
         param ([string]$path, [string]$name, [string]$type, [string]$value)
+        $path = $path.Replace('HKLM\z', "HKLM\$hivePrefix")
         try {
             & reg add $path /v $name /t $type /d $value /f
+            Assert-WinUtilISONativeExit -Operation "设置离线注册表 $path\$name" -ExitCode $LASTEXITCODE
             & $Log "Set registry value: $path\$name"
         } catch {
-            & $Log "Error setting registry value: $_"
+            throw
         }
     }
 
     function Remove-ISOScriptReg {
         param ([string]$path)
+        $path = $path.Replace('HKLM\z', "HKLM\$hivePrefix")
         try {
             & reg delete $path /f
             & $Log "Removed registry key: $path"
@@ -86,33 +96,40 @@ function Invoke-WinUtilISOScript {
         param ([string]$MountPath, [string]$DriverDir, [string]$Label = "image", [scriptblock]$Logger)
         & dism /English "/image:$MountPath" /Add-Driver "/Driver:$DriverDir" /Recurse |
             ForEach-Object { & $Logger "  dism[$Label]: $_" }
+        Assert-WinUtilISONativeExit -Operation "注入 $Label 驱动" -ExitCode $LASTEXITCODE
     }
 
     function Invoke-BootWimInject {
         param ([string]$BootWimPath, [string]$DriverDir, [scriptblock]$Logger)
         Set-ItemProperty -Path $BootWimPath -Name IsReadOnly -Value $false
-        $mountDir = Join-Path $env:TEMP "WinUtil_BootMount_$(Get-Random)"
+        $mountDir = Join-Path $WorkDirectory 'boot_mount'
         New-Item -Path $mountDir -ItemType Directory -Force
+        $mounted = $false
         try {
             & $Logger "Mounting boot.wim (index 2) for driver injection..."
-            Mount-WindowsImage -ImagePath $BootWimPath -Index 2 -Path $mountDir
+            Mount-WindowsImage -ImagePath $BootWimPath -Index 2 -Path $mountDir -ErrorAction Stop
+            $mounted = $true
             Add-DriversToImage -MountPath $mountDir -DriverDir $DriverDir -Label "boot" -Logger $Logger
             & $Logger "Saving boot.wim..."
-            Dismount-WindowsImage -Path $mountDir -Save
+            Dismount-WindowsImage -Path $mountDir -Save -ErrorAction Stop
+            $mounted = $false
             & $Logger "boot.wim driver injection complete."
         } catch {
-            & $Logger "Warning: boot.wim driver injection failed: $_"
-            try { Dismount-WindowsImage -Path $mountDir -Discard } catch {}
+            & $Logger "boot.wim driver injection failed: $_"
+            if ($mounted) { Dismount-WindowsImage -Path $mountDir -Discard -ErrorAction Stop; $mounted = $false }
+            throw
         } finally {
-            Remove-Item -Path $mountDir -Recurse -Force
+            if (-not $mounted) { Remove-Item -LiteralPath $mountDir -Force -ErrorAction Stop }
         }
     }
 
     # -- 1. Remove provisioned AppX packages ----------------------------------
+    if ($WindowsVersion -eq 'Windows11') {
     & $Log "Removing provisioned AppX packages..."
 
     $packages = & dism /English "/image:$ScratchDir" /Get-ProvisionedAppxPackages |
         ForEach-Object { if ($_ -match 'PackageName : (.*)') { $matches[1] } }
+    Assert-WinUtilISONativeExit -Operation '读取镜像预装应用' -ExitCode $LASTEXITCODE
 
     $packagePrefixes = @(
         'Clipchamp.Clipchamp',
@@ -137,15 +154,19 @@ function Invoke-WinUtilISOScript {
     )
 
     $packages | Where-Object { $pkg = $_; $packagePrefixes | Where-Object { $pkg -like "*$_*" } } |
-        ForEach-Object { & dism /English "/image:$ScratchDir" /Remove-ProvisionedAppxPackage "/PackageName:$_" }
+        ForEach-Object {
+            & dism /English "/image:$ScratchDir" /Remove-ProvisionedAppxPackage "/PackageName:$_"
+            Assert-WinUtilISONativeExit -Operation "移除预装应用 $_" -ExitCode $LASTEXITCODE
+        }
+    }
 
     # -- 2. Inject current system drivers (optional) ---------------------------
     if ($InjectCurrentSystemDrivers) {
         & $Log "Exporting all drivers from running system..."
-        $driverExportRoot = Join-Path $env:TEMP "WinUtil_DriverExport_$(Get-Random)"
+        $driverExportRoot = Join-Path $WorkDirectory ('drivers_' + [guid]::NewGuid().ToString('N'))
         New-Item -Path $driverExportRoot -ItemType Directory -Force
         try {
-            Export-WindowsDriver -Online -Destination $driverExportRoot
+            Export-WindowsDriver -Online -Destination $driverExportRoot -ErrorAction Stop
 
             & $Log "Injecting current system drivers into install.wim..."
             Add-DriversToImage -MountPath $ScratchDir -DriverDir $driverExportRoot -Label "install" -Logger $Log
@@ -162,6 +183,7 @@ function Invoke-WinUtilISOScript {
             }
         } catch {
             & $Log "Error during driver export/injection: $_"
+            throw
         } finally {
             Remove-Item -Path $driverExportRoot -Recurse -Force
         }
@@ -169,14 +191,27 @@ function Invoke-WinUtilISOScript {
         & $Log "Driver injection skipped."
     }
 
-    # -- 3. Registry tweaks ----------------------------------------------------
-    & $Log "Loading offline registry hives..."
-    reg load HKLM\zCOMPONENTS "$ScratchDir\Windows\System32\config\COMPONENTS"
-    reg load HKLM\zDEFAULT    "$ScratchDir\Windows\System32\config\default"
-    reg load HKLM\zNTUSER     "$ScratchDir\Users\Default\ntuser.dat"
-    reg load HKLM\zSOFTWARE   "$ScratchDir\Windows\System32\config\SOFTWARE"
-    reg load HKLM\zSYSTEM     "$ScratchDir\Windows\System32\config\SYSTEM"
+    if ($WindowsVersion -eq 'Windows10') {
+        & $Log 'Windows 10 安装应答已写入；保留预装应用、默认系统设置和计划任务，不运行 Windows 11 定制。'
+        return
+    }
 
+    # -- 3. Registry tweaks ----------------------------------------------------
+    $loadedHives = [Collections.Generic.List[string]]::new()
+    try {
+    & $Log "Loading offline registry hives..."
+    $hives = @{
+        DEFAULT = 'Windows\System32\config\default'
+        NTUSER = 'Users\Default\ntuser.dat'
+        SOFTWARE = 'Windows\System32\config\SOFTWARE'
+        SYSTEM = 'Windows\System32\config\SYSTEM'
+    }
+    foreach ($name in $hives.Keys) {
+        $key = "HKLM\$hivePrefix$name"
+        & reg load $key (Join-Path $ScratchDir $hives[$name])
+        Assert-WinUtilISONativeExit -Operation "加载离线注册表 $name" -ExitCode $LASTEXITCODE
+        $loadedHives.Add($key)
+    }
     & $Log "Bypassing system requirements..."
     Set-ISOScriptReg 'HKLM\zDEFAULT\Control Panel\UnsupportedHardwareNotificationCache' 'SV1' 'REG_DWORD' '0'
     Set-ISOScriptReg 'HKLM\zDEFAULT\Control Panel\UnsupportedHardwareNotificationCache' 'SV2' 'REG_DWORD' '0'
@@ -216,47 +251,6 @@ function Invoke-WinUtilISOScript {
 
     & $Log "Enabling local accounts on OOBE..."
     Set-ISOScriptReg 'HKLM\zSOFTWARE\Microsoft\Windows\CurrentVersion\OOBE' 'BypassNRO' 'REG_DWORD' '1'
-
-    if ($AutoUnattendXml) {
-        try {
-            $xmlDoc = [xml]::new()
-            $xmlDoc.LoadXml($AutoUnattendXml)
-
-            $nsMgr = New-Object System.Xml.XmlNamespaceManager($xmlDoc.NameTable)
-            $nsMgr.AddNamespace("sg", "https://schneegans.de/windows/unattend-generator/")
-
-            $fileNodes = $xmlDoc.SelectNodes("//sg:File", $nsMgr)
-            if ($fileNodes -and $fileNodes.Count -gt 0) {
-                foreach ($fileNode in $fileNodes) {
-                    $absPath  = $fileNode.GetAttribute("path")
-                    $relPath  = $absPath -replace '^[A-Za-z]:[/\\]', ''
-                    $destPath = Join-Path $ScratchDir $relPath
-                    New-Item -Path (Split-Path $destPath -Parent) -ItemType Directory -Force
-
-                    $ext = [IO.Path]::GetExtension($destPath).ToLower()
-                    $encoding = switch ($ext) {
-                        { $_ -in '.ps1', '.xml' }        { [System.Text.Encoding]::UTF8 }
-                        { $_ -in '.reg', '.vbs', '.js' } { [System.Text.UnicodeEncoding]::new($false, $true) }
-                        default                          { [System.Text.Encoding]::Default }
-                    }
-                    [System.IO.File]::WriteAllBytes($destPath, ($encoding.GetPreamble() + $encoding.GetBytes($fileNode.InnerText.Trim())))
-                    & $Log "Pre-staged setup script: $relPath"
-                }
-            } else {
-                & $Log "Warning: no <Extensions><File> nodes found in autounattend.xml - setup scripts not pre-staged."
-            }
-        } catch {
-            & $Log "Warning: could not pre-stage setup scripts from autounattend.xml: $_"
-        }
-
-        if ($ISOContentsDir -and (Test-Path $ISOContentsDir)) {
-            $isoDest = Join-Path $ISOContentsDir "autounattend.xml"
-            Set-Content -Path $isoDest -Value $AutoUnattendXml -Encoding UTF8 -Force
-            & $Log "Written autounattend.xml to ISO root ($isoDest)."
-        }
-    } else {
-        & $Log "Warning: autounattend.xml content is empty - skipping OOBE bypass file."
-    }
 
     & $Log "Disabling reserved storage..."
     Set-ISOScriptReg 'HKLM\zSOFTWARE\Microsoft\Windows\CurrentVersion\ReserveManager' 'ShippedWithReserves' 'REG_DWORD' '0'
@@ -316,33 +310,30 @@ function Invoke-WinUtilISOScript {
     & $Log "Preventing installation of new Outlook..."
     Set-ISOScriptReg 'HKLM\zSOFTWARE\Policies\Microsoft\Windows\Windows Mail' 'PreventRun' 'REG_DWORD' '1'
 
-    & $Log "Unloading offline registry hives..."
-    reg unload HKLM\zCOMPONENTS
-    reg unload HKLM\zDEFAULT
-    reg unload HKLM\zNTUSER
-    reg unload HKLM\zSOFTWARE
-    reg unload HKLM\zSYSTEM
-
-    # -- 4. Delete scheduled task definition files -----------------------------
-    & $Log "Deleting scheduled task definition files..."
-    $tasksPath = "$ScratchDir\Windows\System32\Tasks"
-    Remove-Item "$tasksPath\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser" -Force
-    Remove-Item "$tasksPath\Microsoft\Windows\Customer Experience Improvement Program"                  -Recurse -Force
-    Remove-Item "$tasksPath\Microsoft\Windows\Application Experience\ProgramDataUpdater"               -Force
-    Remove-Item "$tasksPath\Microsoft\Windows\Chkdsk\Proxy"                                            -Force
-    Remove-Item "$tasksPath\Microsoft\Windows\Windows Error Reporting\QueueReporting"                  -Force
-    Remove-Item "$tasksPath\Microsoft\Windows\InstallService"                                          -Recurse -Force
-    Remove-Item "$tasksPath\Microsoft\Windows\UpdateOrchestrator"                                      -Recurse -Force
-    Remove-Item "$tasksPath\Microsoft\Windows\UpdateAssistant"                                         -Recurse -Force
-    Remove-Item "$tasksPath\Microsoft\Windows\WaaSMedic"                                               -Recurse -Force
-    Remove-Item "$tasksPath\Microsoft\Windows\WindowsUpdate"                                           -Recurse -Force
-    Remove-Item "$tasksPath\Microsoft\WindowsUpdate"                                                   -Recurse -Force
-    & $Log "Scheduled task files deleted."
-
-    # -- 5. Remove ISO support folder -----------------------------------------
-    if ($ISOContentsDir -and (Test-Path $ISOContentsDir)) {
-        & $Log "Removing ISO support\ folder..."
-        Remove-Item -Path (Join-Path $ISOContentsDir "support") -Recurse -Force
-        & $Log "ISO support\ folder removed."
+    } finally {
+        & $Log "Unloading offline registry hives..."
+        $failures = @()
+        foreach ($key in $loadedHives) {
+            & reg unload $key
+            if ($LASTEXITCODE -ne 0) { $failures += $key }
+        }
+        if ($failures.Count) { throw "未能卸载本次离线注册表，未保存镜像：$($failures -join ', ')" }
     }
+    # Only remove optional definitions inside this mounted image.
+    $taskRoot = Join-Path $ScratchDir 'Windows\System32\Tasks'
+    foreach ($relative in @(
+        'Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser',
+        'Microsoft\Windows\Customer Experience Improvement Program',
+        'Microsoft\Windows\Application Experience\ProgramDataUpdater',
+        'Microsoft\Windows\Chkdsk\Proxy', 'Microsoft\Windows\Windows Error Reporting\QueueReporting',
+        'Microsoft\Windows\InstallService', 'Microsoft\Windows\UpdateOrchestrator',
+        'Microsoft\Windows\UpdateAssistant', 'Microsoft\Windows\WaaSMedic',
+        'Microsoft\Windows\WindowsUpdate', 'Microsoft\WindowsUpdate'
+    )) {
+        $target = [IO.Path]::GetFullPath((Join-Path $taskRoot $relative))
+        if (-not $target.StartsWith($workRoot, [StringComparison]::OrdinalIgnoreCase)) { throw '任务文件路径越界。' }
+        if (Test-Path -LiteralPath $target) { Remove-Item -LiteralPath $target -Recurse -Force -ErrorAction Stop }
+    }
+    $support = Join-Path $ISOContentsDir 'support'
+    if (Test-Path -LiteralPath $support) { Remove-Item -LiteralPath $support -Recurse -Force -ErrorAction Stop }
 }

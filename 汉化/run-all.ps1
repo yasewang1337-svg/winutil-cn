@@ -24,6 +24,7 @@ try {
     $stageTools = Join-Path $stage 'tools'
     $null = New-Item -ItemType Directory -Path $stageLocalization, $stageTools
     [IO.File]::WriteAllBytes((Join-Path $stageTools 'autounattend.xml'), [IO.File]::ReadAllBytes((Join-Path $root 'tools/autounattend.xml')))
+    [IO.File]::WriteAllBytes((Join-Path $stageTools 'autounattend-win10.xml'), [IO.File]::ReadAllBytes((Join-Path $root 'tools/autounattend-win10.xml')))
     $steps = @('apply-categories.ps1', 'apply-xaml.ps1', 'apply-i18n.ps1', 'apply-apps.ps1', 'apply-extra-apps.ps1', 'apply-functions.ps1', 'build-cn.ps1')
     foreach ($name in $steps) { [IO.File]::WriteAllBytes((Join-Path $stageLocalization $name), [IO.File]::ReadAllBytes((Join-Path $PSScriptRoot $name))) }
     foreach ($data in Get-ChildItem -LiteralPath $PSScriptRoot -Filter '*.json' -File) {

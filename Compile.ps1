@@ -49,6 +49,9 @@ if (Test-Path -LiteralPath $verifiedToolSource -PathType Leaf) {
     }
 }
 $parts.Add("`$WinUtilAutounattendXml = @'`r`n$autounattendXml`r`n'@")
+$windows10AutounattendXml = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'tools/autounattend-win10.xml') -Raw -Encoding UTF8
+$null = [xml]$windows10AutounattendXml
+$parts.Add("`$WinUtilWindows10AutounattendXml = @'`r`n$windows10AutounattendXml`r`n'@")
 $parts.Add((Get-Content -LiteralPath (Join-Path $PSScriptRoot 'scripts/main.ps1') -Raw -Encoding UTF8))
 $script = $parts -join "`r`n"
 

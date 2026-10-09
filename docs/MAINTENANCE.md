@@ -19,6 +19,18 @@
 
 界面采用侧栏导航、命令栏与全宽软件行，设计参考 [Files](https://files.community/)、[UniGetUI](https://github.com/Devolutions/UniGetUI) 和 [Windows 导航规范](https://learn.microsoft.com/en-us/windows/apps/develop/ui/controls/navigationview)。软件命令栏由 `Initialize-WinUtilAppCommandBar.ps1` 读取原 `appnavigation.json` 生成，保留稳定控件ID；Button由main统一注册Click，MenuItem由命令栏注册，避免重复派发。条目的完整介绍只设置在最外层Border，子名称和说明不设Tooltip，防止遮蔽。改布局时同时检查整窗深浅色、800px及150%字号，不只检查单独组件。
 
+## 镜像与界面预览维护
+
+Windows 镜像页保留 `WPFWin11ISO*` 控件 ID 以兼容事件，但实际目标由 DISM 元数据识别为 Windows 10 / 11 x64。Windows 10 使用独立的 `tools/autounattend-win10.xml`，编译器和汉化暂存构建必须同时包含此文件；不要把 Win11 的安装脚本直接用于 Win10。完整安装启动、驱动和 U 盘写入仍需在测试设备验收。
+
+每次界面发布前运行以下命令生成当前源码的真实 WPF 预览，不执行系统动作：
+
+```powershell
+powershell -NoProfile -File tools/Export-InterfacePreviews.ps1 -IncludeCompact
+```
+
+检查 `.artifacts/interface-previews/` 的深浅主题、800px / 150% 字号和各页截图，再更新 `docs/assets/images/screenshots/` 下的 `home-cn.png`、`home-light-cn.png`、`software-cn.png`、`updates-cn.png`、`windows-iso-cn.png`。README 使用 `releases/latest` 入口，预览图必须来自本次源码；不要沿用旧版布局或概念稿。页面修改还应检查隐藏步骤展开后的滚动与按钮可达性，相关回归见 `windows-update-layout.Tests.ps1` 和 `windows-iso-layout.Tests.ps1`。
+
 ## 2026-09 可靠性维护
 
 - 启动开关探测只读取指定注册表值，不枚举无关值、不创建注册表键。值损坏或无权限时记录包含路径和值名的警告并继续加载；缺失值采用配置默认值。对应 [Issue #6](https://github.com/yasewang1337-svg/winutil-cn/issues/6)。

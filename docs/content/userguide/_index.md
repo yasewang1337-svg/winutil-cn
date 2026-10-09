@@ -20,8 +20,10 @@ cascade:
 | 打开 Windows 工具或执行修复 | [功能与修复](features/) |
 | 调整 Windows 更新策略 | [更新](updates/) |
 | 保存清单、在另一台电脑复用 | [自动化](automation/) |
-| 制作自定义系统镜像 | [Win11 创建器](win11creator/) |
+| 制作 Windows 10 / 11 x64 安装镜像 | [Windows 镜像](win11creator/) |
 
 装机组合和图形界面导入仅改变选择，确认执行后才安装或修改设置。安装结果按包管理器返回值显示，失败项可以单独重试；设置恢复限于有历史记录的注册表值和服务启动配置。高级修复与镜像制作应在了解影响后单独使用。
+
+本工具的运行环境仍为 Windows 11。镜像页支持的 Windows 10 / 11 是安装介质的制作目标，并不表示工具已经支持在 Windows 10 上运行。
 
 新版说明和校验文件见[中文发布页](https://github.com/yasewang1337-svg/winutil-cn/releases/latest)。

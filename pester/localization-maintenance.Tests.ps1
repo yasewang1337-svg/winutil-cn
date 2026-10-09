@@ -28,6 +28,7 @@
         Write-FixtureText (Join-Path $Path 'scripts/main.ps1') 'Write-Output "fixture only"'
         Write-FixtureText (Join-Path $Path 'xaml/inputXML.xaml') '<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />'
         Write-FixtureText (Join-Path $Path 'tools/autounattend.xml') '<unattend />'
+        Write-FixtureText (Join-Path $Path 'tools/autounattend-win10.xml') '<unattend />'
         Write-FixtureText (Join-Path $Path 'config/applications.json') '{"example": {"category": "Utilities", "description": "Example application", "content":"Example", "winget":"Example.App", "choco":"na", "link":"https://example.com", "foss":true}}'
         Write-FixtureText (Join-Path $Path 'config/tweaks.json') '{"WPFTweaksExample":{"category":"Essential Tweaks","Content":"Example setting","Description":"Example description"}}'
         Write-FixtureText (Join-Path $Path 'config/feature.json') '{"WPFFeaturesExample":{"category":"Features","Content":"Example feature"}}'
