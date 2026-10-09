@@ -146,7 +146,9 @@ Describe 'Windows Update reset scope' {
         # Parse all branches including Aggressive, without dot-sourcing either reset entry point.
         $path = Join-Path $root "functions/public/$Name.ps1"
         $tokens = $null; $parseErrors = $null
-        $ast = [System.Management.Automation.Language.Parser]::ParseFile($path, [ref]$tokens, [ref]$parseErrors)
+        # Match the compiler's explicit UTF-8 source loading on Windows PowerShell 5.1.
+        $source = [System.IO.File]::ReadAllText($path, [System.Text.Encoding]::UTF8)
+        $ast = [System.Management.Automation.Language.Parser]::ParseInput($source, $path, [ref]$tokens, [ref]$parseErrors)
         $parseErrors.Count | Should -Be 0
         $commands = @($ast.FindAll({ param($node) $node -is [System.Management.Automation.Language.CommandAst] }, $true))
         $forbidden = @(
