@@ -39,7 +39,7 @@ $map = [ordered]@{
   'Header="Tweaks"'  = 'Header="优化"'
   'Header="Config"'  = 'Header="配置"'
   'Header="Updates"' = 'Header="更新"'
-  'Header="Win11ISO"' = 'Header="Win11 镜像"'
+  'Header="Win11ISO"' = 'Header="Windows 镜像"'
   # 优化页
   'Content="Recommended Selections:"' = 'Content="推荐方案:"'
   'Content="Run Tweaks"'          = 'Content="运行优化"'
@@ -48,7 +48,7 @@ $map = [ordered]@{
   'Content="Default Settings"'   = 'Content="默认设置"'
   'Content="Security Settings"'  = 'Content="安全设置"'
   'Content="Disable All Updates"' = 'Content="禁用所有更新"'
-  # Win11 镜像页(MicroWin)
+  # Windows 镜像页（保留上游控件名以兼容现有事件）
   'Text="No ISO selected..."'    = 'Text="未选择 ISO..."'
   'Content="Browse"'             = 'Content="浏览"'
   'Content="Open Microsoft Download Page"' = 'Content="打开微软下载页面"'

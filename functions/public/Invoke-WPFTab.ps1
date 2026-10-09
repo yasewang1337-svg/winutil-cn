@@ -26,7 +26,7 @@ function Invoke-WPFTab {
     if ($title) {
         $title.Text = @{
             WPFTab1 = '软件管理'; WPFTab2 = '系统优化'; WPFTab3 = '系统配置'
-            WPFTab4 = 'Windows 更新'; WPFTab5 = 'Win11 镜像'; WPFTab6 = '首页'
+            WPFTab4 = 'Windows 更新'; WPFTab5 = 'Windows 镜像'; WPFTab6 = '首页'
         }[$tabName]
     }
     $sync.SearchBarClearButton.Visibility = 'Collapsed'

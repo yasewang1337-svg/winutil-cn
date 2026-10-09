@@ -342,7 +342,8 @@ $sync["Form"].Add_Closing({
         [void][Windows.MessageBox]::Show('O&O 隐私工具仍在运行，请先关闭 O&O 窗口，再关闭 WinUtil。', 'WinUtil CN')
         return
     }
-    if ($sync.ProcessRunning) {
+    if ($sync.ProcessRunning -or $sync.Win11ISOModifying -or $sync.Win11ISOExporting -or
+        $sync.Win11ISOWritingUSB -or $sync.Win11ISOCleaning) {
         $eventArgs.Cancel = $true
         [void][Windows.MessageBox]::Show('当前任务仍在执行，请等待结果后关闭窗口。', 'WinUtil CN')
         return
@@ -383,7 +384,7 @@ $commonKeyEvents = {
             "T" { Invoke-WPFButton "WPFTab2BT"; $keyEventArgs.Handled = $true } # Navigate to Tweaks tab
             "C" { Invoke-WPFButton "WPFTab3BT"; $keyEventArgs.Handled = $true } # Navigate to Config tab
             "U" { Invoke-WPFButton "WPFTab4BT"; $keyEventArgs.Handled = $true } # Navigate to Updates tab
-            "W" { Invoke-WPFButton "WPFTab5BT"; $keyEventArgs.Handled = $true } # Navigate to Win11ISO tab
+            "W" { Invoke-WPFButton "WPFTab5BT"; $keyEventArgs.Handled = $true } # Navigate to Windows ISO tab
         }
     }
     # Handle Ctrl key combinations for specific actions
@@ -571,7 +572,7 @@ $sync["FontScalingApplyButton"].Add_Click({
     Invoke-WPFPopup -Action "Hide" -Popups @("FontScaling")
 })
 
-# ── Win11ISO Tab button handlers ──────────────────────────────────────────────
+# ── Windows ISO tab button handlers ──────────────────────────────────────────
 
 $sync["WPFTab5BT"].Add_Click({
     $sync["Form"].Dispatcher.BeginInvoke([System.Windows.Threading.DispatcherPriority]::Background, [action]{ Invoke-WinUtilISOCheckExistingWork }) | Out-Null
@@ -581,9 +582,7 @@ $sync["WPFWin11ISOBrowseButton"].Add_Click({
     Invoke-WinUtilISOBrowse
 })
 
-$sync["WPFWin11ISODownloadLink"].Add_Click({
-    Start-Process "https://www.microsoft.com/software-download/windows11"
-})
+Initialize-WinUtilISOControls
 
 $sync["WPFWin11ISOMountButton"].Add_Click({
     Invoke-WinUtilISOMountAndVerify
