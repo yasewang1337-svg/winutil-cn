@@ -68,6 +68,6 @@ GitHub 当前没有待处理的依赖 PR，不能据此认为依赖均最新。I
 
 本轮功能测试禁止真实安装、卸载、改注册表/服务、格式化磁盘、启用 SSH 或修改网络。主机虽然有 Hyper-V 命令入口，但当前身份无法枚举虚拟机，因此没有完成 Windows 11 测试虚拟机验收；没有为此提升管理权限、启用虚拟化或重启系统。自动回归与CI构建不能代替这些验证。
 
-[正式发布验证](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/37923206300)通过 PowerShell 5.1 / 7 各337项回归、启动器夹具、双版本产物语法/BOM检查，以及PS1/EXE逐文件Defender扫描。下载后EXE、清单和扫描报告的本地哈希与GitHub digest一致，EXE内嵌脚本哈希与发布PS1 digest一致。独立PS1在维护环境中读取被拒绝，本地脚本复核尚未完成；云端扫描通过不能代表本地防护兼容问题解决。
+[正式发布验证](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/37923206300)通过 PowerShell 5.1 / 7 各337项回归、启动器夹具、双版本产物语法/BOM检查，以及PS1/EXE逐文件Defender扫描。下载后EXE、清单和扫描报告的本地哈希与GitHub digest一致，EXE内嵌脚本哈希与发布PS1 digest一致。用户随后提供日志，确认独立PS1在哈希核验时被火绒以 `TrojanDownloader/PS.Netloader.lr` 检测并删除，本地脚本复核尚未完成；云端扫描通过不能代表火绒兼容问题解决，也不能直接判定误报。证据与源码对照见[火绒复核材料](HUORONG-REVIEW.md)。
 
 发布和最新测试证据统一记录在 [WORKSTATE.md](../WORKSTATE.md)。MCP修复/新版npm发布、启动盘可靠性、SSH与完整更新策略、真实Windows使用验收，以及完整上游架构迁移仍是后续工作。

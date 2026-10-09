@@ -1,11 +1,38 @@
-# 火绒检测复核材料（待提交）
+# 火绒检测复核材料（尚未向厂商提交）
 
-此文档是本地整理的反馈草稿，尚未向火绒或任何第三方发送。
+此文档整理已公开的项目资料与去除个人路径的告警摘要，尚未向火绒提交。用户原始日志仅保留本地，不随仓库发布。
 
-## 已确认的告警
+## 2026-10-09：31 版发布附件被火绒删除（已确认）
+
+用户补充的三条原始告警与本次核验命令对应，已明确此前“拒绝访问”的原因：火绒检测并删除文件。
+
+| 项目 | 已核实内容 |
+| --- | --- |
+| 检测名称 / ID | `TrojanDownloader/PS.Netloader.lr` / `2905791205BCC50A`；ID不是文件哈希 |
+| 对象 | `cn-2026.10.09-31/winutil-cn.ps1` 发布附件，以及工作区根目录原有的 `winutil.ps1`、`winutil-cn.ps1` |
+| 处理结果 | 三条均为“已处理，删除文件” |
+| 触发上下文 | Codex 调用 PowerShell 7，执行 `Get-FileHash -LiteralPath ... -Algorithm SHA256` 核对文件；没有以目标PS1为入口执行WinUtil功能 |
+| 发布来源 | [31版](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/cn-2026.10.09-31)，源码 `5844369d49482bd2162568333810d02b1d6bfa7a` |
+| 发布PS1身份 | 710651字节；GitHub资产digest、校验清单及扫描报告中的SHA256为 `BBEE00E5724FF8383C277EFDC9D5F32DA2BEBDCC4AF369ED20A89F0C26E802FD`；由于本机读取被拦，不能称为本机独立PS1实测哈希 |
+| 尚缺信息 | 本次日志未包含告警时间、当前火绒客户端和病毒库版本；不沿用9月旧值 |
+
+`Get-FileHash` 用于读取文件内容并计算哈希，见[微软说明](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/get-filehash)。本次发布核验设置了 `$ErrorActionPreference = 'Stop'`，在附件哈希循环中读取PS1失败，未进入后续静态验证脚本。根目录核验命令也只查询哈希。因此，日志的“操作类型：执行”不能单独证明目标脚本的功能代码已经执行。现有资料也不足以区分火绒内部的具体扫描通道或命中特征。
+
+### 与30版的源码对照
+
+- 比较已发布源码 `b10def3` → `5844369`：共享下载校验 `Invoke-WinUtilVerifiedTool.ps1`、O&O入口、`scripts/start.ps1`、`tools/launcher/Launcher.cs` 及无人值守模板均未变化。31版涉及的运行源码主要为后台任务状态、更新修复范围、软件包映射、固定SID及OneDrive路径。
+- O&O仍要求有效签名及预期发布者；ViVeTool仍固定官方版本SHA256，并保留执行期间文件锁。远程清单仍按JSON解析并验证已有项目ID，不把清单当PowerShell执行。
+- `Invoke-WPFButton.ps1` 的 `Invoke-Expression` 处理内置功能配置，并非本次核验命令从互联网下载后执行的内容。这个语法存在本身不能证明恶意，也不能证明它就是火绒命中的位置。
+- 本次旧文件和31版附件均被同名、同ID检测；这不足以把告警归因于31版新增代码。检测名/ID相同也不能证明文件字节或实际命中位置相同。
+
+[31版CI](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/37923206300)完成PS5.1/7各337项回归、构建和双产物Defender扫描。EXE、校验清单和扫描报告的本地哈希与GitHub digest一致；仅对EXE内嵌资源计算哈希，也与发布PS1 digest一致。上述证据没有替代被拦PS1的本地验证，不能证明火绒误报或用户环境已感染。
+
+原始证据保存在 `.artifacts/update-audit-20261009/huorong-user-report-20261009.txt`，首条命令行在用户提供的文本中被截断；完整核验命令及读取失败另有本次操作记录对应。此轮仅补充证据与文档，没有重下被拦文件、恢复隔离、调整防护或修改运行代码以试探放行条件。下一步是由厂商结合上述发布样本身份复核检测结果；尚未向厂商发送。
+
+## 2026-09-20：历史告警（整改前）
 
 - 项目：WinUtil CN，公开源码 https://github.com/yasewang1337-svg/winutil-cn 。
-- 本轮维护基线：`eb57d18`；本地安全整改尚未发布。
+- 当时维护基线：`eb57d18`；当时本地安全整改尚未发布。
 - 告警时间：2026-09-20 05:58:54、06:04:04、06:14:17（三次构建，均由用户导出的原始日志确认）。
 - 产品：火绒安全，病毒防护 → 文件实时监控。05:59:00 更新记录显示版本为 `6.0.12.1`，病毒库时间 `2026-09-19 19:44`；其后两次构建仍出现上述检测。
 - 检测名：`TrojanDownloader/PS.Netloader.lr`。
@@ -32,7 +59,7 @@
 
 安全修复通过 [PR #11](https://github.com/yasewang1337-svg/winutil-cn/pull/11) 合并至 `b10def37204eb7651bb11582d74ba3acd7195d2b`，[正式CI](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/35474785713) 正常构建并发布 [cn-2026.09.19-30](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/cn-2026.09.19-30)。PS5.1/PS7各311项回归、启动器无害夹具及产物检查通过；两个最终产物均完成Defender按需扫描，未检出威胁。
 
-发布附件提供 `SHA256SUMS.txt` 和 `security-scan.json`：EXE哈希 `D7737684A391DF17EA04A42E407A53440556D295E151B64AFB554FFA3853894B`，PS1哈希 `28B59D90E28B729A6F4A74D489D10ECE67FC6C34A44AD1597BA7B1E51DE09237`。已下载核对GitHub资产digest、校验和及EXE内嵌脚本一致性，并同步到工作区；这些新附件目前能在本机读取。
+发布附件提供 `SHA256SUMS.txt` 和 `security-scan.json`：EXE哈希 `D7737684A391DF17EA04A42E407A53440556D295E151B64AFB554FFA3853894B`，PS1哈希 `28B59D90E28B729A6F4A74D489D10ECE67FC6C34A44AD1597BA7B1E51DE09237`。当时已下载核对GitHub资产digest、校验和及EXE内嵌脚本一致性，并同步到工作区；交付时附件能在本机读取。后续10月再次核验发生火绒删除，不能把9月可读作为当前放行证据。
 
 这是一次明确的CI扫描通过和交付记录，**不是火绒已经放行的结论**。没有关闭防护、设置排除或恢复隔离样本；尚未对新版本执行真实系统优化，也没有向火绒提交复核。
 
@@ -93,6 +120,6 @@
 
 请核对上述检测是否针对本开源工具的具体危险行为，或属于误报。如属误报，请告知需要提供的准确样本及安全提交方式；如存在具体风险，请说明涉及的函数或行为，以便继续修复。
 
-目前可确认历史火绒告警、本机构建读取阻断及后续CI扫描通过，尚不能确认火绒具体命中特征或断言误报。最新双 PowerShell 引擎各311项隔离测试、启动器无害夹具与Defender扫描通过，均不能代替火绒的检测或厂商复核。
+目前已确认历史构建告警，以及31版发布附件在哈希核验时被火绒检测并删除，尚不能确认具体命中特征或断言误报。31版双PowerShell各337项隔离测试、启动器无害夹具与Defender扫描通过，均不能代替火绒的检测或厂商复核。
 
-提交入口请从火绒安全客户端的“问题反馈 / 病毒样本上报”进入官方渠道，参见[火绒官方用户手册](https://cdn-www.huorong.cn/Public/Uploads/uploadfile/files/20250704/huoronganquanruanjian6.0yonghucaozuoshouce6.0.7.0banben25.6.26.pdf)。
+提交入口请从火绒安全客户端的“问题反馈 / 病毒上报”进入官方渠道，参见[火绒官方用户手册](https://cdn-www.huorong.cn/Public/Uploads/uploadfile/files/20260512/%E7%81%AB%E7%BB%92%E5%AE%89%E5%85%A8%E8%BD%AF%E4%BB%B6%206.0%20%E7%94%A8%E6%88%B7%E6%93%8D%E4%BD%9C%E6%89%8B%E5%86%8C%EF%BC%886.0.10.0%E7%89%88%E6%9C%AC%EF%BC%89.pdf)。
