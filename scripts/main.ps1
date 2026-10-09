@@ -396,23 +396,6 @@ $commonKeyEvents = {
 }
 $sync["Form"].Add_PreViewKeyDown($commonKeyEvents)
 
-$sync["Form"].Add_MouseLeftButtonDown({
-    Invoke-WPFPopup -Action "Hide" -Popups @("Settings", "Theme", "FontScaling")
-    $sync["Form"].DragMove()
-})
-
-$sync["Form"].Add_MouseDoubleClick({
-    if ($_.OriginalSource.Name -eq "NavDockPanel" -or
-        $_.OriginalSource.Name -eq "GridBesideNavDockPanel") {
-            if ($sync["Form"].WindowState -eq [Windows.WindowState]::Normal) {
-                $sync["Form"].WindowState = [Windows.WindowState]::Maximized
-            }
-            else{
-                $sync["Form"].WindowState = [Windows.WindowState]::Normal
-            }
-    }
-})
-
 $sync["Form"].Add_Deactivated({
     Invoke-WPFPopup -Action "Hide" -Popups @("Settings", "Theme", "FontScaling")
 })
@@ -439,7 +422,7 @@ $sync["Form"].Add_ContentRendered({
         # Online - ensure install tab is enabled
         $sync.WPFTab1BT.IsEnabled = $true
         $sync.WPFTab1BT.Opacity = 1.0
-        $sync.WPFTab1BT.ToolTip = $null
+        $sync.WPFTab1BT.ToolTip = '软件管理'
     }
     Invoke-WPFTab "WPFTab6BT"
 
@@ -488,28 +471,7 @@ $sync["Form"].Add_Loaded({
     $sync["Form"].MaxHeight = [Double]::PositiveInfinity
 })
 
-$NavLogoPanel = $sync["Form"].FindName("NavLogoPanel")
-$NavLogoPanel.Children.Add((Invoke-WinUtilAssets -Type "logo" -Size 30)) | Out-Null
-# Holha1337 品牌字(霓虹渐变 + 辉光),置于徽记右侧
-$brandText = New-Object Windows.Controls.TextBlock
-$brandText.Text = "WinUtil CN"
-$brandText.FontFamily = "Consolas"
-$brandText.FontSize = 18
-$brandText.FontWeight = "Bold"
-$brandText.VerticalAlignment = "Center"
-$brandText.Margin = "8,0,0,0"
-$brandGrad = New-Object Windows.Media.LinearGradientBrush
-$brandGrad.StartPoint = "0,0"; $brandGrad.EndPoint = "1,0"
-$brandGrad.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#38F9D7"), 0)))
-$brandGrad.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#43A6FF"), 0.5)))
-$brandGrad.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#C86BFF"), 1)))
-$brandText.Foreground = $brandGrad
-$brandGlow = New-Object Windows.Media.Effects.DropShadowEffect
-$brandGlow.Color = [Windows.Media.ColorConverter]::ConvertFromString("#43A6FF")
-$brandGlow.BlurRadius = 12; $brandGlow.ShadowDepth = 0; $brandGlow.Opacity = 0.7
-$brandText.Effect = $brandGlow
-$NavLogoPanel.Children.Add($brandText) | Out-Null
-
+Initialize-WinUtilWindowChrome
 
 if (Test-Path "$winutildir\logo.ico") {
     $sync["logorender"] = "$winutildir\logo.ico"

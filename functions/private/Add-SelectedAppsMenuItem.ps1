@@ -2,7 +2,7 @@
     <# .SYNOPSIS Adds one readable, keyboard-removable item to the selection popup. #>
     param([string]$name, [string]$key)
     $row = [Windows.Controls.Grid]::new()
-    $row.Margin = '0,2,0,2'
+    $row.Margin = '0,4,0,4'
     $null = $row.ColumnDefinitions.Add([Windows.Controls.ColumnDefinition]::new())
     $removeColumn = [Windows.Controls.ColumnDefinition]::new()
     $removeColumn.Width = 'Auto'
@@ -21,7 +21,7 @@
     $remove = [Windows.Controls.Button]::new()
     $remove.Content = '移除'
     $remove.Tag = $key
-    $remove.Padding = '6,3,6,3'
+    $remove.Padding = '8,5,8,5'
     $remove.ToolTip = "从已选清单移除 $name，不会卸载软件。"
     $remove.SetResourceReference([Windows.Controls.Control]::ForegroundProperty, 'MainForegroundColor')
     $remove.SetResourceReference([Windows.Controls.Control]::FontFamilyProperty, 'FontFamily')

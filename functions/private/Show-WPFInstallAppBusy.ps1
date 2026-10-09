@@ -18,6 +18,8 @@ function Show-WPFInstallAppBusy {
         $sync.InstallAppAreaOverlayText.TextWrapping = 'Wrap'
         $sync.InstallAppAreaOverlayText.TextAlignment = 'Center'
         $sync.InstallAppAreaBorder.IsEnabled = $false
-        $sync.InstallAppAreaScrollViewer.Effect.Radius = 5
+        $blur = [Windows.Media.Effects.BlurEffect]::new()
+        $blur.Radius = 5
+        $sync.InstallAppAreaScrollViewer.Effect = $blur
     }
 }

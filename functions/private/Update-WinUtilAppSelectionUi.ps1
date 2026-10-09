@@ -2,7 +2,10 @@
     <# .SYNOPSIS Refreshes the selection summary, popup and active filters together. #>
     if ($null -eq $sync) { return }
     $count = @($sync.selectedApps).Count
-    if ($sync.WPFselectedAppsButton) { $sync.WPFselectedAppsButton.Content = "已选应用: $count" }
+    if ($sync.WPFselectedAppsButton) {
+        $sync.WPFselectedAppsButton.Content = "已选应用: $count"
+        [Windows.Automation.AutomationProperties]::SetName($sync.WPFselectedAppsButton, "已选应用: $count")
+    }
     if ($sync.selectedAppsstackPanel) {
         $sync.selectedAppsstackPanel.Children.Clear()
         foreach ($key in @($sync.selectedApps | Sort-Object { $sync.configs.applicationsHashtable[$_].Content })) {

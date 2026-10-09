@@ -12,10 +12,11 @@
 
     $border = [Windows.Controls.Border]::new()
     $border.Width = 320
-    $border.Padding = 10
+    $border.Padding = 12
+    $border.CornerRadius = 6
     $border.SetResourceReference([Windows.Documents.TextElement]::FontSizeProperty, 'ButtonFontSize')
-    $border.SetResourceReference([Windows.Controls.Border]::BackgroundProperty, 'MainBackgroundColor')
-    $border.SetResourceReference([Windows.Controls.Border]::BorderBrushProperty, 'MainForegroundColor')
+    $border.SetResourceReference([Windows.Controls.Border]::BackgroundProperty, 'PanelBackgroundColor')
+    $border.SetResourceReference([Windows.Controls.Border]::BorderBrushProperty, 'BorderColor')
     $border.BorderThickness = 1
     $popup.Child = $border
     $layout = [Windows.Controls.DockPanel]::new()
@@ -40,7 +41,7 @@
     $empty.Text = '还没有选择软件。在列表中勾选后，可在这里查看和移除。'
     $empty.TextWrapping = 'Wrap'
     $empty.Margin = '4,4,4,10'
-    $empty.SetResourceReference([Windows.Controls.TextBlock]::ForegroundProperty, 'MainForegroundColor')
+    $empty.SetResourceReference([Windows.Controls.TextBlock]::ForegroundProperty, 'SecondaryForegroundColor')
     $empty.SetResourceReference([Windows.Controls.TextBlock]::FontFamilyProperty, 'FontFamily')
     [Windows.Controls.DockPanel]::SetDock($empty, 'Top')
     $null = $layout.Children.Add($empty)

@@ -42,15 +42,17 @@
 </div>
 
 <details>
-<summary><b>展开查看：浅色主题与软件组合选择</b></summary>
+<summary><b>展开查看：浅色主题与软件管理</b></summary>
 
 ### 浅色主题
 
 ![WinUtil CN 浅色主题首页](docs/assets/images/screenshots/home-light-cn.png)
 
-### 按用途调整软件组合
+### 软件名称与用途一起阅读
 
-![办公组合选择：逐项说明用途，确认后加入清单](docs/assets/images/screenshots/bundle-cn.png)
+![软件管理：用途摘要、整行悬停说明和列表上方的操作栏](docs/assets/images/screenshots/software-cn.png)
+
+软件名称、勾选框、用途摘要及行内留白共用完整悬停介绍；右键菜单也可用 `Shift + F10` 打开。组合推荐与更多操作收在命令栏中，安装和卸载仍先确认范围。
 
 </details>
 

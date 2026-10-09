@@ -1,7 +1,7 @@
 ﻿BeforeAll {
     Add-Type -AssemblyName PresentationFramework
     $script:root = Split-Path $PSScriptRoot -Parent
-    foreach ($file in @('public/Invoke-WPFTab.ps1', 'public/Invoke-WPFHome.ps1', 'private/Set-WinUtilWindowBounds.ps1', 'private/Invoke-WinutilThemeChange.ps1', 'private/Invoke-WinUtilFontScaling.ps1')) {
+    foreach ($file in @('public/Invoke-WPFTab.ps1', 'public/Invoke-WPFHome.ps1', 'private/Set-WinUtilWindowBounds.ps1', 'private/Invoke-WinutilThemeChange.ps1', 'private/Invoke-WinUtilFontScaling.ps1', 'private/Initialize-WinUtilWindowChrome.ps1', 'private/Set-WinUtilNavigationLayout.ps1', 'private/Test-WinUtilTitleBarSource.ps1')) {
         . ([scriptblock]::Create([IO.File]::ReadAllText((Join-Path $script:root "functions/$file"))))
     }
     function Set-Preferences { param([switch]$save) }
@@ -11,6 +11,18 @@
 }
 
 Describe 'Chinese navigation and first-use layout' {
+    It 'dismisses toolbar popups on outside clicks without pre-toggling their own button' {
+        Initialize-WinUtilWindowChrome
+        $sync.ThemePopup = [pscustomobject]@{IsOpen=$true;IsMouseOver=$false}
+        $sync.ThemeButton = [pscustomobject]@{IsMouseOver=$true}
+        $click = [Windows.Input.MouseButtonEventArgs]::new([Windows.Input.InputManager]::Current.PrimaryMouseDevice, 0, [Windows.Input.MouseButton]::Left)
+        $click.RoutedEvent = [Windows.UIElement]::PreviewMouseDownEvent
+        $form.RaiseEvent($click)
+        $sync.ThemePopup.IsOpen | Should -BeTrue
+        $sync.ThemeButton.IsMouseOver = $false
+        $form.RaiseEvent($click)
+        $sync.ThemePopup.IsOpen | Should -BeFalse
+    }
     BeforeEach {
         $text = [IO.File]::ReadAllText((Join-Path $script:root 'xaml/inputXML.xaml'))
         $xml = [xml]($text -replace 'mc:Ignorable="d"', '' -replace 'x:N', 'N' -replace '^<Win.*', '<Window')
@@ -22,6 +34,7 @@ Describe 'Chinese navigation and first-use layout' {
         Mock Find-AppsByNameOrDescription {}
         Mock Find-TweaksByNameOrDescription {}
         Invoke-WinutilThemeChange -theme Dark
+        Initialize-WinUtilWindowChrome
     }
     AfterEach { $form.Close() }
 
@@ -31,15 +44,20 @@ Describe 'Chinese navigation and first-use layout' {
         $sync.currentTab | Should -Be 'WPFTab1'
         $sync.SearchBar.Visibility | Should -Be 'Visible'
         $sync.WPFTabNav.SelectedItem.Name | Should -Be 'WPFTab1'
+        $sync.WPFPageTitle.Text | Should -Be '软件管理'
+        $sync.WPFSearchRow.Visibility | Should -Be 'Visible'
         Should -Invoke Find-AppsByNameOrDescription -Times 1 -Exactly
         Invoke-WPFTab 'WPFTab6BT'
         $sync.WPFTabNav.SelectedItem.Name | Should -Be 'WPFTab6'
         $sync.SearchBar.Visibility | Should -Be 'Collapsed'
         $sync.WPFTab1BT.IsChecked | Should -BeFalse
+        $sync.WPFPageTitle.Text | Should -Be '首页'
+        $sync.WPFSearchRow.Visibility | Should -Be 'Collapsed'
     }
 
     It 'does not navigate through a disabled tab' {
         Invoke-WPFTab 'WPFTab6BT'
+        Set-WinUtilNavigationLayout -AvailableWidth 800
         $sync.WPFTab1BT.IsEnabled = $false
         Invoke-WPFTab 'WPFTab1BT'
         $sync.currentTab | Should -Be 'WPFTab6'
@@ -65,5 +83,42 @@ Describe 'Chinese navigation and first-use layout' {
             $button.ActualWidth | Should -BeGreaterThan 0 -Because $name
             ($point.X + $button.ActualWidth) | Should -BeLessOrEqual 801 -Because $name
         }
+    }
+    It 'collapses navigation labels at narrow widths without losing accessible page names or selection' {
+        Invoke-WPFTab 'WPFTab4BT'
+        Set-WinUtilNavigationLayout -AvailableWidth 800
+        $sync.WPFMainGrid.ColumnDefinitions[0].Width.Value | Should -Be 56
+        foreach ($number in 1..6) {
+            $form.FindName("WPFTab${number}Label").Visibility | Should -Be 'Collapsed'
+            [Windows.Automation.AutomationProperties]::GetName($sync["WPFTab${number}BT"]) | Should -Not -BeNullOrEmpty
+            $sync["WPFTab${number}BT"].ToolTip | Should -Not -BeNullOrEmpty
+        }
+        $sync.WPFTab4BT.IsChecked | Should -BeTrue
+        Set-WinUtilNavigationLayout -AvailableWidth 1280
+        $sync.WPFMainGrid.ColumnDefinitions[0].Width.Value | Should -Be 184
+        $form.FindName('WPFTab4Label').Visibility | Should -Be 'Visible'
+        $sync.WPFTab4BT.IsChecked | Should -BeTrue
+    }
+    It 'initializes the actual production title bar once and keeps its theme resources live' {
+        Initialize-WinUtilWindowChrome
+        $sync.NavLogoPanel.Children.Count | Should -Be 1
+        $title = $sync.NavLogoPanel.Children[0]
+        $title.Text | Should -Be 'WinUtil CN'
+        $title.Effect | Should -BeNullOrEmpty
+        Invoke-WinutilThemeChange -theme Light
+        $title.Foreground.Color | Should -Be $form.Resources.MainForegroundColor.Color
+    }
+    It 'accepts title and empty title-bar hits for window gestures while excluding controls and page content' {
+        Invoke-WPFTab 'WPFTab6BT'
+        $grid = $form.Content
+        $grid.Measure([Windows.Size]::new(1280,800)); $grid.Arrange([Windows.Rect]::new(0,0,1280,800)); $grid.UpdateLayout()
+        foreach ($x in @(20,150,350,750)) {
+            $hit = [Windows.Media.VisualTreeHelper]::HitTest($grid,[Windows.Point]::new($x,22))
+            Test-WinUtilTitleBarSource -Source $hit.VisualHit | Should -BeTrue
+        }
+        Test-WinUtilTitleBarSource -Source $sync.ThemeButton | Should -BeFalse
+        Test-WinUtilTitleBarSource -Source $sync.WPFCloseButton | Should -BeFalse
+        Test-WinUtilTitleBarSource -Source $sync.WPFHomeInstall | Should -BeFalse
+        Test-WinUtilTitleBarSource -Source $sync.WPFPageTitle | Should -BeFalse
     }
 }

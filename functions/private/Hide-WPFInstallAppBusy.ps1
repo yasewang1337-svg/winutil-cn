@@ -7,6 +7,6 @@ function Hide-WPFInstallAppBusy {
     Invoke-WPFUIThread -ScriptBlock {
         $sync.InstallAppAreaOverlay.Visibility = [Windows.Visibility]::Collapsed
         $sync.InstallAppAreaBorder.IsEnabled = $true
-        $sync.InstallAppAreaScrollViewer.Effect.Radius = 0
+        $sync.InstallAppAreaScrollViewer.Effect = $null
     }
 }
