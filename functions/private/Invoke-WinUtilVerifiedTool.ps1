@@ -79,21 +79,29 @@ function Invoke-WinUtilVerifiedTool {
                 $expectedZipHash = '30AD9A4912686355BFCE60E1D7BEF608735475B7E2160D67418EED8F5E3BA8C7'
             }
             $download = Join-Path $workspace 'ViVeTool.zip'
+            $downloadKind = 'ZIP'
+            $verification = 'PinnedSHA256'
+            $publisher = $null
         } else {
             $uri = 'https://dl5.oo-software.com/files/ooshutup10/OOSU10.exe'
             if ($isArm64) { $uri = 'https://dl5.oo-software.com/files/ooshutup10/OOSU10-arm64.exe' }
             elseif (-not [Environment]::Is64BitOperatingSystem) { $uri = 'https://dl5.oo-software.com/files/ooshutup10/OOSU10-x86.exe' }
             $download = Join-Path $workspace 'OOSU10.exe'
+            $downloadKind = 'EXE'
+            $verification = 'Authenticode'
         }
         $stage = '下载'
+        Write-Host "$Tool 下载来源：$uri"
         Invoke-WebRequest -Uri $uri -OutFile $download -UseBasicParsing -TimeoutSec 120 -ErrorAction Stop
         $downloadLock = [IO.File]::Open($download, 'Open', 'Read', 'Read')
         $locks.Add($downloadLock)
+        # Record the locked download itself: the ViVe ZIP or the signed O&O EXE.
+        $stage = '计算下载文件 SHA256'
+        $downloadHash = (Get-FileHash -InputStream $downloadLock -Algorithm SHA256 -ErrorAction Stop).Hash
 
         if ($Tool -eq 'ViVeTool') {
             $stage = '校验下载包 SHA256'
-            $actualHash = (Get-FileHash -InputStream $downloadLock -Algorithm SHA256 -ErrorAction Stop).Hash
-            if ($actualHash -ne $expectedZipHash) { throw '下载包与固定版本的可信哈希不符，已拒绝执行。' }
+            if ($downloadHash -ne $expectedZipHash) { throw '下载包与固定版本的可信哈希不符，已拒绝执行。' }
             $downloadLock.Position = 0
             $stage = '解压并校验工具文件'
             Add-Type -AssemblyName System.IO.Compression -ErrorAction Stop
@@ -136,6 +144,8 @@ function Invoke-WinUtilVerifiedTool {
             $executable = $download
         }
 
+        Write-Host "$Tool 校验通过：$downloadKind SHA256=$downloadHash；验证方式：$verification"
+        if ($publisher) { Write-Host "$Tool 已验证签名发布者：$publisher" }
         $stage = '运行'
         $startParameters = @{
             FilePath = $executable; WorkingDirectory = $workspace
@@ -168,7 +178,16 @@ function Invoke-WinUtilVerifiedTool {
                 throw "ViVeTool 未确认设置成功；退出码为 0 也可能表示设置失败。输出：$detail"
             }
         }
-        return [pscustomobject]@{ Tool = $Tool; ExitCode = $process.ExitCode }
+        Write-Host "$Tool 已退出，退出码：$($process.ExitCode)"
+        return [pscustomobject]@{
+            Tool = $Tool
+            SourceUri = $uri
+            DownloadKind = $downloadKind
+            SHA256 = $downloadHash
+            Verification = $verification
+            Publisher = $publisher
+            ExitCode = $process.ExitCode
+        }
     } catch {
         throw "$Tool $stage 失败：$($_.Exception.Message)"
     } finally {

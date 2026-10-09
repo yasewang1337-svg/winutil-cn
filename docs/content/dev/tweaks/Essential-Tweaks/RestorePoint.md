@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFTweaksRestorePoint`
 - 当前分类：常用设置（按需选择）
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`a85c67780077af4d6f1de65990346bcbbdd597c15afd705794757bce59621453`
+- 源配置 SHA-256：`33f10e42b9f76c8fbd483caa30659ea97f92494332979089db2acdb6f1c63951`
 
 先创建并核对新的 Windows 系统还原点；创建失败会停止本次其他修改。推荐通过中文版 EXE 使用，系统还原需在 Windows 中操作。
 

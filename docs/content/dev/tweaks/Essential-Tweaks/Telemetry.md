@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFTweaksTelemetry`
 - 当前分类：z__高级设置 - 先了解影响
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`a85c67780077af4d6f1de65990346bcbbdd597c15afd705794757bce59621453`
+- 源配置 SHA-256：`33f10e42b9f76c8fbd483caa30659ea97f92494332979089db2acdb6f1c63951`
 
 关闭 Microsoft 遥测与部分相关数据收集；保留 Defender 自动样本提交设置。
 

@@ -185,9 +185,7 @@
     "panel": "2",
     "Type": "Button",
     "ButtonWidth": "300",
-    "InvokeScript": [
-      "control"
-    ],
+    "Action": "Panel.Control",
     "link": "https://winutil.christitus.com/dev/features/legacy-windows-panels/control"
   },
   "WPFPanelComputer": {
@@ -196,9 +194,7 @@
     "panel": "2",
     "Type": "Button",
     "ButtonWidth": "300",
-    "InvokeScript": [
-      "compmgmt.msc"
-    ],
+    "Action": "Panel.Computer",
     "link": "https://winutil.christitus.com/dev/features/legacy-windows-panels/computer"
   },
   "WPFPanelNetwork": {
@@ -207,9 +203,7 @@
     "panel": "2",
     "Type": "Button",
     "ButtonWidth": "300",
-    "InvokeScript": [
-      "ncpa.cpl"
-    ],
+    "Action": "Panel.Network",
     "link": "https://winutil.christitus.com/dev/features/legacy-windows-panels/network"
   },
   "WPFPanelPower": {
@@ -218,9 +212,7 @@
     "panel": "2",
     "Type": "Button",
     "ButtonWidth": "300",
-    "InvokeScript": [
-      "powercfg.cpl"
-    ],
+    "Action": "Panel.Power",
     "link": "https://winutil.christitus.com/dev/features/legacy-windows-panels/power"
   },
   "WPFPanelPrinter": {
@@ -229,9 +221,7 @@
     "panel": "2",
     "Type": "Button",
     "ButtonWidth": "300",
-    "InvokeScript": [
-      "Start-Process 'shell:::{A8A91A66-3A7D-4424-8D24-04E180695C7A}'"
-    ],
+    "Action": "Panel.Printer",
     "link": "https://winutil.christitus.com/dev/features/legacy-windows-panels/printer"
   },
   "WPFPanelRegion": {
@@ -240,9 +230,7 @@
     "panel": "2",
     "Type": "Button",
     "ButtonWidth": "300",
-    "InvokeScript": [
-      "intl.cpl"
-    ],
+    "Action": "Panel.Region",
     "link": "https://winutil.christitus.com/dev/features/legacy-windows-panels/region"
   },
   "WPFPanelRestore": {
@@ -251,9 +239,7 @@
     "panel": "2",
     "Type": "Button",
     "ButtonWidth": "300",
-    "InvokeScript": [
-      "rstrui.exe"
-    ],
+    "Action": "Panel.Restore",
     "link": "https://winutil.christitus.com/dev/features/legacy-windows-panels/restore"
   },
   "WPFPanelSound": {
@@ -262,9 +248,7 @@
     "panel": "2",
     "Type": "Button",
     "ButtonWidth": "300",
-    "InvokeScript": [
-      "mmsys.cpl"
-    ],
+    "Action": "Panel.Sound",
     "link": "https://winutil.christitus.com/dev/features/legacy-windows-panels/sound"
   },
   "WPFPanelSystem": {
@@ -273,9 +257,7 @@
     "panel": "2",
     "Type": "Button",
     "ButtonWidth": "300",
-    "InvokeScript": [
-      "sysdm.cpl"
-    ],
+    "Action": "Panel.System",
     "link": "https://winutil.christitus.com/dev/features/legacy-windows-panels/system"
   },
   "WPFPanelTimedate": {
@@ -284,9 +266,7 @@
     "panel": "2",
     "Type": "Button",
     "ButtonWidth": "300",
-    "InvokeScript": [
-      "timedate.cpl"
-    ],
+    "Action": "Panel.Timedate",
     "link": "https://winutil.christitus.com/dev/features/legacy-windows-panels/timedate"
   },
   "WPFWinUtilInstallPSProfile": {
@@ -324,7 +304,7 @@
     "panel": "1",
     "Type": "Button",
     "ButtonWidth": "300",
-    "InvokeScript": ["if (Get-Command pip -ErrorAction SilentlyContinue) { pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple; pip config set global.trusted-host pypi.tuna.tsinghua.edu.cn; Write-Host 'pip 已换清华源' -ForegroundColor Green } else { Write-Host '未检测到 pip，请先安装 Python' -ForegroundColor Yellow }"]
+    "Action": "Mirror.Pip.CN"
   },
   "WPFFeatureMirrorNpmCN": {
     "Content": "npm 换 npmmirror",
@@ -333,7 +313,7 @@
     "panel": "1",
     "Type": "Button",
     "ButtonWidth": "300",
-    "InvokeScript": ["if (Get-Command npm -ErrorAction SilentlyContinue) { npm config set registry https://registry.npmmirror.com; Write-Host 'npm 已换 npmmirror 源' -ForegroundColor Green } else { Write-Host '未检测到 npm，请先安装 Node.js' -ForegroundColor Yellow }"]
+    "Action": "Mirror.Npm.CN"
   },
   "WPFFeatureMirrorYarnCN": {
     "Content": "yarn 换 npmmirror",
@@ -342,7 +322,7 @@
     "panel": "1",
     "Type": "Button",
     "ButtonWidth": "300",
-    "InvokeScript": ["if (Get-Command yarn -ErrorAction SilentlyContinue) { yarn config set registry https://registry.npmmirror.com; Write-Host 'yarn 已换 npmmirror 源' -ForegroundColor Green } else { Write-Host '未检测到 yarn' -ForegroundColor Yellow }"]
+    "Action": "Mirror.Yarn.CN"
   },
   "WPFFeatureMirrorCondaCN": {
     "Content": "conda 换清华源",
@@ -351,7 +331,7 @@
     "panel": "1",
     "Type": "Button",
     "ButtonWidth": "300",
-    "InvokeScript": ["if (Get-Command conda -ErrorAction SilentlyContinue) { conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/; conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/; conda config --set show_channel_urls yes; Write-Host 'conda 已加清华源' -ForegroundColor Green } else { Write-Host '未检测到 conda' -ForegroundColor Yellow }"]
+    "Action": "Mirror.Conda.CN"
   },
   "WPFFeatureMirrorGoCN": {
     "Content": "go 换 goproxy.cn",
@@ -360,16 +340,16 @@
     "panel": "1",
     "Type": "Button",
     "ButtonWidth": "300",
-    "InvokeScript": ["if (Get-Command go -ErrorAction SilentlyContinue) { go env -w GOPROXY=https://goproxy.cn,direct; Write-Host 'go 已换 goproxy.cn' -ForegroundColor Green } else { Write-Host '未检测到 go' -ForegroundColor Yellow }"]
+    "Action": "Mirror.Go.CN"
   },
   "WPFFeatureMirrorPipReset": {
     "Content": "pip 恢复官方",
-    "Description": "恢复 pip 官方源 pypi.org。",
+    "Description": "移除 pip 的 global.index-url 与 global.trusted-host 设置，使用其余配置或默认源；不会还原此前自定义地址。",
     "category": "换源 · 恢复官方源",
     "panel": "2",
     "Type": "Button",
     "ButtonWidth": "300",
-    "InvokeScript": ["if (Get-Command pip -ErrorAction SilentlyContinue) { pip config unset global.index-url 2>$null; pip config unset global.trusted-host 2>$null; Write-Host 'pip 已恢复官方源' -ForegroundColor Green } else { Write-Host '未检测到 pip' -ForegroundColor Yellow }"]
+    "Action": "Mirror.Pip.Official"
   },
   "WPFFeatureMirrorNpmReset": {
     "Content": "npm 恢复官方",
@@ -378,7 +358,7 @@
     "panel": "2",
     "Type": "Button",
     "ButtonWidth": "300",
-    "InvokeScript": ["if (Get-Command npm -ErrorAction SilentlyContinue) { npm config set registry https://registry.npmjs.org; Write-Host 'npm 已恢复官方源' -ForegroundColor Green } else { Write-Host '未检测到 npm' -ForegroundColor Yellow }"]
+    "Action": "Mirror.Npm.Official"
   },
   "WPFFeatureMirrorYarnReset": {
     "Content": "yarn 恢复官方",
@@ -387,7 +367,7 @@
     "panel": "2",
     "Type": "Button",
     "ButtonWidth": "300",
-    "InvokeScript": ["if (Get-Command yarn -ErrorAction SilentlyContinue) { yarn config set registry https://registry.yarnpkg.com; Write-Host 'yarn 已恢复官方源' -ForegroundColor Green } else { Write-Host '未检测到 yarn' -ForegroundColor Yellow }"]
+    "Action": "Mirror.Yarn.Official"
   },
   "WPFFeatureMirrorCondaReset": {
     "Content": "conda 恢复官方",
@@ -396,7 +376,7 @@
     "panel": "2",
     "Type": "Button",
     "ButtonWidth": "300",
-    "InvokeScript": ["if (Get-Command conda -ErrorAction SilentlyContinue) { conda config --remove-key channels 2>$null; Write-Host 'conda 已恢复默认频道' -ForegroundColor Green } else { Write-Host '未检测到 conda' -ForegroundColor Yellow }"]
+    "Action": "Mirror.Conda.Official"
   },
   "WPFFeatureMirrorGoReset": {
     "Content": "go 恢复官方",
@@ -405,6 +385,6 @@
     "panel": "2",
     "Type": "Button",
     "ButtonWidth": "300",
-    "InvokeScript": ["if (Get-Command go -ErrorAction SilentlyContinue) { go env -w GOPROXY=https://proxy.golang.org,direct; Write-Host 'go 已恢复官方代理' -ForegroundColor Green } else { Write-Host '未检测到 go' -ForegroundColor Yellow }"]
+    "Action": "Mirror.Go.Official"
   }
 }

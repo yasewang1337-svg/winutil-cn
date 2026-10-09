@@ -67,6 +67,7 @@ Describe 'Verified third-party tool execution' {
             }
             [pscustomobject]@{ ExitCode = $script:exitCode }
         }
+        Mock Write-Host {}
     }
 
     AfterEach {
@@ -90,6 +91,11 @@ Describe 'Verified third-party tool execution' {
         }
         $result = Invoke-WinUtilVerifiedTool -Tool ViVeTool -Action Disable
         $result.ExitCode | Should -Be 0
+        $result.SourceUri | Should -BeExactly 'https://github.com/thebookisclosed/ViVe/releases/download/v0.3.4/ViVeTool-v0.3.4-IntelAmd.zip'
+        $result.DownloadKind | Should -BeExactly 'ZIP'
+        $result.SHA256 | Should -BeExactly 'CC27F073F3FE5DD2C3D947FAF558FD4B2F8E34454F812689B0D65EE8A52E4147'
+        $result.Verification | Should -BeExactly 'PinnedSHA256'
+        $result.Publisher | Should -BeNullOrEmpty
         Should -Invoke Start-Process -Times 1 -Exactly -ParameterFilter {
             $Wait -and $PassThru -and $NoNewWindow -and $ErrorAction -eq 'Stop' -and
             ($ArgumentList -join ' ') -eq '/disable /id:47205210' -and
@@ -122,6 +128,27 @@ Describe 'Verified third-party tool execution' {
         $null = Invoke-WinUtilVerifiedTool -Tool OOSU
         Should -Invoke Get-AuthenticodeSignature -Times 1 -Exactly
         Should -Invoke Start-Process -Times 1 -Exactly -ParameterFilter { $Wait -and $PassThru -and -not $ArgumentList }
+    }
+
+    It 'reports the actual locked O&O EXE hash and verified signer without local paths' {
+        $script:executedHash = $null
+        Mock Start-Process {
+            $stream = [IO.File]::OpenRead($FilePath)
+            $hasher = [Security.Cryptography.SHA256]::Create()
+            try { $script:executedHash = ([BitConverter]::ToString($hasher.ComputeHash($stream))).Replace('-', '') }
+            finally { $hasher.Dispose(); $stream.Dispose() }
+            [pscustomobject]@{ ExitCode = 0 }
+        }
+        $result = Invoke-WinUtilVerifiedTool -Tool OOSU
+        $result.SourceUri | Should -BeExactly 'https://dl5.oo-software.com/files/ooshutup10/OOSU10.exe'
+        $result.DownloadKind | Should -BeExactly 'EXE'
+        $result.SHA256 | Should -BeExactly $script:executedHash
+        $result.Verification | Should -BeExactly 'Authenticode'
+        $result.Publisher | Should -BeExactly 'O&O Software GmbH'
+        ($result | ConvertTo-Json) | Should -Not -Match ([regex]::Escape($TestDrive))
+        Should -Invoke Write-Host -Times 1 -Exactly -ParameterFilter { "$Object" -match 'EXE SHA256=' + $script:executedHash }
+        Should -Invoke Write-Host -Times 1 -Exactly -ParameterFilter { "$Object" -match '已验证签名发布者：O&O Software GmbH' }
+        Should -Invoke Write-Host -Times 0 -Exactly -ParameterFilter { "$Object" -match [regex]::Escape($script:testToolRoot) }
     }
 
     It 'stops after a nonterminating download error for <Tool>' -ForEach @(@{ Tool = 'OOSU' }, @{ Tool = 'ViVeTool' }) {
@@ -173,6 +200,7 @@ Describe 'Verified third-party tool execution' {
         $script:publisher = 'Unrelated Publisher'
         { Invoke-WinUtilVerifiedTool -Tool OOSU } | Should -Throw '*发布者不是 O&O Software GmbH*'
         Should -Invoke Start-Process -Times 0 -Exactly
+        Should -Invoke Write-Host -Times 0 -Exactly -ParameterFilter { "$Object" -match '校验通过|已验证签名发布者|已退出' }
     }
 
     It 'reports nonzero exit codes for <Tool> and releases all files' -ForEach @(@{ Tool = 'OOSU' }, @{ Tool = 'ViVeTool' }) {

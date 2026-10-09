@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFTweaksRazerBlock`
 - 当前分类：z__高级优化 - 谨慎
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`a85c67780077af4d6f1de65990346bcbbdd597c15afd705794757bce59621453`
+- 源配置 SHA-256：`33f10e42b9f76c8fbd483caa30659ea97f92494332979089db2acdb6f1c63951`
 
 阻止 Razer 相关软件/驱动的自动安装（硬件通常仍可用）。注意：也可能影响部分第三方驱动安装流程。
 
@@ -43,10 +43,10 @@ generated: true
       }
     ],
     "InvokeScript": [
-      "\r\n      $RazerPath = \"C:\\Windows\\Installer\\Razer\"\r\n\r\n      if (Test-Path $RazerPath) {\r\n        Remove-Item $RazerPath\\* -Recurse -Force\r\n      } else {\r\n        New-Item -Path $RazerPath -ItemType Directory\r\n      }\r\n\r\n      icacls $RazerPath /deny \"*S-1-1-0:(W)\"\n      "
+      "\r\n      $RazerPath = \"C:\\Windows\\Installer\\Razer\"\r\n\r\n      if (Test-Path $RazerPath) {\r\n        Remove-Item $RazerPath\\* -Recurse -Force\r\n      } else {\r\n        New-Item -Path $RazerPath -ItemType Directory\r\n      }\r\n\r\n      icacls $RazerPath /deny \"*S-1-1-0:(W)\"\r\n      "
     ],
     "UndoScript": [
-      "\r\n      icacls \"C:\\Windows\\Installer\\Razer\" /remove:d *S-1-1-0\n      "
+      "\r\n      icacls \"C:\\Windows\\Installer\\Razer\" /remove:d *S-1-1-0\r\n      "
     ],
     "link": "https://winutil.christitus.com/dev/tweaks/z--advanced-tweaks---caution/razerblock"
   }

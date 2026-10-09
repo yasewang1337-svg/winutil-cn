@@ -11,7 +11,8 @@ generated: true
 - 稳定 ID：`WPFFeatureMirrorYarnCN`
 - 当前分类：换源 · 换国内镜像
 - 源配置：`config/feature.json`
-- 源配置 SHA-256：`56ea30c4ec708287321e017ee42c1e6316d3d197cafba238138466e020d5d4f5`
+- 源配置 SHA-256：`6460128039e8fab2f6e81d750496f65cc7ca181cc0dbf062c7de56c813e31777`
+- 固定动作：`Mirror.Yarn.CN`
 
 把 yarn 源换成 npmmirror 镜像。
 
@@ -26,9 +27,42 @@ generated: true
     "panel": "1",
     "Type": "Button",
     "ButtonWidth": "300",
-    "InvokeScript": [
-      "if (Get-Command yarn -ErrorAction SilentlyContinue) { yarn config set registry https://registry.npmmirror.com; Write-Host 'yarn 已换 npmmirror 源' -ForegroundColor Green } else { Write-Host '未检测到 yarn' -ForegroundColor Yellow }"
-    ]
+    "Action": "Mirror.Yarn.CN"
   }
+}
+```
+
+## 入口函数
+
+来源：`functions/private/Invoke-WinUtilFeatureAction.ps1`。这里只展示入口，其他被调用函数以仓库源码为准。
+
+```powershell
+function Invoke-WinUtilFeatureAction {
+    <# Fixed system-panel targets and mirror operations; no script text from JSON. #>
+    param([Parameter(Mandatory)][string]$Action)
+    $systemDirectory = [Environment]::SystemDirectory
+    switch -CaseSensitive -Exact ($Action) {
+        'Panel.Control' { Start-Process -FilePath (Join-Path $systemDirectory 'control.exe') -ErrorAction Stop }
+        'Panel.Computer' { Start-Process -FilePath (Join-Path $systemDirectory 'mmc.exe') -ArgumentList ('"{0}"' -f (Join-Path $systemDirectory 'compmgmt.msc')) -ErrorAction Stop }
+        'Panel.Network' { Start-Process -FilePath (Join-Path $systemDirectory 'control.exe') -ArgumentList ('"{0}"' -f (Join-Path $systemDirectory 'ncpa.cpl')) -ErrorAction Stop }
+        'Panel.Power' { Start-Process -FilePath (Join-Path $systemDirectory 'control.exe') -ArgumentList ('"{0}"' -f (Join-Path $systemDirectory 'powercfg.cpl')) -ErrorAction Stop }
+        'Panel.Printer' { Start-Process -FilePath (Join-Path $env:SystemRoot 'explorer.exe') -ArgumentList 'shell:::{A8A91A66-3A7D-4424-8D24-04E180695C7A}' -ErrorAction Stop }
+        'Panel.Region' { Start-Process -FilePath (Join-Path $systemDirectory 'control.exe') -ArgumentList ('"{0}"' -f (Join-Path $systemDirectory 'intl.cpl')) -ErrorAction Stop }
+        'Panel.Restore' { Start-Process -FilePath (Join-Path $systemDirectory 'rstrui.exe') -ErrorAction Stop }
+        'Panel.Sound' { Start-Process -FilePath (Join-Path $systemDirectory 'control.exe') -ArgumentList ('"{0}"' -f (Join-Path $systemDirectory 'mmsys.cpl')) -ErrorAction Stop }
+        'Panel.System' { Start-Process -FilePath (Join-Path $systemDirectory 'control.exe') -ArgumentList ('"{0}"' -f (Join-Path $systemDirectory 'sysdm.cpl')) -ErrorAction Stop }
+        'Panel.Timedate' { Start-Process -FilePath (Join-Path $systemDirectory 'control.exe') -ArgumentList ('"{0}"' -f (Join-Path $systemDirectory 'timedate.cpl')) -ErrorAction Stop }
+        'Mirror.Pip.CN' { Invoke-WinUtilMirrorAction -Tool Pip }
+        'Mirror.Pip.Official' { Invoke-WinUtilMirrorAction -Tool Pip -Reset }
+        'Mirror.Npm.CN' { Invoke-WinUtilMirrorAction -Tool Npm }
+        'Mirror.Npm.Official' { Invoke-WinUtilMirrorAction -Tool Npm -Reset }
+        'Mirror.Yarn.CN' { Invoke-WinUtilMirrorAction -Tool Yarn }
+        'Mirror.Yarn.Official' { Invoke-WinUtilMirrorAction -Tool Yarn -Reset }
+        'Mirror.Conda.CN' { Invoke-WinUtilMirrorAction -Tool Conda }
+        'Mirror.Conda.Official' { Invoke-WinUtilMirrorAction -Tool Conda -Reset }
+        'Mirror.Go.CN' { Invoke-WinUtilMirrorAction -Tool Go }
+        'Mirror.Go.Official' { Invoke-WinUtilMirrorAction -Tool Go -Reset }
+        default { throw "不支持的按钮动作：$Action。" }
+    }
 }
 ```

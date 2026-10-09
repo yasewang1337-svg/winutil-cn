@@ -152,7 +152,6 @@ jobs:
           - PowerShell 5.1 / 7 回归测试、产物语法和编码检查通过
           - 签名检查：$signatureSummary（NotSigned 表示未签名）；校验文件见 SHA256SUMS.txt
           - 逐文件哈希、实际签名状态、Defender 引擎/病毒库版本、原始扫描输出见 security-scan.json；扫描通过不能保证其他厂商或未来版本不再告警
-          - 火绒构建拦截尚未确认解决；已知记录与整改范围见[安全告警复核](https://github.com/$repo/blob/$sha/docs/HUORONG-REVIEW.md)，不能将本次 Defender 结果视为火绒已放行
           - 若被安全软件拦截，请先保留告警名称与文件 SHA256，核对版本并向维护者及检测厂商报告；不要关闭防护或添加排除
           - 可按哈希查看 [VirusTotal](https://www.virustotal.com/gui/search/$exeSha) 是否已有检测记录
           - EXE SHA256：``$exeSha``

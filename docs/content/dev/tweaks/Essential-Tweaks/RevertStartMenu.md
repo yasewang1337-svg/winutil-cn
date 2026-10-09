@@ -11,9 +11,9 @@ generated: true
 - 稳定 ID：`WPFTweaksRevertStartMenu`
 - 当前分类：z__高级设置 - 先了解影响
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`a85c67780077af4d6f1de65990346bcbbdd597c15afd705794757bce59621453`
+- 源配置 SHA-256：`33f10e42b9f76c8fbd483caa30659ea97f92494332979089db2acdb6f1c63951`
 
-把 25H2 新版开始菜单恢复为逐步推送前的旧布局。
+从官方 GitHub 发布页下载 ViVeTool v0.3.4，核对固定 SHA256 后禁用 Windows 功能 47205210，尝试恢复旧版开始菜单布局。可能需要重启，较新 Windows 版本可能不再支持；此功能改动无法通过 WinUtil 操作历史完整恢复。
 
 本页描述实现，不代表推荐勾选。历史恢复仅覆盖工具实际记录的设置；配置中的 OriginalValue / OriginalType 不等于这台电脑的修改前状态。应用、文件及脚本其他改动不保证可恢复。
 
@@ -23,7 +23,7 @@ generated: true
 {
   "WPFTweaksRevertStartMenu": {
     "Content": "恢复旧版开始菜单布局",
-    "Description": "把 25H2 新版开始菜单恢复为逐步推送前的旧布局。",
+    "Description": "从官方 GitHub 发布页下载 ViVeTool v0.3.4，核对固定 SHA256 后禁用 Windows 功能 47205210，尝试恢复旧版开始菜单布局。可能需要重启，较新 Windows 版本可能不再支持；此功能改动无法通过 WinUtil 操作历史完整恢复。",
     "category": "z__高级设置 - 先了解影响",
     "panel": "1",
     "InvokeScript": [
