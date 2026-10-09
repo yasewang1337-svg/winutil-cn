@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFFeaturewsl`
 - 当前分类：功能
 - 源配置：`config/feature.json`
-- 源配置 SHA-256：`56ea30c4ec708287321e017ee42c1e6316d3d197cafba238138466e020d5d4f5`
+- 源配置 SHA-256：`6460128039e8fab2f6e81d750496f65cc7ca181cc0dbf062c7de56c813e31777`
 
 启用 WSL，让你在 Windows 上运行 Linux 发行版（开发/命令行工具常用）。
 

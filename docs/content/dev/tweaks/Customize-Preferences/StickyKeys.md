@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFToggleStickyKeys`
 - 当前分类：自定义偏好
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`a85c67780077af4d6f1de65990346bcbbdd597c15afd705794757bce59621453`
+- 源配置 SHA-256：`33f10e42b9f76c8fbd483caa30659ea97f92494332979089db2acdb6f1c63951`
 
 开关粘滞键（连续按 Shift 触发的辅助功能）。
 

@@ -18,28 +18,17 @@ function Invoke-WPFButton {
         Set-WinUtilProgressBar  -label "" -percent 0
     }
 
-    # Check if button is defined in feature config with function or InvokeScript
+    # Configuration identifies a reviewed action; it is never executable source.
     if ($sync.configs.feature.$Button) {
         $buttonConfig = $sync.configs.feature.$Button
-
-        # If button has a function defined, call it
-        if ($buttonConfig.function) {
-            $functionName = $buttonConfig.function
-            if (Get-Command $functionName -ErrorAction SilentlyContinue) {
-                & $functionName
-                return
-            }
+        try {
+            Invoke-WinUtilFeatureButton -Button $Button -Configuration $buttonConfig
+        } catch {
+            $message = "操作未完成：$($_.Exception.Message)"
+            Write-Warning $message
+            Show-WinUtilTweakDialog -Title '操作未完成' -Message $message | Out-Null
         }
-
-        # If button has InvokeScript defined, execute the scripts
-        if ($buttonConfig.InvokeScript -and $buttonConfig.InvokeScript.Count -gt 0) {
-            foreach ($script in $buttonConfig.InvokeScript) {
-                if (-not [string]::IsNullOrWhiteSpace($script)) {
-                    Invoke-Expression $script
-                }
-            }
-            return
-        }
+        return
     }
 
     # Fallback to hard-coded switch for buttons not in feature.json

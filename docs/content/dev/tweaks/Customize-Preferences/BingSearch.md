@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFToggleBingSearch`
 - 当前分类：自定义偏好
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`a85c67780077af4d6f1de65990346bcbbdd597c15afd705794757bce59621453`
+- 源配置 SHA-256：`33f10e42b9f76c8fbd483caa30659ea97f92494332979089db2acdb6f1c63951`
 
 控制开始菜单搜索是否包含 Bing 网页结果（关掉更隐私、也更干净）。
 

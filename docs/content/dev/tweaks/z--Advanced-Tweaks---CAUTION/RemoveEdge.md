@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFTweaksRemoveEdge`
 - 当前分类：z__高级优化 - 谨慎
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`a85c67780077af4d6f1de65990346bcbbdd597c15afd705794757bce59621453`
+- 源配置 SHA-256：`33f10e42b9f76c8fbd483caa30659ea97f92494332979089db2acdb6f1c63951`
 
 解除 Edge 的卸载限制后，调用其卸载程序移除 Edge。
 

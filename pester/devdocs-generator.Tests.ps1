@@ -67,6 +67,35 @@ Describe 'Development reference generation preserves source and authored pages' 
         Get-FixtureDocHashes $script:fixture | Should -Be $generated
     }
 
+    It 'documents <Action> without executing its handler' -ForEach @(
+        @{ Action = 'Panel.Control' }, @{ Action = 'Mirror.Pip.CN' }
+    ) {
+        $source = Join-Path $script:fixture 'config/feature.json'
+        Write-FixtureJson -Path $source -Value @{ WPFFeatureExample = @{ Content='固定动作'; Type='Button'; Action=$Action } }
+        $handler = Join-Path $script:fixture 'functions/nested/Invoke-WinUtilFeatureAction.ps1'
+        [IO.File]::WriteAllText($handler, 'function Invoke-WinUtilFeatureAction { throw "Handler must not execute during documentation generation" }')
+        $sourceHash = Get-DevDocsHash $source
+        (Invoke-DevDocsGenerator -Root $script:fixture).Pages | Should -Be 2
+        $page = Get-Content (Join-Path $script:fixture 'docs/content/dev/features/Old-English/Example.md') -Raw -Encoding UTF8
+        $page | Should -Match ([regex]::Escape($Action))
+        $page | Should -Match 'functions/nested/Invoke-WinUtilFeatureAction.ps1'
+        (Get-DevDocsHash $source) | Should -Be $sourceHash
+    }
+
+    It 'preserves existing pages when a fixed action is <Case>' -ForEach @(
+        @{ Case='unknown'; Action='Panel.Unregistered'; Type='Button'; Extra=@{} }
+        @{ Case='command text'; Action='Panel.Control; Write-Output injected'; Type='Button'; Extra=@{} }
+        @{ Case='not a button'; Action='Panel.Control'; Type='CheckBox'; Extra=@{} }
+        @{ Case='mixed with a function'; Action='Panel.Control'; Type='Button'; Extra=@{ function='Invoke-Example' } }
+        @{ Case='mixed with a script'; Action='Panel.Control'; Type='Button'; Extra=@{ InvokeScript=@('Write-Output injected') } }
+    ) {
+        $item = @{ Content='无效动作'; Type=$Type; Action=$Action }
+        foreach ($name in $Extra.Keys) { $item[$name] = $Extra[$name] }
+        Write-FixtureJson -Path (Join-Path $script:fixture 'config/feature.json') -Value @{ WPFFeatureExample=$item }
+        { Invoke-DevDocsGenerator -Root $script:fixture } | Should -Throw '*固定动作配置无效*'
+        Get-FixtureDocHashes $script:fixture | Should -Be $script:beforeDocs
+    }
+
     It 'validates without publishing or modifying existing pages' {
         $result = Invoke-DevDocsGenerator -Root $script:fixture -ValidateOnly
         $result.ValidatedOnly | Should -BeTrue

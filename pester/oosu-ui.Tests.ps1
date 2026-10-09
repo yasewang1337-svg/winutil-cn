@@ -3,7 +3,7 @@
     . ([scriptblock]::Create([IO.File]::ReadAllText((Join-Path $root 'functions/public/Invoke-WPFOOSU.ps1'))))
     function Invoke-WinUtilVerifiedTool { [CmdletBinding()] param($Tool); throw 'Tests must not run external tools.' }
     function Invoke-WPFRunspace { [CmdletBinding()] param($ScriptBlock); throw 'Tests must not create application runspaces.' }
-    function Show-WinUtilTweakDialog { param($Title, $Message); throw 'Tests must not open a real dialog.' }
+    function Show-WinUtilTweakDialog { param($Title, $Message, [switch]$Confirm); throw 'Tests must not open a real dialog.' }
 }
 
 Describe 'O&O responsive UI entry point' {
@@ -23,7 +23,7 @@ Describe 'O&O responsive UI entry point' {
         $script:oosuWorker = $null
         Mock Invoke-WPFRunspace { $script:oosuWorker = $ScriptBlock }
         Mock Invoke-WinUtilVerifiedTool { [pscustomobject]@{ Tool = 'OOSU'; ExitCode = 0 } }
-        Mock Show-WinUtilTweakDialog {}
+        Mock Show-WinUtilTweakDialog { if ($Confirm) { return $true } }
         Mock Write-Host {}
         Mock Write-Warning {}
         Mock Invoke-WebRequest { throw 'The UI wrapper must not download content itself.' }
@@ -41,6 +41,7 @@ Describe 'O&O responsive UI entry point' {
         $script:oosuWorker | Should -BeOfType ([scriptblock])
         Should -Invoke Invoke-WPFRunspace -Times 1 -Exactly -ParameterFilter { $ErrorAction -eq 'Stop' }
         Should -Invoke Invoke-WinUtilVerifiedTool -Times 0 -Exactly
+        Should -Invoke Show-WinUtilTweakDialog -Times 1 -Exactly -ParameterFilter { $Confirm }
         Should -Invoke Write-Warning -Times 1 -Exactly -ParameterFilter { $Message -match '正在准备或运行' }
         $script:sync.ProcessRunning | Should -BeTrue
     }
@@ -55,9 +56,61 @@ Describe 'O&O responsive UI entry point' {
         $script:sync.OOSURunning | Should -BeFalse
         $script:sync.ProcessRunning | Should -BeTrue
         Should -Invoke Invoke-WinUtilVerifiedTool -Times 1 -Exactly -ParameterFilter { $Tool -eq 'OOSU' -and $ErrorAction -eq 'Stop' }
-        Should -Invoke Show-WinUtilTweakDialog -Times 0 -Exactly
+        Should -Invoke Show-WinUtilTweakDialog -Times 0 -Exactly -ParameterFilter { -not $Confirm }
         Should -Invoke Invoke-WebRequest -Times 0 -Exactly
         Should -Invoke Start-Process -Times 0 -Exactly
+    }
+
+    It 'explains the official source and system impact before scheduling any work' {
+        Mock Show-WinUtilTweakDialog {
+            $Confirm | Should -BeTrue
+            $script:sync.OOSURunning | Should -BeTrue
+            $Message | Should -Match 'dl5\.oo-software\.com'
+            $Message | Should -Match '数字签名.*O&O Software GmbH'
+            $Message | Should -Match '当前管理员权限'
+            $Message | Should -Match '不会自动选择或应用'
+            $Message | Should -Match '无法通过 WinUtil 的操作历史恢复'
+            $script:oosuWorker | Should -BeNullOrEmpty
+            return $true
+        }
+        Invoke-WPFOOSU
+        Should -Invoke Invoke-WPFRunspace -Times 1 -Exactly
+        Should -Invoke Invoke-WinUtilVerifiedTool -Times 0 -Exactly
+    }
+
+    It 'does not schedule or download anything when the user cancels and permits a later attempt' {
+        Mock Show-WinUtilTweakDialog { return $false }
+        Invoke-WPFOOSU
+        $script:sync.OOSURunning | Should -BeFalse
+        $script:sync.ProcessRunning | Should -BeTrue
+        Should -Invoke Invoke-WPFRunspace -Times 0 -Exactly
+        Should -Invoke Invoke-WinUtilVerifiedTool -Times 0 -Exactly
+        Should -Invoke Invoke-WebRequest -Times 0 -Exactly
+        Mock Show-WinUtilTweakDialog { return $true }
+        Invoke-WPFOOSU
+        Should -Invoke Invoke-WPFRunspace -Times 1 -Exactly
+    }
+
+    It 'blocks another click processed while confirmation is open' {
+        Mock Show-WinUtilTweakDialog {
+            Invoke-WPFOOSU
+            return $true
+        }
+        Invoke-WPFOOSU
+        Should -Invoke Show-WinUtilTweakDialog -Times 1 -Exactly
+        Should -Invoke Invoke-WPFRunspace -Times 1 -Exactly
+        Should -Invoke Write-Warning -Times 1 -Exactly -ParameterFilter { $Message -match '正在准备或运行' }
+    }
+
+    It 'releases the reservation when confirmation fails without downloading or showing another dialog' {
+        Mock Show-WinUtilTweakDialog { throw 'dialog unavailable' }
+        Invoke-WPFOOSU
+        $script:sync.OOSURunning | Should -BeFalse
+        $script:sync.ProcessRunning | Should -BeTrue
+        Should -Invoke Invoke-WPFRunspace -Times 0 -Exactly
+        Should -Invoke Invoke-WinUtilVerifiedTool -Times 0 -Exactly
+        Should -Invoke Show-WinUtilTweakDialog -Times 1 -Exactly
+        Should -Invoke Write-Warning -Times 1 -Exactly -ParameterFilter { $Message -match '尚未开始下载.*dialog unavailable' }
     }
 
     It 'shows validation failure on the UI dispatcher and allows another attempt' {

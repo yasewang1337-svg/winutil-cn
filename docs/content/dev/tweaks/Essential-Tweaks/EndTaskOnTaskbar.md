@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFTweaksEndTaskOnTaskbar`
 - 当前分类：常用设置（按需选择）
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`a85c67780077af4d6f1de65990346bcbbdd597c15afd705794757bce59621453`
+- 源配置 SHA-256：`33f10e42b9f76c8fbd483caa30659ea97f92494332979089db2acdb6f1c63951`
 
 在支持的 Windows 11 版本中，为任务栏程序右键菜单增加“结束任务”。强制结束应用可能丢失未保存内容；此项仅显示入口，不会自动结束程序。
 

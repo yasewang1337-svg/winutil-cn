@@ -52,6 +52,20 @@ Describe 'Start menu configuration uses the verified tool entry point' {
         Should -Invoke Start-Process -Times 0 -Exactly
     }
 
+    It 'includes external download and recovery limits in the existing settings confirmation' {
+        . ([scriptblock]::Create([IO.File]::ReadAllText((Join-Path $script:integrationRoot 'functions/private/Confirm-WinUtilTweakPlan.ps1'))))
+        function Show-WinUtilTweakDialog { param($Title, $Message, [switch]$Confirm); throw 'Tests must not open a real dialog.' }
+        Mock Show-WinUtilTweakDialog { return $false }
+        $sync = @{ Form = $true; configs = @{ tweaks = @{ WPFTweaksRevertStartMenu = $script:tweakEntry } } }
+        Confirm-WinUtilTweakPlan -Tweaks @('WPFTweaksRevertStartMenu') | Should -BeFalse
+        Should -Invoke Show-WinUtilTweakDialog -Times 1 -Exactly -ParameterFilter {
+            $Confirm -and $Message -match '官方 GitHub.*ViVeTool v0\.3\.4' -and
+            $Message -match '固定 SHA256.*47205210' -and $Message -match '可能需要重启' -and
+            $Message -match '无法通过 WinUtil 操作历史完整恢复'
+        }
+        Should -Invoke Invoke-WinUtilVerifiedTool -Times 0 -Exactly
+    }
+
     It 'preserves Enable for the undo script without exposing the internal result object' {
         $result = Invoke-Command -ScriptBlock ([scriptblock]::Create($script:tweakEntry.UndoScript[0])) -ErrorAction Stop
         $result | Should -BeNullOrEmpty

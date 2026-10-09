@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFTweaksRightClickMenu`
 - 当前分类：z__高级优化 - 谨慎
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`a85c67780077af4d6f1de65990346bcbbdd597c15afd705794757bce59621453`
+- 源配置 SHA-256：`33f10e42b9f76c8fbd483caa30659ea97f92494332979089db2acdb6f1c63951`
 
 恢复在文件资源管理器中右键时的经典右键菜单,替换 Windows 11 的简化版菜单。
 

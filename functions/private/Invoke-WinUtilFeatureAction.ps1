@@ -1,40 +1,3 @@
----
-title: "日期和时间"
-description: "当前源配置生成的开发参考"
-generated: true
----
-
-<!-- winutil-devdocs: features/WPFPanelTimedate; schema=1 -->
-
-> 本页由 tools/devdocs-generator.ps1 生成，请修改源配置或函数后重新生成。目录保留历史 URL，实际分类以本页为准。
-
-- 稳定 ID：`WPFPanelTimedate`
-- 当前分类：传统 Windows 面板
-- 源配置：`config/feature.json`
-- 源配置 SHA-256：`6460128039e8fab2f6e81d750496f65cc7ca181cc0dbf062c7de56c813e31777`
-- 固定动作：`Panel.Timedate`
-
-## 配置定义
-
-```json
-{
-  "WPFPanelTimedate": {
-    "Content": "日期和时间",
-    "category": "传统 Windows 面板",
-    "panel": "2",
-    "Type": "Button",
-    "ButtonWidth": "300",
-    "Action": "Panel.Timedate",
-    "link": "https://winutil.christitus.com/dev/features/legacy-windows-panels/timedate"
-  }
-}
-```
-
-## 入口函数
-
-来源：`functions/private/Invoke-WinUtilFeatureAction.ps1`。这里只展示入口，其他被调用函数以仓库源码为准。
-
-```powershell
 function Invoke-WinUtilFeatureAction {
     <# Fixed system-panel targets and mirror operations; no script text from JSON. #>
     param([Parameter(Mandatory)][string]$Action)
@@ -63,4 +26,3 @@ function Invoke-WinUtilFeatureAction {
         default { throw "不支持的按钮动作：$Action。" }
     }
 }
-```

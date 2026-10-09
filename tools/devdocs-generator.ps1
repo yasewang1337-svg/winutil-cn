@@ -84,6 +84,14 @@ function Get-DevDocsPlan {
             if ($alias -notmatch "^/dev/$($route.source)/[A-Za-z0-9_/-]+/$" -or $alias -match '(^|/)\.\.?(/|$)') { throw "无效的旧地址别名：$alias" }
         }
         $handler = $item.function
+        if ($item.PSObject.Properties['Action']) {
+            $allowedAction = '^(Panel\.(Control|Computer|Network|Power|Printer|Region|Restore|Sound|System|Timedate)|Mirror\.(Pip|Npm|Yarn|Conda|Go)\.(CN|Official))$'
+            if ($route.source -ne 'features' -or $item.Type -cne 'Button' -or $item.Action -isnot [string] -or
+                $item.Action -cnotmatch $allowedAction -or $item.function -or $item.InvokeScript) {
+                throw "固定动作配置无效或混用了其他处理入口：$key"
+            }
+            $handler = 'Invoke-WinUtilFeatureAction'
+        }
         if ($route.handler) {
             if ($handler -and $handler -ne $route.handler) { throw "处理函数映射与源配置冲突：$key" }
             $handler = $route.handler
@@ -136,6 +144,7 @@ function New-DevDocsPage {
     $lines += ('- 当前分类：' + [string]$Page.Item.category)
     $lines += ('- 源配置：`' + $Page.Source.RelativePath + '`')
     $lines += ('- 源配置 SHA-256：`' + $Page.Source.Hash + '`')
+    if ($Page.Item.Action) { $lines += ('- 固定动作：`' + [string]$Page.Item.Action + '`') }
     if ($Page.Item.Description) { $lines += @('', [string]$Page.Item.Description) }
     if ($Page.Route.source -eq 'tweaks') {
         $lines += @('', '本页描述实现，不代表推荐勾选。历史恢复仅覆盖工具实际记录的设置；配置中的 OriginalValue / OriginalType 不等于这台电脑的修改前状态。应用、文件及脚本其他改动不保证可恢复。')
