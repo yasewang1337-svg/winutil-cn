@@ -2,7 +2,7 @@
 
 更新：2026-10-09。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
 
-## 当前任务：全面更新调查与选择性修复
+## 当前任务：全面更新调查与选择性修复（已发布，本地脚本复核受阻）
 
 用户要求“更新一下，全面调查一下可更新点”。调查起点本地与远端main均为 `98895c1`，工作区干净，实际最新桌面版为30（不是浏览器仍打开的28）。本轮分支 `maintenance/update-audit-20261009`。上游核对到26.10.07 / `07ccd8e`；共同祖先后的历史差异为223提交/433文件，不等同待修问题数量。
 
@@ -11,8 +11,12 @@
 - 已更新维护/上游状态、MCP真实使用边界、Windows更新指南及启动器环境说明，刷新105页受管理参考。没有发布npm，也没有宣称完整同步上游。
 - 本地最终完整回归PS5.1/7各337项通过，含6场景真实worker/WPF Dispatcher无害夹具。Hugo生成161页/2个别名，6523处内部页面/资源引用无缺失；Actionlint与diff检查通过。完整源码编译、启动器与扫描由GitHub隔离CI验收，不在主机运行真实WinUtil或改系统。
 - Hyper-V命令存在，但当前身份无法枚举虚拟机；真实Windows11安装、恢复、磁盘/网络验收仍未完成。无提权开启虚拟化、重启或绕过防护。
-- [PR #13](https://github.com/yasewang1337-svg/winutil-cn/pull/13) 已提交。首轮CI的PS7、编译和启动器检查通过，PS5.1一项AST测试因英文环境默认编码读取中文源码而失败；已改为与编译器一致的显式UTF-8读取，相关16项本地双版本回归通过，等待重新验收。
-- 待交付：核对CI、合并后验证正式发布附件，并同步该记录。优先后续：MCP受限执行及独立发布、启动盘擦除前检查与退出码、SSH/更新模式完整适配，再推进逐软件更新中心和诊断报告。Issue #5/#6保持开放。
+- [PR #13](https://github.com/yasewang1337-svg/winutil-cn/pull/13) 已合并，源码提交 `5844369d49482bd2162568333810d02b1d6bfa7a`。首轮CI发现PS5.1在英文环境默认编码读取中文源码导致一项AST测试失败，已改为与编译器一致的显式UTF-8读取；最终PR运行 [37922974206](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/37922974206) 双版本各337项通过，编译、启动器和其他检查均通过。
+- 正式版本 [cn-2026.10.09-31](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/cn-2026.10.09-31) 已发布，运行 [37923206300](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/37923206300) 全成功：PS5.1/7各337项、无害启动器、双版本产物语法/BOM检查通过，Defender逐个扫描PS1和EXE均退出0且未检出威胁。引擎 `1.1.26080.3`、病毒库 `1.459.636.0`，报告如实记录runner实时防护false、两份产物NotSigned。发布说明已补本轮变更、调查入口和实际验证限制。
+- 发布后下载四份原始附件。EXE、SHA256SUMS、扫描报告本地哈希与GitHub资产digest一致；清单、报告、源码提交相符；仅反射读取EXE资源并计算哈希，内嵌脚本与发布PS1 digest一致，没有提取或执行脚本。证据在 `.artifacts/update-audit-20261009/release-verification.json`、`release-metadata.json`、`validation/release-ci.log`。
+- **本地限制**：核对根目录旧PS1时返回拒绝访问，随后元数据检查已找不到两份旧PS1；新版下载到 `.artifacts/released/cn-2026.10.09-31/` 后，读取独立PS1也返回拒绝访问。没有本次具体检测名/引擎证据，不能据此直接归因火绒，也不能以Defender云端通过宣称解决。本地PS1哈希/语法复核与根目录脚本交付未完成；没有重下受阻文件、改名、恢复隔离或调整防护。
+- 已将核验成功的31版EXE同步到 `W:\winutil-cn\WinUtil-CN.exe`，同步后哈希一致，未启动真实程序。EXE SHA256：`D105317A1846BA1414B7D63763A216C340F36987A93E954C490C99178FC70868`；发布PS1的GitHub digest/扫描报告SHA256：`BBEE00E5724FF8383C277EFDC9D5F32DA2BEBDCC4AF369ED20A89F0C26E802FD`。详见 `local-delivery.json`；这个PS1值来自发布证据，不能写成本机独立文件实测。
+- 本轮调查和首批修复已交付。优先后续：MCP受限执行及独立发布、启动盘擦除前检查与退出码、SSH/更新模式完整适配，再推进逐软件更新中心和诊断报告；本机访问异常需结合实际防护告警继续定位。Issue #5/#6保持开放，没有发布npm或声称全量同步上游。
 
 ## 上一阶段：安全修复与新版发布（已交付）
 
