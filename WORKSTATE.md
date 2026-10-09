@@ -2,7 +2,7 @@
 
 更新：2026-10-09。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
 
-## 当前任务：更新页布局、Windows 10/11 镜像与仓库展示（已验证，待发布）
+## 当前任务：更新页布局、Windows 10/11 镜像与仓库展示（已交付35版）
 
 用户要求修复 Windows 更新页标题裁剪、镜像页不再只限 Win11、GitHub 仓库页及预览图随版本更新；进一步明确选择 Windows 10 / 11 都能制作镜像。基于 main `f94b988`，分支 `codex/windows-pages-repo-20261009`。
 
@@ -10,11 +10,16 @@
 
 已完成：更新页改纵向布局与自适应标题/按钮；镜像页支持官方Win10/11下载选择、整页滚动、长磁盘名换行及常显清理入口；按详细DISM元数据识别Win10 19041–19045 / Win11 >=22000的x64客户端，WIM/ESD统一先导出所选版本。制作使用独立受保护目录与状态清单，Win10独立最小应答，Win11保留现有定制；驱动要求同代际，写盘前核对设备身份/容量，失败不报告成功。四种后台操作接入全局忙状态与启动失败恢复。消息框枚举不再被汉化成非法参数。
 
-最终PS5.1/7完整回归各582项通过。首轮发现一处旧编译夹具缺少新Win10模板输入，补齐后双版本全部通过。隔离源码快照实际构建及双版本语法/BOM通过，检查新模板和控件已嵌入，根目录34版文件未变。布局单项验证覆盖明暗/1280与800px/100%与150%、镜像全部步骤、下拉文字与箭头间距及滚动可达。20张最终WPF预览中5张已更新仓库截图；Hugo161页/2别名、6518站点引用与128条Markdown相对链接无缺失，105页开发参考、Actionlint/diff检查通过。
+最终PS5.1/7完整回归各582项通过。首轮发现一处旧编译夹具缺少新Win10模板输入，补齐后双版本全部通过。隔离源码快照实际构建及双版本语法/BOM通过，检查新模板和控件已嵌入；隔离构建没有覆盖当时的根目录34版文件，正式交付时已替换为下述35版。布局单项验证覆盖明暗/1280与800px/100%与150%、镜像全部步骤、下拉文字与箭头间距及滚动可达。20张最终WPF预览中5张已更新仓库截图；Hugo161页/2别名、6518站点引用与128条Markdown相对链接无缺失，105页开发参考、Actionlint/diff检查通过。
 
-证据在 `.artifacts/windows-pages/`：`tests-ps51-final.log`、`tests-ps7-final.log`、`isolated-build.json`、`screenshot-delivery.json`、`docs-qa.json`；子目录 `updates/`、`iso-layout/`、`iso/` 保存定向验证。没有真实挂载用户ISO、修改系统或写U盘；ISO输出启动、完整安装与目标设备驱动仍未真机验收。尚待GitHub正式构建、附件复核、仓库About与本地交付。
+证据在 `.artifacts/windows-pages/`：`tests-ps51-final.log`、`tests-ps7-final.log`、`isolated-build.json`、`screenshot-delivery.json`、`docs-qa.json`；子目录 `updates/`、`iso-layout/`、`iso/` 保存定向验证。没有真实挂载用户ISO、修改系统或写U盘；ISO输出启动、完整安装与目标设备驱动仍未真机验收。
 
 [PR #22](https://github.com/yasewang1337-svg/winutil-cn/pull/22) 首轮CI的PowerShell5.1发现新增汉化回归使用ParseFile，英文runner把无BOM的UTF-8源码按ANSI解析；五项失败，其余577项通过。测试改为与生产编译器一致的显式UTF-8读取与ParseInput，保留真实汉化后的语法及消息框枚举验证；产品源码没有因此改变。初轮日志 `.artifacts/windows-pages/pr-ci-failed.log`，修复后本地回归 `tests-ps51-ci-fix.log`。
+
+- PR #22已合并，源码提交 `25d87c2c3428a82b902a93432f1276fb17869b3c`。修复后PR运行 [37944284654](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/37944284654) 与正式发布运行 [37944537665](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/37944537665) 全部成功，PS5.1/7各582项、无害启动器及编译产物检查通过。
+- 正式版 [cn-2026.10.09-35](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/cn-2026.10.09-35) 已发布并回读说明。四份附件的GitHub digest、SHA256SUMS、报告源码提交和EXE内嵌PS1一致性均已核对，下载脚本本地双版本语法/BOM通过。Defender逐文件按需扫描退出0、未检出威胁；报告如实保留runner实时防护false及NotSigned，不代表其他引擎验收。
+- 2026-10-09T14:33:57Z根目录 `WinUtil-CN.exe`、`winutil-cn.ps1`、`winutil.ps1` 已同步35版并核对哈希。EXE SHA256：`B7455A3A549B020219B67144D73BB9B83EE915B4D763DFE37079AD66FD3F702B`；PS1 SHA256：`7BFFB3D71221E709E94FF3063D2534AF6DF437609C67BD2B8D7518ED77EAA55A`。附件在 `.artifacts/released/cn-2026.10.09-35/`，记录在 `release-metadata.json`、`asset-digests.json`、`release-verification.json`、`local-delivery.json`。
+- GitHub About已同步Win10/11镜像能力，下载入口保持latest；远程README与五张预览图的Git blob逐一匹配本地文件，证据 `repo-about.json`、`github-page-verification.json`。新增 `tools/Export-InterfacePreviews.ps1` 可继续从真实WPF导出后续版本预览。本轮三项要求已交付；真实ISO启动/安装与USB写盘仍需目标测试设备验收。
 
 ## 上一阶段：界面美化与一致悬停介绍（已交付34版）
 
