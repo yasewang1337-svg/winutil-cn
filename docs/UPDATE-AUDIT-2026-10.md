@@ -8,6 +8,7 @@
 | --- | --- |
 | 中文仓库调查起点 | `98895c1`；当时本地与远端 main 一致，工作区干净 |
 | 调查开始时最新桌面版 | [cn-2026.09.19-30](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/cn-2026.09.19-30)，源码 `b10def3`；已包含下载校验、启动器保护及逐产物扫描 |
+| 本轮交付 | [cn-2026.10.09-31](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/cn-2026.10.09-31)，[PR #13](https://github.com/yasewang1337-svg/winutil-cn/pull/13)，源码 `5844369`；下表明确修复已发布 |
 | 官方上游 | [26.10.07](https://github.com/ChrisTitusTech/winutil/releases/tag/26.10.07)，`07ccd8e`；调查时 main 同一提交 |
 | 上游历史差异 | 共同祖先 `58a81b1` 后 223 次提交、433 个变化文件；相较上次核对的 26.08.19 又增 53 次提交、188 个变化文件 |
 | 独立 npm 包 | [winutil-cn-mcp 0.3.0](https://registry.npmjs.org/winutil-cn-mcp/0.3.0)，2026-07-09 发布；与桌面版分开分发 |
@@ -66,5 +67,7 @@ GitHub 当前没有待处理的依赖 PR，不能据此认为依赖均最新。I
 调查使用了实际 GitHub/npm/WinGet/Chocolatey 官方元数据、上游 Git 差异、已发布 npm tarball 完整性校验、PowerShell 双版本隔离复现。已排除 30 版已修的下载校验，以及本地已修的 `sc.exe` 退出码、Disable兼容、WaaSMedicSvc恢复等，避免重复计数。
 
 本轮功能测试禁止真实安装、卸载、改注册表/服务、格式化磁盘、启用 SSH 或修改网络。主机虽然有 Hyper-V 命令入口，但当前身份无法枚举虚拟机，因此没有完成 Windows 11 测试虚拟机验收；没有为此提升管理权限、启用虚拟化或重启系统。自动回归与CI构建不能代替这些验证。
+
+[正式发布验证](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/37923206300)通过 PowerShell 5.1 / 7 各337项回归、启动器夹具、双版本产物语法/BOM检查，以及PS1/EXE逐文件Defender扫描。下载后EXE、清单和扫描报告的本地哈希与GitHub digest一致，EXE内嵌脚本哈希与发布PS1 digest一致。独立PS1在维护环境中读取被拒绝，本地脚本复核尚未完成；云端扫描通过不能代表本地防护兼容问题解决。
 
 发布和最新测试证据统一记录在 [WORKSTATE.md](../WORKSTATE.md)。MCP修复/新版npm发布、启动盘可靠性、SSH与完整更新策略、真实Windows使用验收，以及完整上游架构迁移仍是后续工作。
