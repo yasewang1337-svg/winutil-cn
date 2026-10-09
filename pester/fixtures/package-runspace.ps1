@@ -3,7 +3,7 @@ $ErrorActionPreference='Stop'
 Add-Type -AssemblyName PresentationFramework
 $root=Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 $env:LOCALAPPDATA=$LogRoot
-$names=@('Get-WinUtilPackagePlan','Get-WinUtilPackageExitResult','Invoke-WinUtilPackageProcess','Install-WinUtilProgramWinget','Install-WinUtilProgramChoco','Invoke-WinUtilPackageBatch','Show-WinUtilPackageDialog','Invoke-WinUtilPackageOperation','Initialize-WinUtilPackageUiCallbacks','Invoke-WinUtilPackageUiAction','Show-WPFInstallAppBusy','Hide-WPFInstallAppBusy','Invoke-WPFUIThread','Invoke-WPFRunspace','Complete-WinUtilRunspaceJobs')
+$names=@('Get-WinUtilPackagePlan','Get-WinUtilPackageResultView','Get-WinUtilPackageExitResult','Invoke-WinUtilPackageProcess','Install-WinUtilProgramWinget','Install-WinUtilProgramChoco','Invoke-WinUtilPackageBatch','Show-WinUtilPackageDialog','Invoke-WinUtilPackageOperation','Initialize-WinUtilPackageUiCallbacks','Invoke-WinUtilPackageUiAction','Show-WPFInstallAppBusy','Hide-WPFInstallAppBusy','Invoke-WPFUIThread','Invoke-WPFRunspace','Complete-WinUtilRunspaceJobs')
 foreach($name in $names){$file=Get-ChildItem (Join-Path $root 'functions') -Recurse -Filter "$name.ps1" | Select-Object -First 1;. ([scriptblock]::Create((Get-Content $file.FullName -Raw -Encoding UTF8)))}
 . ([scriptblock]::Create((Get-Content (Join-Path $root 'functions/private/Invoke-WinUtilPackageBatch.ps1') -Raw -Encoding UTF8).Replace("[Environment]::GetFolderPath('LocalApplicationData')", '$env:LOCALAPPDATA')))
 $sync=[hashtable]::Synchronized(@{Form=(New-Object Windows.Window);ProcessRunning=$false;DialogCount=0;ProcessCalls=0;FailedAttempts=0;MainThread=[Threading.Thread]::CurrentThread.ManagedThreadId;preferences=@{packagemanager='Winget'}})
@@ -14,7 +14,7 @@ $sync.InstallAppAreaScrollViewer=New-Object Windows.Controls.ScrollViewer
 $sync.InstallAppAreaScrollViewer.Effect=New-Object Windows.Media.Effects.BlurEffect
 function Set-WinUtilTaskbaritem {param($state,$overlay) $sync.TaskbarThread=[Threading.Thread]::CurrentThread.ManagedThreadId }
 function Show-WinUtilPackageDialog {
- param($Title,$Description,$Details,$PrimaryLabel,$CloseLabel,$LogDirectory)
+ param($Title,$Description,$Details,$PrimaryLabel,$CloseLabel,$LogDirectory,$Results)
  $sync.DialogCount++;$sync.DialogThread=[Threading.Thread]::CurrentThread.ManagedThreadId
  if($sync.DialogCount -le 2){return 'Primary'}else{return 'Close'}
 }

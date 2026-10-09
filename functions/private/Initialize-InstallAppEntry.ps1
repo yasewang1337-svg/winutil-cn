@@ -1,4 +1,4 @@
-function Initialize-InstallAppEntry {
+﻿function Initialize-InstallAppEntry {
     <#
         .SYNOPSIS
             Creates the app entry to be placed on the install tab for a given app
@@ -17,7 +17,7 @@ function Initialize-InstallAppEntry {
         $border = New-Object Windows.Controls.Border
         $border.Style = $sync.Form.Resources.AppEntryBorderStyle
         $border.Tag = $appKey
-        $border.ToolTip = $Apps.$appKey.description
+        $border.ToolTip = "$($Apps.$appKey.content)`n$($Apps.$appKey.description)"
         $border.Add_MouseLeftButtonUp({
             $childCheckbox = ($this.Child | Where-Object {$_.Template.TargetType -eq [System.Windows.Controls.Checkbox]})[0]
             $childCheckBox.isChecked = -not $childCheckbox.IsChecked
@@ -46,6 +46,7 @@ function Initialize-InstallAppEntry {
         # Store the original appKey in Tag
         $checkBox.Tag = $appKey
         $checkbox.Style = $sync.Form.Resources.AppEntryCheckboxStyle
+        $checkBox.ToolTip = $border.ToolTip
         $checkbox.Add_Checked({
             Invoke-WPFSelectedCheckboxesUpdate -type "Add" -checkboxName $this.Parent.Tag
             $borderElement = $this.Parent
@@ -62,6 +63,7 @@ function Initialize-InstallAppEntry {
         $appName = New-Object Windows.Controls.TextBlock
         $appName.Style = $sync.Form.Resources.AppEntryNameStyle
         $appName.Text = $Apps.$appKey.content
+        $appName.ToolTip = $Apps.$appKey.content
 
         # Change color to Green if FOSS
         if ($Apps.$appKey.foss -eq $true) {
@@ -74,6 +76,7 @@ function Initialize-InstallAppEntry {
 
         # Add accessibility properties to make the elements screen reader friendly
         $checkBox.SetValue([Windows.Automation.AutomationProperties]::NameProperty, $Apps.$appKey.content)
+        $checkBox.SetValue([Windows.Automation.AutomationProperties]::HelpTextProperty, $Apps.$appKey.description)
         $border.SetValue([Windows.Automation.AutomationProperties]::NameProperty, $Apps.$appKey.content)
 
         $border.Child = $checkBox

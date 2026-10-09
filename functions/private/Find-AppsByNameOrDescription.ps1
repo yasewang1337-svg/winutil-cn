@@ -1,136 +1,76 @@
-function Find-AppsByNameOrDescription {
-    <#
-        .SYNOPSIS
-            Searches through the Apps on the Install Tab and hides all entries that do not match the string
+﻿function Find-AppsByNameOrDescription {
+    <# .SYNOPSIS Filters software without changing the selection or saved category layout. #>
+    param([string]$SearchString = '')
+    if ($null -eq $sync -or $null -eq $sync.ItemsControl -or
+        $null -eq $sync.configs -or $null -eq $sync.configs.applicationsHashtable) { return }
+    $searchTerm = $SearchString.Trim()
+    $sync.InstallSearchText = $SearchString
+    $onlySelected = $null -ne $sync.InstallSelectedOnly -and $sync.InstallSelectedOnly.IsChecked -eq $true
+    $filterActive = $onlySelected -or $searchTerm.Length -gt 0
+    $selected = @($sync.selectedApps)
+    $matchCount = 0
+    $totalCount = 0
 
-        .DESCRIPTION
-            Filters application entries by name or description using literal string matching.
-            Respects collapsed category state and handles null $sync gracefully.
-
-        .PARAMETER SearchString
-            The string to be searched for. Wildcards are treated as literal characters.
-
-        .NOTES
-            - Uses module-scope $sync (no parameter needed; inherits from caller's scope)
-            - Performs literal matching (no wildcard expansion)
-            - Safely handles missing hashtable keys and null UI elements
-            - Protected by try/catch to prevent UI thread crashes
-    #>
-    param(
-        [Parameter(Mandatory = $false)]
-        [string]$SearchString = ""
-    )
-
-    # Validate that $sync exists and has required structure
-    if ($null -eq $sync) {
-        Write-Warning "Find-AppsByNameOrDescription: Global `$sync not found. Aborting search."
-        return
-    }
-
-    if ($null -eq $sync.ItemsControl) {
-        Write-Warning "Find-AppsByNameOrDescription: `$sync.ItemsControl not initialized. Aborting search."
-        return
-    }
-
-    if ($null -eq $sync.configs -or $null -eq $sync.configs.applicationsHashtable) {
-        Write-Warning "Find-AppsByNameOrDescription: `$sync.configs.applicationsHashtable not initialized. Aborting search."
-        return
-    }
-
-    try {
-        # Reset the visibility if the search string is empty or the search is cleared
-        if ([string]::IsNullOrWhiteSpace($SearchString)) {
-            $sync.ItemsControl.Items | ForEach-Object {
-                # Each item is a StackPanel container
-                $_.Visibility = [Windows.Visibility]::Visible
-
-                if ($_.Children.Count -ge 2) {
-                    $categoryLabel = $_.Children[0]
-                    $wrapPanel = $_.Children[1]
-
-                    # Keep category label visible
-                    $categoryLabel.Visibility = [Windows.Visibility]::Visible
-
-                    # Respect the collapsed state of categories (indicated by + prefix)
-                    if ($categoryLabel.Content -like "+*") {
-                        $wrapPanel.Visibility = [Windows.Visibility]::Collapsed
-                    }
-                    else {
-                        $wrapPanel.Visibility = [Windows.Visibility]::Visible
-                    }
-
-                    # Show all apps within the category
-                    $wrapPanel.Children | ForEach-Object {
-                        $_.Visibility = [Windows.Visibility]::Visible
-                    }
-                }
-            }
-            return
-        }
-
-        # Escape wildcard characters for literal matching
-        $escapedSearchString = [System.Management.Automation.WildcardPattern]::Escape($SearchString)
-
-        # Perform search
-        $sync.ItemsControl.Items | ForEach-Object {
-            # Each item is a StackPanel container with Children[0] = label, Children[1] = WrapPanel
-            if ($_.Children.Count -ge 2) {
-                $categoryLabel = $_.Children[0]
-                $wrapPanel = $_.Children[1]
-                $categoryHasMatch = $false
-
-                # Keep category label visible
-                $categoryLabel.Visibility = [Windows.Visibility]::Visible
-
-                # Search through apps in this category
-                $wrapPanel.Children | ForEach-Object {
-                    # Safely retrieve app entry from hashtable
-                    $appTag = $_.Tag
-                    $appEntry = $null
-
-                    if (-not [string]::IsNullOrWhiteSpace($appTag) -and $sync.configs.applicationsHashtable.ContainsKey($appTag)) {
-                        $appEntry = $sync.configs.applicationsHashtable[$appTag]
-                    }
-
-                    # Check if app matches search criteria
-                    if ($null -ne $appEntry) {
-                        $contentMatch = $appEntry.Content -like "*$escapedSearchString*"
-                        $descriptionMatch = $appEntry.Description -like "*$escapedSearchString*"
-
-                        if ($contentMatch -or $descriptionMatch) {
-                            # Show the App and mark that this category has a match
-                            $_.Visibility = [Windows.Visibility]::Visible
-                            $categoryHasMatch = $true
-                        }
-                        else {
-                            $_.Visibility = [Windows.Visibility]::Collapsed
-                        }
-                    }
-                    else {
-                        # Hide app if no entry found (data integrity issue)
-                        $_.Visibility = [Windows.Visibility]::Collapsed
-                    }
-                }
-
-                # If category has matches, show the WrapPanel and update the category label to expanded state
-                if ($categoryHasMatch) {
-                    $wrapPanel.Visibility = [Windows.Visibility]::Visible
-                    $_.Visibility = [Windows.Visibility]::Visible
-                    # Update category label to show expanded state (-)
-                    if ($categoryLabel.Content -like "+*") {
-                        $categoryLabel.Content = $categoryLabel.Content -replace "^\+ ", "- "
-                    }
-                }
-                else {
-                    # Hide the entire category container if no matches
-                    $_.Visibility = [Windows.Visibility]::Collapsed
-                }
+    # Keep the pre-filter category layout through repeated searches/selection changes.
+    if ($filterActive -and $null -eq $sync.InstallCategoryCollapseState) {
+        $sync.InstallCategoryCollapseState = @{}
+        foreach ($category in $sync.ItemsControl.Items) {
+            if ($category.Children.Count -ge 2) {
+                $sync.InstallCategoryCollapseState[$category] = $category.Children[1].Visibility -eq 'Collapsed'
             }
         }
     }
-    catch {
-        Write-Warning "Find-AppsByNameOrDescription: An error occurred during search: $_"
-        # Fail gracefully - do not crash the UI thread
-        return
+    foreach ($category in $sync.ItemsControl.Items) {
+        if ($category.Children.Count -lt 2) { continue }
+        $label = $category.Children[0]
+        $wrap = $category.Children[1]
+        $categoryMatches = 0
+        foreach ($border in $wrap.Children) {
+            $key = [string]$border.Tag
+            $entry = $sync.configs.applicationsHashtable[$key]
+            if ($null -eq $entry) { $border.Visibility = 'Collapsed'; continue }
+            $totalCount++
+            $matchesText = $searchTerm.Length -eq 0
+            if (-not $matchesText) {
+                foreach ($value in @($entry.Content, $entry.Description, $entry.winget, $entry.choco)) {
+                    if ($null -ne $value -and ([string]$value).IndexOf($searchTerm, [StringComparison]::OrdinalIgnoreCase) -ge 0) {
+                        $matchesText = $true
+                        break
+                    }
+                }
+            }
+            if ($matchesText -and (-not $onlySelected -or $selected -contains $key)) {
+                $border.Visibility = 'Visible'
+                $categoryMatches++
+                $matchCount++
+            } else { $border.Visibility = 'Collapsed' }
+        }
+        $label.Visibility = 'Visible'
+        if ($filterActive) {
+            $category.Visibility = if ($categoryMatches -gt 0) { 'Visible' } else { 'Collapsed' }
+            $wrap.Visibility = 'Visible'
+            $label.Content = ([string]$label.Content) -replace '^\+ ', '- '
+        } else {
+            $category.Visibility = 'Visible'
+            if ($null -ne $sync.InstallCategoryCollapseState -and $sync.InstallCategoryCollapseState.ContainsKey($category)) {
+                $collapsed = $sync.InstallCategoryCollapseState[$category]
+                $wrap.Visibility = if ($collapsed) { 'Collapsed' } else { 'Visible' }
+                $label.Content = (([string]$label.Content) -replace '^[+-] ', '')
+                $label.Content = if ($collapsed) { '+ ' + $label.Content } else { '- ' + $label.Content }
+            }
+        }
+    }
+    if (-not $filterActive) { $sync.InstallCategoryCollapseState = $null }
+    if ($sync.InstallFilterStatus) { $sync.InstallFilterStatus.Text = "显示 $matchCount / $totalCount 项    已选 $($selected.Count) 项" }
+    if ($sync.InstallClearFilter) { $sync.InstallClearFilter.IsEnabled = $filterActive }
+    if ($sync.InstallFilterEmpty) {
+        $sync.InstallFilterEmpty.Visibility = if ($matchCount -eq 0) { 'Visible' } else { 'Collapsed' }
+        $sync.InstallFilterEmptyText.Text = if ($onlySelected -and $selected.Count -eq 0) {
+            '还没有选择软件。关闭“仅看已选”，从列表勾选想安装的软件。'
+        } elseif ($onlySelected) {
+            '已选软件中没有匹配项。换个关键词，或清除筛选查看全部软件；已有勾选会保留。'
+        } else {
+            '没有找到匹配的软件。可搜索名称、用途或包 ID，或清除筛选查看全部软件。'
+        }
     }
 }

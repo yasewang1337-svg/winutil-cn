@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFTweaksDisableWarningForUnsignedRdp`
 - 当前分类：z__高级优化 - 谨慎
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`33f10e42b9f76c8fbd483caa30659ea97f92494332979089db2acdb6f1c63951`
+- 源配置 SHA-256：`09ebd3bfcdbb4a45f67506a5c926f7f468d1da38a2a95e8accaa0d9f7e062fa9`
 
 关闭新版 Windows 10/11 在启动未签名 RDP 文件时显示的安全警告。仅在你信任这些 RDP 文件来源时使用。
 

@@ -1,4 +1,4 @@
-    function Initialize-InstallAppArea {
+﻿    function Initialize-InstallAppArea {
         <#
             .SYNOPSIS
                 Creates a [Windows.Controls.ScrollViewer] containing a [Windows.Controls.ItemsControl] which is setup to use Virtualization to only load the visible elements for performance reasons.
@@ -14,6 +14,17 @@
         param($TargetElement)
         $targetGrid = $sync.Form.FindName($TargetElement)
         $null = $targetGrid.Children.Clear()
+
+        $targetGrid.RowDefinitions.Clear()
+        $toolbarRow = [Windows.Controls.RowDefinition]::new()
+        $toolbarRow.Height = 'Auto'
+        $null = $targetGrid.RowDefinitions.Add($toolbarRow)
+        $null = $targetGrid.RowDefinitions.Add([Windows.Controls.RowDefinition]::new())
+        $toolbar = Initialize-WinUtilAppFilterBar
+        $null = $targetGrid.Children.Add($toolbar)
+        $appContentGrid = [Windows.Controls.Grid]::new()
+        [Windows.Controls.Grid]::SetRow($appContentGrid, 1)
+        $null = $targetGrid.Children.Add($appContentGrid)
 
         # Create the outer Border for the aren where the apps will be placed
         $Border = New-Object Windows.Controls.Border
@@ -50,7 +61,22 @@
         $itemsControl.ItemsPanel = $itemsPanelTemplate
 
         # Add the Border containing the App Area to the target Grid
-        $targetGrid.Children.Add($Border) | Out-Null
+        $appContentGrid.Children.Add($Border) | Out-Null
+
+        $empty = [Windows.Controls.Border]::new()
+        $empty.Padding = '24'
+        $empty.Visibility = 'Collapsed'
+        $empty.HorizontalAlignment = 'Stretch'
+        $empty.VerticalAlignment = 'Center'
+        $emptyText = [Windows.Controls.TextBlock]::new()
+        $emptyText.TextWrapping = 'Wrap'
+        $emptyText.SetResourceReference([Windows.Controls.TextBlock]::ForegroundProperty, 'MainForegroundColor')
+        $emptyText.SetResourceReference([Windows.Controls.TextBlock]::FontFamilyProperty, 'FontFamily')
+        $emptyText.SetResourceReference([Windows.Controls.TextBlock]::FontSizeProperty, 'ButtonFontSize')
+        $empty.Child = $emptyText
+        $sync.InstallFilterEmpty = $empty
+        $sync.InstallFilterEmptyText = $emptyText
+        $null = $appContentGrid.Children.Add($empty)
 
         $overlay = New-Object Windows.Controls.Border
         $overlay.CornerRadius = New-Object Windows.CornerRadius(10)
@@ -58,7 +84,7 @@
         $overlay.Visibility = [Windows.Visibility]::Collapsed
 
         # Also add the overlay to the target Grid on top of the App Area
-        $targetGrid.Children.Add($overlay) | Out-Null
+        $appContentGrid.Children.Add($overlay) | Out-Null
         $sync.InstallAppAreaOverlay = $overlay
 
         $overlayText = New-Object Windows.Controls.TextBlock
@@ -68,7 +94,7 @@
         $overlayText.SetResourceReference([Windows.Controls.TextBlock]::ForegroundProperty, "MainForegroundColor")
         $overlayText.Background = "Transparent"
         $overlayText.SetResourceReference([Windows.Controls.TextBlock]::FontSizeProperty, "HeaderFontSize")
-        $overlayText.SetResourceReference([Windows.Controls.TextBlock]::FontFamilyProperty, "MainFontFamily")
+        $overlayText.SetResourceReference([Windows.Controls.TextBlock]::FontFamilyProperty, "FontFamily")
         $overlayText.SetResourceReference([Windows.Controls.TextBlock]::FontWeightProperty, "MainFontWeight")
         $overlayText.SetResourceReference([Windows.Controls.TextBlock]::MarginProperty, "MainMargin")
         $sync.InstallAppAreaOverlayText = $overlayText

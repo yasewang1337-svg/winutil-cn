@@ -13,7 +13,7 @@ aliases:
 - 稳定 ID：`WPFAddUltPerf`
 - 当前分类：性能计划 - 不适用于笔记本
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`33f10e42b9f76c8fbd483caa30659ea97f92494332979089db2acdb6f1c63951`
+- 源配置 SHA-256：`09ebd3bfcdbb4a45f67506a5c926f7f468d1da38a2a95e8accaa0d9f7e062fa9`
 
 本页描述实现，不代表推荐勾选。历史恢复仅覆盖工具实际记录的设置；配置中的 OriginalValue / OriginalType 不等于这台电脑的修改前状态。应用、文件及脚本其他改动不保证可恢复。
 

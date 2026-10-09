@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFFeatureslegacymedia`
 - 当前分类：功能
 - 源配置：`config/feature.json`
-- 源配置 SHA-256：`6460128039e8fab2f6e81d750496f65cc7ca181cc0dbf062c7de56c813e31777`
+- 源配置 SHA-256：`956400006e36b3841c7816500199907bb57de94c98a0f05b1e9ee4737a8ab03c`
 
 启用旧版媒体相关组件（Windows Media Player、DirectPlay 等），用于兼容老游戏/老播放器。
 

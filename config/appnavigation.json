@@ -60,11 +60,11 @@
         "Description": "清除已选应用"
     },
     "WPFGetInstalled": {
-        "Content": "显示已装应用",
+        "Content": "勾选已装应用",
         "Category": "__选择",
         "Type": "Button",
         "Order": "4",
-        "Description": "显示已安装的应用"
+        "Description": "扫描并将识别到的已安装应用加入勾选清单；不会立即安装或卸载，也不会清除原有选择"
     },
     "WPFselectedAppsButton": {
         "Content": "已选应用: 0",
@@ -72,6 +72,13 @@
         "Type": "Button",
         "Order": "5",
         "Description": "显示已选中的应用"
+    },
+    "WPFPackageResults": {
+        "Content": "查看上次结果",
+        "Category": "____操作",
+        "Type": "Button",
+        "Order": "4",
+        "Description": "重新查看当前会话上次软件任务的逐项结果和日志，可仅重试失败项；查看本身不会执行操作"
     },
     "WPFToggleFOSSHighlight": {
         "Content": "高亮开源(FOSS)",

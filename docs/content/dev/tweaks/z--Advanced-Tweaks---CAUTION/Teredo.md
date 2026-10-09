@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFTweaksTeredo`
 - 当前分类：z__高级优化 - 谨慎
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`33f10e42b9f76c8fbd483caa30659ea97f92494332979089db2acdb6f1c63951`
+- 源配置 SHA-256：`09ebd3bfcdbb4a45f67506a5c926f7f468d1da38a2a95e8accaa0d9f7e062fa9`
 
 关闭 Teredo（IPv6 隧道）。可能改善延迟/安全，但可能影响部分 Xbox/联机 NAT 场景。
 

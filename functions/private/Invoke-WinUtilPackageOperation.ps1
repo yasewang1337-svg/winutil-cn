@@ -12,10 +12,16 @@
     }
     if ($NonInteractive -or -not $sync.form) {
         $sync.ProcessRunning = $true
+        $sync.PackageOperationError = ''
+        $sync.LastPackageResults = @()
+        $sync.LastPackageRun = $null
         try {
             $batch = Invoke-WinUtilPackageBatch -Plan $Plan -PrepareManagers
             $sync.LastPackageRun = $batch; $sync.LastPackageResults = $batch.Results
             return $batch
+        } catch {
+            $sync.PackageOperationError = $_.Exception.Message
+            throw
         } finally { $sync.ProcessRunning = $false }
     }
     $actionLabels = @{ Install = '安装 / 升级'; Uninstall = '卸载'; UpgradeAll = '更新全部' }
@@ -43,6 +49,9 @@
     Initialize-WinUtilPackageUiCallbacks
     # Reserve busy before dispatch so rapid clicks cannot start competing batches.
     $sync.ProcessRunning = $true
+    $sync.PackageOperationError = ''
+    $sync.LastPackageResults = @()
+    $sync.LastPackageRun = $null
     try {
         $null = Invoke-WPFRunspace -ParameterList (, @("Plan", $Plan)) -ScriptBlock {
             param($Plan)
@@ -62,26 +71,13 @@
                     $allResults = @($allResults | Where-Object { $_.Id -notin $changedIds }) + @($batch.Results)
                     $sync.LastPackageResults = $allResults
                     Invoke-WinUtilPackageUiAction -Action Hide
-                    $failed = @($allResults | Where-Object Status -eq 'Failed')
-                    $successful = @($allResults | Where-Object Status -eq 'Succeeded')
-                    $skipped = @($allResults | Where-Object Status -eq 'Skipped')
-                    $reboot = @($allResults | Where-Object Status -eq 'RebootRequired')
-                    $summary = "成功 $($successful.Count) 项 · 失败 $($failed.Count) 项 · 已跳过 $($skipped.Count) 项 · 需重启 $($reboot.Count) 项。"
-                    if (@($allResults | Where-Object NeedsReboot).Count) { $summary += ' 请保存工作，并在方便时重启电脑。' }
-                    if ($batch.LogWarning) { $summary += "`r`n$($batch.LogWarning)" }
-                    $resultText = ($allResults | ForEach-Object {
-                        "[$($_.StatusText)] $($_.Name) · $($_.PackageId)`r`n$($_.Reason)`r`n退出码：$($_.ExitCode) $($_.ExitCodeHex)`r`n输出日志：$($_.OutputPath)`r`n错误日志：$($_.ErrorPath)"
-                    }) -join "`r`n`r`n"
-                    # Bulk retries would repeat successes; offer retries only for known individual failures.
-                    $retryable = @($failed | Where-Object Action -ne 'UpgradeAll')
-                    $retryLabel = ''
-                    if ($retryable.Count) { $retryLabel = "仅重试失败项（$($retryable.Count)）" }
+                    $view = Get-WinUtilPackageResultView -Results $allResults -LogWarning $batch.LogWarning
                     $sync.PackageRetryRequested = $false
-                    $sync.PackageResultSummary = $summary
-                    $sync.PackageResultDetails = $resultText
-                    $sync.PackageRetryLabel = $retryLabel
+                    $sync.PackageResultSummary = $view.Summary
+                    $sync.PackageResultDetails = $view.Details
+                    $sync.PackageRetryLabel = $view.RetryLabel
                     Invoke-WinUtilPackageUiAction -Action Results
-                    $pendingPlan = @($retryable | ForEach-Object { $_.Plan })
+                    $pendingPlan = @($view.RetryPlan)
                 } while ($sync.PackageRetryRequested -and $pendingPlan.Count)
             } catch {
                 Write-Warning "软件任务异常中止：$($_.Exception.Message)"
@@ -94,6 +90,7 @@
         }
     } catch {
         $sync.ProcessRunning = $false
+        $sync.PackageOperationError = $_.Exception.Message
         Hide-WPFInstallAppBusy
         $null = [Windows.MessageBox]::Show("无法启动软件任务：$($_.Exception.Message)", 'WinUtil CN')
     }

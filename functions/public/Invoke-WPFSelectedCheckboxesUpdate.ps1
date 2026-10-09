@@ -1,4 +1,4 @@
-function Invoke-WPFSelectedCheckboxesUpdate{
+﻿function Invoke-WPFSelectedCheckboxesUpdate{
     <#
         .SYNOPSIS
             This is a helper function that is called by the Checked and Unchecked events of the Checkboxes.
@@ -45,11 +45,7 @@ function Invoke-WPFSelectedCheckboxesUpdate{
                 $sync.selectedApps.Remove($appKey)
             }
 
-            $count = $sync.SelectedApps.Count
-            $sync.WPFselectedAppsButton.Content = "已选应用: $count"
-            # On every change, remove all entries inside the Popup Menu. This is done, so we can keep the alphabetical order even if elements are selected in a random way
-            $sync.selectedAppsstackPanel.Children.Clear()
-            $sync.selectedApps | Foreach-Object { Add-SelectedAppsMenuItem -name $($sync.configs.applicationsHashtable.$_.Content) -key $_ }
+            Update-WinUtilAppSelectionUi
         }
         "Tweaks" {
             if ($type -eq "Add") {
