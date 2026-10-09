@@ -21,8 +21,12 @@
     $script:parseErrors = @{}
     foreach ($file in $script:isoFiles) {
         $errors = $null
-        $script:asts[$file] = [Management.Automation.Language.Parser]::ParseFile(
-            (Join-Path $script:fixture "functions/private/$file"), [ref]$null, [ref]$errors)
+        $path = Join-Path $script:fixture "functions/private/$file"
+        # Localized source is UTF-8 without BOM; match Compile.ps1 instead of
+        # letting Windows PowerShell 5.1 use the runner's ANSI code page.
+        $text = [IO.File]::ReadAllText($path, [Text.Encoding]::UTF8)
+        $script:asts[$file] = [Management.Automation.Language.Parser]::ParseInput(
+            $text, $path, [ref]$null, [ref]$errors)
         $script:parseErrors[$file] = @($errors)
     }
 

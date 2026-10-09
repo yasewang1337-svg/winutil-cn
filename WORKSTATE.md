@@ -14,6 +14,8 @@
 
 证据在 `.artifacts/windows-pages/`：`tests-ps51-final.log`、`tests-ps7-final.log`、`isolated-build.json`、`screenshot-delivery.json`、`docs-qa.json`；子目录 `updates/`、`iso-layout/`、`iso/` 保存定向验证。没有真实挂载用户ISO、修改系统或写U盘；ISO输出启动、完整安装与目标设备驱动仍未真机验收。尚待GitHub正式构建、附件复核、仓库About与本地交付。
 
+[PR #22](https://github.com/yasewang1337-svg/winutil-cn/pull/22) 首轮CI的PowerShell5.1发现新增汉化回归使用ParseFile，英文runner把无BOM的UTF-8源码按ANSI解析；五项失败，其余577项通过。测试改为与生产编译器一致的显式UTF-8读取与ParseInput，保留真实汉化后的语法及消息框枚举验证；产品源码没有因此改变。初轮日志 `.artifacts/windows-pages/pr-ci-failed.log`，修复后本地回归 `tests-ps51-ci-fix.log`。
+
 ## 上一阶段：界面美化与一致悬停介绍（已交付34版）
 
 用户要求美化UI/交互，并指出软件名称悬停仅显示名称，而勾选框才显示介绍。确认33版 `Initialize-InstallAppEntry.ps1` 的名称ToolTip覆盖祖先介绍；本轮基于main `a6a1c6d`，分支 `codex/ui-polish-20261009`。修复整张软件条目统一介绍，增加可读标题/完整用途/包ID、缺介绍回退和主题/字号适配；统一深浅主题、软件条目/分类/导航/按钮层级与键盘焦点。右键菜单由图标改清楚文字，Apps/Shift+F10可打开、Esc关闭，保留任务忙/离线/单软件确认边界。
