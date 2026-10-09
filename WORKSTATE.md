@@ -2,7 +2,7 @@
 
 更新：2026-10-09。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
 
-## 当前任务：软件使用流程体验优化（已实现并验证，待发布）
+## 当前任务：软件使用流程体验优化（已交付33版）
 
 用户要求“优化一下用户使用体验”。以已交付32版及main `5e2a895` 为基线，在 `codex/ux-software-flow-20261009` 分支实施。范围聚焦找软件、核对选择、看懂结果：搜索数量与空状态、名称/介绍/包ID搜索、仅看已选和清除筛选；多项选择弹层滚动与键盘使用；结果列表及逐项详情、当前会话上次结果回看。修正“显示已装应用”实际添加勾选的文案。保留现有主题和确认机制，不做真实安装或系统变更。
 
@@ -10,7 +10,10 @@
 
 - 已实现上述范围，同时修复清单重置误清“仅看已选”、旧分类折叠状态被搜索覆盖、任务失败时旧结果被当作新结果等衔接问题。结果详情包含操作类型；整批升级不提供自动失败重试。软件名称自然换行，完整名称保留Tooltip和读屏信息。
 - 最终全量回归PS5.1/7各443项通过；105页开发参考更新并校验，Hugo构建161页/2个别名，Actionlint及diff检查通过。真实WPF离屏预览覆盖暗亮主题、结果窗360px窄宽与22px字号、软件区340px及150%字号、30项已选清单。初轮439项通过后，依据视觉发现补充长名/字号/操作类型并追加4项测试；最终443项无失败。
-- 证据在 `.artifacts/ux-software-flow/`（最终回归 `tests-ps51-final.log`、`tests-ps7-final.log`，结果窗口渲染、文档构建与参考校验）及 `.artifacts/ux-selection/`（真实192项目录的列表、筛选、长名称与弹层预览）。没有运行真实安装/卸载或修改系统；离屏字体测试不等同实际多屏DPI/读屏器人工验收。当前待PR/正式发布CI及实际附件核验，上次正式交付仍是32版。
+- 证据在 `.artifacts/ux-software-flow/`（最终回归 `tests-ps51-final.log`、`tests-ps7-final.log`，结果窗口渲染、文档构建与参考校验）及 `.artifacts/ux-selection/`（真实192项目录的列表、筛选、长名称与弹层预览）。没有运行真实安装/卸载或修改系统；离屏字体测试不等同实际多屏DPI/读屏器人工验收。
+- [PR #18](https://github.com/yasewang1337-svg/winutil-cn/pull/18) 已合并，源码提交 `0f592c5bdea09ff5d4a7c5b01822be12fe05a3bf`。PR运行 [37931456323](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/37931456323) 与正式发布运行 [37931674812](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/37931674812) 全部通过，双版本各443项回归、无害启动器及产物语法/BOM检查均成功。
+- 正式版 [cn-2026.10.09-33](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/cn-2026.10.09-33) 已发布，说明已更新本轮体验改进并回读核对。Defender逐文件按需扫描退出0、未检出威胁，引擎 `1.1.26080.3`、病毒库 `1.459.638.0`；扫描报告保留runner实时防护false及两份产物NotSigned事实，不代表其他引擎验收。
+- 发布四份附件已核对GitHub digest、校验清单、扫描报告的源码提交、EXE内嵌PS1与独立脚本一致性；独立脚本本地PS5.1/7语法/BOM复核通过。根目录 `WinUtil-CN.exe`、`winutil-cn.ps1`、`winutil.ps1` 已更新并再次核对哈希。EXE SHA256：`7369E90E48AF059B57FE62B0AF6F6134DBA8579131A253E016E0D1D727F8E2E7`；PS1 SHA256：`780196B4DA91441754FA698070171868D368E7248A471D1C750A307528DA81B9`。正式附件在 `.artifacts/released/cn-2026.10.09-33/`，验证及本地交付证据在 `.artifacts/ux-software-flow/{release-ci.log,release-metadata.json,asset-digests.json,release-verification.json,local-delivery.json}`。本轮体验改进已交付，无需继续扩大范围。
 
 ## 上一阶段：程序行为透明化与可靠性优化（已交付32版）
 
