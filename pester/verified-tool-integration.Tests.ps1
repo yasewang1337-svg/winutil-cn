@@ -131,6 +131,27 @@ Describe 'Unattended installation follows the same verified path' {
 }
 
 Describe 'Verifier template synchronization and build drift guard' {
+    It 'checks the production template via -File from another working directory without writing it' {
+        $before = (Get-FileHash -LiteralPath $script:toolTemplatePath).Hash
+        $engine = (Get-Process -Id $PID).Path
+        Push-Location -LiteralPath $TestDrive
+        try {
+            $output = & $engine -NoProfile -ExecutionPolicy RemoteSigned -File $script:syncTemplateScript -Check 2>&1
+            $LASTEXITCODE | Should -Be 0 -Because ($output | Out-String)
+        } finally { Pop-Location }
+        (Get-FileHash -LiteralPath $script:toolTemplatePath).Hash | Should -BeExactly $before
+    }
+
+    It 'resolves explicit relative fixture paths from the PowerShell location' {
+        & $script:syncTemplateScript -SourcePath $script:fixtureSource -TemplatePath $script:fixtureTemplate
+        Push-Location -LiteralPath $script:fixtureRoot
+        try {
+            { & $script:syncTemplateScript -SourcePath 'functions/private/Invoke-WinUtilVerifiedTool.ps1' -TemplatePath 'tools/autounattend.xml' -Check } | Should -Not -Throw
+            [IO.File]::WriteAllText($script:fixtureTemplate, '<unattend><Extensions /></unattend>', [Text.UTF8Encoding]::new($false))
+            { & $script:syncTemplateScript -SourcePath 'functions/private/Invoke-WinUtilVerifiedTool.ps1' -TemplatePath 'tools/autounattend.xml' -Check } | Should -Throw '*缺失或与源码不同*'
+        } finally { Pop-Location }
+    }
+
     BeforeEach {
         $script:fixtureRoot = Join-Path $TestDrive ([guid]::NewGuid().ToString('N'))
         foreach ($directory in @('scripts', 'functions/private', 'config', 'xaml', 'tools')) {

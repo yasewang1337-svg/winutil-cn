@@ -1,6 +1,6 @@
 # 仓库目录与维护入口
 
-普通使用从根目录 [README](../README.md) 和[快速上手](content/userguide/getting-started/_index.md)开始。本文帮助维护者区分运行源码、构建工具、文档与历史材料。
+普通使用从根目录 [README](../README.md) 和[快速上手](content/userguide/getting-started/_index.md)开始。本文帮助维护者区分运行源码、构建工具、文档与历史材料。当前维护优先级见 [2026-10 更新调查](UPDATE-AUDIT-2026-10.md)。
 
 | 位置 | 职责 | 维护约定 |
 | --- | --- | --- |

@@ -94,7 +94,7 @@ Get-FileHash .\winutil-cn.ps1 -Algorithm SHA256
 | 查找设置、修复和更新功能 | [用户指南](docs/content/userguide/_index.md) · [常见问题](docs/content/faq.md) · [已知问题](docs/content/KnownIssues.md) |
 | 通过 AI 客户端查询或操作 | [MCP 服务器](mcp/README.md) |
 | 修改翻译、参与开发 | [汉化层说明](汉化/README.md) · [架构与设计](docs/content/dev/architecture.md) · [贡献指南](.github/CONTRIBUTING.md) |
-| 了解构建方式与上游同步 | [EXE 启动器](tools/launcher/README.md) · [维护说明](docs/MAINTENANCE.md) · [上游同步进度 #5](https://github.com/yasewang1337-svg/winutil-cn/issues/5) |
+| 了解构建方式与上游同步 | [EXE 启动器](tools/launcher/README.md) · [维护说明](docs/MAINTENANCE.md) · [2026-10 更新调查](docs/UPDATE-AUDIT-2026-10.md) · [上游同步进度 #5](https://github.com/yasewang1337-svg/winutil-cn/issues/5) |
 
 ## 遇到问题
 
@@ -146,7 +146,7 @@ powershell -NoProfile -File tools\Test-Build.ps1
 
 自动模式仅支持软件操作及可记录的基础注册表设置（含受支持的开关）；脚本、服务、预装应用移除（Appx）、DNS 和系统功能等复杂操作需要在图形界面核对。具体项目见 [config/preset.json](config/preset.json)。
 
-[MCP 服务器](mcp/README.md)可让支持 MCP 的客户端查询软件、组合和系统设置，并按接口要求预览、确认操作。
+[MCP 服务器](mcp/README.md)可供支持 MCP 的客户端查询软件、组合和系统设置。截至 2026-10-09，npm 发布仍为独立的 0.3.0，未包含桌面版 30 的工具下载安全修复；其系统修改接口还有错误反馈和恢复缺口，当前建议只使用查询工具。GitHub EXE/PS1 的更新不会自动更新 npm 包，详情见 [MCP 使用边界](mcp/README.md)。
 
 </details>
 

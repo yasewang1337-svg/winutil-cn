@@ -8,12 +8,12 @@
 |---|---|
 | **自包含** | 脚本作为嵌入资源打进 EXE，运行时释放到临时目录执行——离线、不联网、不下载远程代码 |
 | **透明** | 不加壳、不混淆；只做「释放脚本 → 调用系统 PowerShell → 清理」，采用进程级 `RemoteSigned`，不修改持久执行策略 |
-| **零依赖** | 目标 net48：.NET Framework 4.x 在所有 Windows 10/11 上预装，产物开箱即跑、无需安装运行时 |
+| **运行环境** | 目标 net48，需要 .NET Framework 4.8 或兼容的更高版本；Windows 11 通常已具备，旧 Windows 10 应先核对框架版本 |
 | **现代工具链** | 用最新 .NET SDK 的 Roslyn 编译器（`LangVersion=latest` → 最新 C#），SDK 风格 `.csproj` 工程 |
 | **可靠** | `app.manifest` 强制管理员权限（弹 UAC）；透传 `-Preset` / `-Config` 参数；等待退出、透传退出码、清理临时文件 |
 | **完整性** | 释放脚本后持有只允许共享读取的文件句柄，直到子进程退出；仅调用系统目录内的 PowerShell，不回退 PATH |
 
-目标 net48 是为了复用 Windows 自带的 .NET Framework 运行环境。框架选择不代表杀毒检测结论；每个发布产物仍需独立扫描。64 位系统优先使用 64 位进程。
+目标 net48 是为了复用 Windows 的 .NET Framework 运行环境；不能把“有任意4.x版本”当作已满足4.8要求。当前项目面向Windows 11，旧版系统的支持范围需另行验证，框架要求见[微软文档](https://learn.microsoft.com/en-us/dotnet/framework/get-started/system-requirements)。框架选择不代表杀毒检测结论；每个发布产物仍需独立扫描。64 位系统优先使用 64 位进程。启动器可从内嵌脚本启动，安装软件等网络功能仍需要联网。
 
 ## 文件
 

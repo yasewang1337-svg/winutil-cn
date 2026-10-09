@@ -1,8 +1,19 @@
 # WinUtil CN 维护状态
 
-更新：2026-09-20。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
+更新：2026-10-09。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
 
-## 当前任务：安全修复与新版发布（已交付）
+## 当前任务：全面更新调查与选择性修复
+
+用户要求“更新一下，全面调查一下可更新点”。调查起点本地与远端main均为 `98895c1`，工作区干净，实际最新桌面版为30（不是浏览器仍打开的28）。本轮分支 `maintenance/update-audit-20261009`。上游核对到26.10.07 / `07ccd8e`；共同祖先后的历史差异为223提交/433文件，不等同待修问题数量。
+
+- 已完成三路调查：上游迁移、运行可靠性与用户体验、依赖/软件目录/MCP发布。对外完整清单见 `docs/UPDATE-AUDIT-2026-10.md`；本地证据在 `.artifacts/update-audit-20261009/{upstream,runtime,dependencies,validation}/`。
+- 已实现：移除更新修复/默认更新入口的全局策略和安全模板重置；修复功能安装、库存扫描异常后卡忙及重复派发；6处英文ACL主体改固定SID；OneDrive卸载器用SystemRoot；4项.NET Desktop Runtime的Chocolatey映射改正确类型；修复模板同步工具PS5.1默认参数和相对路径解析。
+- 已更新维护/上游状态、MCP真实使用边界、Windows更新指南及启动器环境说明，刷新105页受管理参考。没有发布npm，也没有宣称完整同步上游。
+- 本地最终完整回归PS5.1/7各337项通过，含6场景真实worker/WPF Dispatcher无害夹具。Hugo生成161页/2个别名，6523处内部页面/资源引用无缺失；Actionlint与diff检查通过。完整源码编译、启动器与扫描由GitHub隔离CI验收，不在主机运行真实WinUtil或改系统。
+- Hyper-V命令存在，但当前身份无法枚举虚拟机；真实Windows11安装、恢复、磁盘/网络验收仍未完成。无提权开启虚拟化、重启或绕过防护。
+- 待交付：提交PR、核对CI、合并后验证正式发布附件，并同步该记录。优先后续：MCP受限执行及独立发布、启动盘擦除前检查与退出码、SSH/更新模式完整适配，再推进逐软件更新中心和诊断报告。Issue #5/#6保持开放。
+
+## 上一阶段：安全修复与新版发布（已交付）
 
 用户先要求处理偶发报毒，随后要求修复复核出的缺口，最后明确要求“生成吧 然后把GitHub上的更新了”。本轮修复已通过 [PR #11](https://github.com/yasewang1337-svg/winutil-cn/pull/11) 合并，源码提交 `b10def37204eb7651bb11582d74ba3acd7195d2b`；正式版本 [cn-2026.09.19-30](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/cn-2026.09.19-30) 已发布。版本日期采用CI的UTC日期，实际发布为台北时间09-20 07:00。
 

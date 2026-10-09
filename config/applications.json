@@ -289,7 +289,7 @@
     },
     "dotnet6": {
         "category": "微软工具",
-        "choco": "dotnet-6.0-runtime",
+        "choco": "dotnet-6.0-desktopruntime",
         "content": ".NET Desktop Runtime 6",
         "description": "运行基于 .NET 6 开发的桌面应用所需的运行库。",
         "link": "https://dotnet.microsoft.com/download/dotnet/6.0",
@@ -298,7 +298,7 @@
     },
     "dotnet8": {
         "category": "微软工具",
-        "choco": "dotnet-8.0-runtime",
+        "choco": "dotnet-8.0-desktopruntime",
         "content": ".NET Desktop Runtime 8",
         "description": "运行基于 .NET 8 开发的桌面应用所需的运行库。",
         "link": "https://dotnet.microsoft.com/download/dotnet/8.0",
@@ -307,7 +307,7 @@
     },
     "dotnet9": {
         "category": "微软工具",
-        "choco": "dotnet-9.0-runtime",
+        "choco": "dotnet-9.0-desktopruntime",
         "content": ".NET Desktop Runtime 9",
         "description": "运行基于 .NET 9 开发的桌面应用所需的运行库。",
         "link": "https://dotnet.microsoft.com/download/dotnet/9.0",
@@ -316,7 +316,7 @@
     },
     "dotnet10": {
         "category": "微软工具",
-        "choco": "dotnet-10.0-runtime",
+        "choco": "dotnet-10.0-desktopruntime",
         "content": ".NET Desktop Runtime 10",
         "description": "运行基于 .NET 10 开发的桌面应用所需的运行库。",
         "link": "https://dotnet.microsoft.com/download/dotnet/10.0",

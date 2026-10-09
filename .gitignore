@@ -32,3 +32,6 @@ mcp/data.json
 
 # Local verification artifacts and downloaded test tools
 .artifacts/
+
+# Default local Pester result file
+/testResults.xml

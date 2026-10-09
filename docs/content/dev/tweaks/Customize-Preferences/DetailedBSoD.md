@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFToggleDetailedBSoD`
 - 当前分类：自定义偏好
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`3e7f3f2dc0b37b3a858d3faf8151aa53c1ffd5a9bc1baa24e82ad364a5a28952`
+- 源配置 SHA-256：`a85c67780077af4d6f1de65990346bcbbdd597c15afd705794757bce59621453`
 
 蓝屏时显示更详细的信息（对排障更友好）。
 
