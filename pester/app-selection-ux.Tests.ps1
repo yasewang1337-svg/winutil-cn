@@ -5,20 +5,35 @@
         'private/Initialize-InstallAppArea.ps1', 'private/Initialize-InstallAppEntry.ps1',
         'private/Initialize-InstallCategoryAppList.ps1', 'private/Initialize-WinUtilAppFilterBar.ps1',
         'private/Initialize-WinUtilSelectedAppsPopup.ps1', 'private/Add-SelectedAppsMenuItem.ps1',
+        'private/Initialize-WinUtilAppActions.ps1', 'private/Show-WinUtilAppActions.ps1',
+        'private/Show-WPFInstallAppBusy.ps1', 'private/Hide-WPFInstallAppBusy.ps1',
         'private/Find-AppsByNameOrDescription.ps1', 'private/Reset-WinUtilAppFilter.ps1',
         'private/Update-WinUtilAppSelectionUi.ps1', 'private/Reset-WPFCheckBoxes.ps1',
         'private/Update-WinUtilSelections.ps1', 'public/Invoke-WPFSelectedCheckboxesUpdate.ps1',
         'public/Initialize-WPFUI.ps1', 'public/Invoke-WPFPresets.ps1',
-        'private/Invoke-WinutilThemeChange.ps1', 'private/Invoke-WinUtilFontScaling.ps1'
+        'private/Invoke-WinutilThemeChange.ps1', 'private/Invoke-WinUtilFontScaling.ps1',
+        'private/Initialize-WinUtilWindowChrome.ps1', 'private/Set-WinUtilNavigationLayout.ps1'
     )) {
         . ([scriptblock]::Create([IO.File]::ReadAllText((Join-Path $script:root "functions/$file"))))
     }
     function Set-Preferences { param([switch]$save) }
+    function Invoke-WPFUIThread { param($ScriptBlock) & $ScriptBlock }
     function Invoke-TestClick($Button) {
         $Button.RaiseEvent([Windows.RoutedEventArgs]::new([Windows.Controls.Primitives.ButtonBase]::ClickEvent))
     }
 }
 Describe 'Software search and selected-list experience' {
+    It 'keeps idle text sharp after repeated busy overlays' {
+        $sync.InstallAppAreaScrollViewer.Effect | Should -BeNullOrEmpty
+        foreach ($iteration in 1..2) {
+            Show-WPFInstallAppBusy -text 'Test task'
+            $sync.InstallAppAreaBorder.IsEnabled | Should -BeFalse
+            $sync.InstallAppAreaScrollViewer.Effect.Radius | Should -Be 5
+            Hide-WPFInstallAppBusy
+            $sync.InstallAppAreaBorder.IsEnabled | Should -BeTrue
+            $sync.InstallAppAreaScrollViewer.Effect | Should -BeNullOrEmpty
+        }
+    }
     BeforeEach {
         $text = [IO.File]::ReadAllText((Join-Path $script:root 'xaml/inputXML.xaml'))
         $xml = [xml]($text -replace 'mc:Ignorable="d"', '' -replace 'x:N', 'N' -replace '^<Win.*', '<Window')
@@ -41,6 +56,7 @@ Describe 'Software search and selected-list experience' {
         foreach ($node in $xml.SelectNodes('//*[@Name]')) { $script:sync[$node.Name] = $form.FindName($node.Name) }
         $sync.WPFselectedAppsButton = [Windows.Controls.Button]::new()
         Invoke-WinutilThemeChange -theme Dark
+        Initialize-WinUtilWindowChrome
         Initialize-WPFUI -TargetGridName appscategory
         Initialize-WPFUI -TargetGridName appspanel
         $sync.WPFTab1.IsSelected = $true
@@ -70,6 +86,7 @@ Describe 'Software search and selected-list experience' {
         $sync.SearchBar.Text = 'alpha'
         $sync.InstallSelectedOnly.IsChecked = $true
         $sync.InstallFilterStatus.Text | Should -Be '显示 1 / 3 项    已选 2 项'
+        [Windows.Automation.AutomationProperties]::GetName($sync.WPFselectedAppsButton) | Should -Be '已选应用: 2'
         $sync.WPFInstallBeta.Parent.Visibility | Should -Be 'Collapsed'
         $sync.WPFInstallBeta.IsChecked | Should -BeTrue
     }
@@ -79,6 +96,7 @@ Describe 'Software search and selected-list experience' {
         $sync.InstallFilterStatus.Text | Should -Be '显示 1 / 3 项    已选 1 项'
         $sync.WPFInstallAlpha.IsChecked = $false
         $sync.InstallFilterStatus.Text | Should -Be '显示 0 / 3 项    已选 0 项'
+        [Windows.Automation.AutomationProperties]::GetName($sync.WPFselectedAppsButton) | Should -Be '已选应用: 0'
         $sync.InstallFilterEmptyText.Text | Should -Match '还没有选择'
         $sync.SelectedAppsEmptyText.Visibility | Should -Be 'Visible'
     }
@@ -160,7 +178,7 @@ Describe 'Software search and selected-list experience' {
         }
     }
 
-    It 'wraps long software names within their own cards at <Scale> scaling' -ForEach @(@{Scale=1.0}, @{Scale=1.5}) {
+    It 'wraps long software names inside full-width rows at <Scale> scaling' -ForEach @(@{Scale=1.0}, @{Scale=1.5}) {
         $name = 'Beta 文本编辑器专业版 Very long application name that must remain readable without covering adjacent software'
         $sync.configs.applicationsHashtable.WPFInstallBeta.Content = $name
         Initialize-WPFUI -TargetGridName appspanel
@@ -171,17 +189,27 @@ Describe 'Software search and selected-list experience' {
         $panel.UpdateLayout()
         $checkbox = $sync.WPFInstallBeta
         $border = $checkbox.Parent
-        $label = $checkbox.Content
+        $label = $checkbox.Content.Children[0]
+        $description = $checkbox.Content.Children[1]
         $label.TextWrapping | Should -Be 'Wrap'
         $label.ActualHeight | Should -BeGreaterThan ($label.FontSize * 2)
         $point = $label.TranslatePoint([Windows.Point]::new(0,0), $border)
         ($point.X + $label.ActualWidth) | Should -BeLessOrEqual ($border.ActualWidth + 1)
         ($point.Y + $label.ActualHeight) | Should -BeLessOrEqual ($border.ActualHeight + 1)
+        $description.Text | Should -Be '文本编辑'
+        $description.TextWrapping | Should -Be 'NoWrap'
+        $description.TextTrimming | Should -Be 'CharacterEllipsis'
+        $descriptionPoint = $description.TranslatePoint([Windows.Point]::new(0,0), $border)
+        ($descriptionPoint.X + $description.ActualWidth) | Should -BeLessOrEqual ($border.ActualWidth + 1)
+        ($descriptionPoint.Y + $description.ActualHeight) | Should -BeLessOrEqual ($border.ActualHeight + 1)
+        $descriptionPoint.Y | Should -BeGreaterOrEqual ($point.Y + $label.ActualHeight)
         $nextBorder = $sync.WPFInstallLiteral.Parent
         $nextPoint = $nextBorder.TranslatePoint([Windows.Point]::new(0,0), $border)
-        $nextPoint.Y | Should -BeGreaterOrEqual $border.ActualHeight
-        $label.ToolTip | Should -Be $name
-        $checkbox.ToolTip | Should -Match ([regex]::Escape($name))
+        $nextPoint.Y | Should -BeGreaterOrEqual ($border.ActualHeight - 0.01)
+        $label.ToolTip | Should -BeNullOrEmpty
+        $checkbox.ToolTip | Should -BeNullOrEmpty
+        $border.ToolTip.Content.Children[0].Text | Should -Be $name
+        $border.ToolTip.Content.Children[1].Text | Should -Be '文本编辑'
         [Windows.Automation.AutomationProperties]::GetName($checkbox) | Should -Be $name
         [Windows.Automation.AutomationProperties]::GetHelpText($checkbox) | Should -Be '文本编辑'
         $checkbox.Focusable | Should -BeTrue
@@ -203,5 +231,39 @@ Describe 'Software search and selected-list experience' {
         $point = $row.Children[1].TranslatePoint([Windows.Point]::new(0,0), $border)
         ($point.X + $row.Children[1].ActualWidth) | Should -BeLessOrEqual 321
         $row.Children[1].ActualWidth | Should -BeGreaterThan 0
+    }
+
+    It 'fills the software area with equal-width rows at <Width> pixels and <Scale> scaling' -ForEach @(
+        @{Width=800;Scale=1.0}, @{Width=800;Scale=1.5},
+        @{Width=1280;Scale=1.0}, @{Width=1280;Scale=1.5}
+    ) {
+        $sync.configs.applicationsHashtable.WPFInstallBeta.Description = '提供文本编辑、搜索替换、语法高亮及多种扩展功能，适合编程与日常文档处理。' * 5
+        Initialize-WPFUI -TargetGridName appspanel
+        Invoke-WinUtilFontScaling -ScaleFactor $Scale
+        Set-WinUtilNavigationLayout -AvailableWidth $Width
+        $grid = $sync.Form.Content
+        $grid.Measure([Windows.Size]::new($Width,600))
+        $grid.Arrange([Windows.Rect]::new(0,0,$Width,600))
+        $grid.UpdateLayout()
+        $row = $sync.WPFInstallBeta.Parent
+        $nextRow = $sync.WPFInstallLiteral.Parent
+        $wrap = $row.Parent
+        $row.ActualWidth | Should -BeGreaterThan 250
+        [math]::Abs($row.ActualWidth - $wrap.ActualWidth) | Should -BeLessThan 1
+        [math]::Abs($row.ActualWidth - $nextRow.ActualWidth) | Should -BeLessThan 1
+        $nextPoint = $nextRow.TranslatePoint([Windows.Point]::new(0,0),$row)
+        $nextPoint.X | Should -Be 0
+        $nextPoint.Y | Should -BeGreaterOrEqual ($row.ActualHeight - 0.01)
+        $name = $row.Child.Content.Children[0]
+        $summary = $row.Child.Content.Children[1]
+        $summary.TextTrimming | Should -Be 'CharacterEllipsis'
+        $summary.ActualHeight | Should -BeLessThan ($summary.FontSize * 2)
+        $summary.FontSize | Should -Be ([double]$sync.configs.themes.shared.AppEntryDescriptionFontSize * $Scale)
+        foreach ($textBlock in @($name,$summary)) {
+            $point = $textBlock.TranslatePoint([Windows.Point]::new(0,0),$row)
+            ($point.X + $textBlock.ActualWidth) | Should -BeLessOrEqual ($row.ActualWidth + 1)
+            ($point.Y + $textBlock.ActualHeight) | Should -BeLessOrEqual ($row.ActualHeight + 1)
+        }
+        $row.ToolTip.Content.Children[1].Text | Should -Be $summary.Text
     }
 }

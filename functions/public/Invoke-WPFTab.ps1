@@ -20,6 +20,15 @@ function Invoke-WPFTab {
     $searchVisible = $tabName -in @('WPFTab1', 'WPFTab2')
     $visibility = if ($searchVisible) { 'Visible' } else { 'Collapsed' }
     $sync.SearchBar.Visibility = $visibility
+    $searchRow = $sync.Form.FindName('WPFSearchRow')
+    if ($searchRow) { $searchRow.Visibility = $visibility }
+    $title = $sync.Form.FindName('WPFPageTitle')
+    if ($title) {
+        $title.Text = @{
+            WPFTab1 = '软件管理'; WPFTab2 = '系统优化'; WPFTab3 = '系统配置'
+            WPFTab4 = 'Windows 更新'; WPFTab5 = 'Win11 镜像'; WPFTab6 = '首页'
+        }[$tabName]
+    }
     $sync.SearchBarClearButton.Visibility = 'Collapsed'
     $searchIcon = $sync.Form.FindName('WPFSearchIcon')
     if ($searchIcon) { $searchIcon.Visibility = $visibility }

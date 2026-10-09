@@ -35,16 +35,12 @@
         # Add a ScrollViewer, because the ItemsControl does not support scrolling by itself
         $scrollViewer = New-Object Windows.Controls.ScrollViewer
         $scrollViewer.VerticalScrollBarVisibility = 'Auto'
+        $scrollViewer.HorizontalScrollBarVisibility = 'Disabled'
         $scrollViewer.HorizontalAlignment = 'Stretch'
         $scrollViewer.VerticalAlignment = 'Stretch'
         $scrollViewer.CanContentScroll = $true
         $sync.InstallAppAreaScrollViewer = $scrollViewer
         $Border.Child = $scrollViewer
-
-        # Initialize the Blur Effect for the ScrollViewer, which will be used to indicate that an install/uninstall is in progress
-        $blurEffect = New-Object Windows.Media.Effects.BlurEffect
-        $blurEffect.Radius = 0
-        $scrollViewer.Effect = $blurEffect
 
         ## Create the ItemsControl, which will be the parent of all the app entries
         $itemsControl = New-Object Windows.Controls.ItemsControl
@@ -52,11 +48,11 @@
         $itemsControl.VerticalAlignment = 'Stretch'
         $scrollViewer.Content = $itemsControl
 
-        # Use WrapPanel to create dynamic columns based on AppEntryWidth and window width
+        # Categories stack vertically; each category owns full-width software rows.
         $itemsPanelTemplate = New-Object Windows.Controls.ItemsPanelTemplate
-        $factory = New-Object Windows.FrameworkElementFactory ([Windows.Controls.WrapPanel])
-        $factory.SetValue([Windows.Controls.WrapPanel]::OrientationProperty, [Windows.Controls.Orientation]::Horizontal)
-        $factory.SetValue([Windows.Controls.WrapPanel]::HorizontalAlignmentProperty, [Windows.HorizontalAlignment]::Left)
+        $factory = New-Object Windows.FrameworkElementFactory ([Windows.Controls.StackPanel])
+        $factory.SetValue([Windows.Controls.StackPanel]::OrientationProperty, [Windows.Controls.Orientation]::Vertical)
+        $factory.SetValue([Windows.Controls.StackPanel]::HorizontalAlignmentProperty, [Windows.HorizontalAlignment]::Stretch)
         $itemsPanelTemplate.VisualTree = $factory
         $itemsControl.ItemsPanel = $itemsPanelTemplate
 

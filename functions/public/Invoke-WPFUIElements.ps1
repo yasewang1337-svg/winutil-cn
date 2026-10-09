@@ -25,6 +25,11 @@ function Invoke-WPFUIElements {
         [int]$columncount
     )
 
+    if ($targetGridName -eq 'appscategory') {
+        Initialize-WinUtilAppCommandBar -Configuration $configVariable
+        return
+    }
+
     $window = $sync.form
 
     $borderstyle = $window.FindResource("BorderStyle")

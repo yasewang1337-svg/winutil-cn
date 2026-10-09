@@ -22,6 +22,8 @@ function Invoke-WinUtilFontScaling {
         Write-Warning "Scale factor must be between 0.75 and 2.0. Using 1.0 instead."
         $ScaleFactor = 1.0
     }
+    # Preserve the applied value, independently of an unconfirmed slider edit.
+    $sync.UiScaleFactor = $ScaleFactor
 
     # Define an array for resources to be scaled
     $fontResources = @(
@@ -35,6 +37,8 @@ function Invoke-WinUtilFontScaling {
         "SettingsIconFontSize",
         "CloseIconFontSize",
         "AppEntryFontSize",
+        "AppEntryDescriptionFontSize",
+        "PageTitleFontSize",
         "SearchBarTextBoxFontSize",
         "SearchBarClearButtonFontSize",
         "CustomDialogFontSize",

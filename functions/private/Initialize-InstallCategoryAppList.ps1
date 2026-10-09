@@ -29,7 +29,7 @@ function Initialize-InstallCategoryAppList {
             # Create a container for category label + apps
             $categoryContainer = New-Object Windows.Controls.StackPanel
             $categoryContainer.Orientation = "Vertical"
-            $categoryContainer.Margin = New-Object Windows.Thickness(0, 0, 0, 0)
+            $categoryContainer.Margin = New-Object Windows.Thickness(0, 0, 0, 4)
             $categoryContainer.HorizontalAlignment = [Windows.HorizontalAlignment]::Stretch
             [System.Windows.Automation.AutomationProperties]::SetName($categoryContainer, $Category)
 
@@ -40,18 +40,21 @@ function Initialize-InstallCategoryAppList {
             [void][Windows.Data.BindingOperations]::SetBinding($categoryContainer, [Windows.FrameworkElement]::WidthProperty, $binding)
 
             # Add category label to container
-            $toggleButton = New-Object Windows.Controls.Label
+            $toggleButton = New-Object Windows.Controls.Button
             $toggleButton.Content = "- $Category"
             $toggleButton.Tag = "CategoryToggleButton"
+            $toggleButton.SetResourceReference([Windows.Controls.Control]::StyleProperty, "CategoryHeaderStyle")
             $toggleButton.SetResourceReference([Windows.Controls.Control]::FontSizeProperty, "HeaderFontSize")
             $toggleButton.SetResourceReference([Windows.Controls.Control]::FontFamilyProperty, "HeaderFontFamily")
             $toggleButton.SetResourceReference([Windows.Controls.Control]::ForegroundProperty, "LabelboxForegroundColor")
             $toggleButton.Cursor = [System.Windows.Input.Cursors]::Hand
             $toggleButton.HorizontalAlignment = [Windows.HorizontalAlignment]::Stretch
+            $toggleButton.ToolTip = "展开或收起$Category。也可以按 Enter 或空格。"
+            [Windows.Automation.AutomationProperties]::SetName($toggleButton, "展开或收起$Category")
             $sync.$Category = $toggleButton
 
             # Add click handler to toggle category visibility
-            $toggleButton.Add_MouseLeftButtonUp({
+            $toggleButton.Add_Click({
                 param($sender, $e)
 
                 # Find the parent StackPanel (categoryContainer)
@@ -78,11 +81,17 @@ function Initialize-InstallCategoryAppList {
             # Add wrap panel for apps to container
             $wrapPanel = New-Object Windows.Controls.WrapPanel
             $wrapPanel.Orientation = "Horizontal"
-            $wrapPanel.HorizontalAlignment = "Left"
+            $wrapPanel.HorizontalAlignment = "Stretch"
             $wrapPanel.VerticalAlignment = "Top"
             $wrapPanel.Margin = New-Object Windows.Thickness(0, 0, 0, 0)
             $wrapPanel.Visibility = [Windows.Visibility]::Visible
             $wrapPanel.Tag = "CategoryWrapPanel_$category"
+
+            # Preserve the category panel contract used by filtering while
+            # giving every software row the full available list width.
+            $rowWidth = [Windows.Data.Binding]::new('ActualWidth')
+            $rowWidth.RelativeSource = [Windows.Data.RelativeSource]::new([Windows.Data.RelativeSourceMode]::Self)
+            $null = [Windows.Data.BindingOperations]::SetBinding($wrapPanel, [Windows.Controls.WrapPanel]::ItemWidthProperty, $rowWidth)
 
             $null = $categoryContainer.Children.Add($wrapPanel)
 
