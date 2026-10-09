@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFTweaksDiskCleanup`
 - 当前分类：常用设置（按需选择）
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`33f10e42b9f76c8fbd483caa30659ea97f92494332979089db2acdb6f1c63951`
+- 源配置 SHA-256：`09ebd3bfcdbb4a45f67506a5c926f7f468d1da38a2a95e8accaa0d9f7e062fa9`
 
 运行系统磁盘清理并清理旧组件/更新缓存，释放空间（可能需要较长时间）。
 

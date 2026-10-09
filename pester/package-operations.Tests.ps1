@@ -1,6 +1,6 @@
 BeforeAll {
     $privateNames = @(
-        'Get-WinUtilPackagePlan', 'Get-WinUtilPackageExitResult', 'Invoke-WinUtilPackageProcess',
+        'Get-WinUtilPackagePlan', 'Get-WinUtilPackageResultView', 'Get-WinUtilPackageExitResult', 'Invoke-WinUtilPackageProcess',
         'Install-WinUtilProgramWinget', 'Install-WinUtilProgramChoco', 'Invoke-WinUtilPackageBatch',
         'Invoke-WinUtilPackageOperation', 'Show-WinUtilPackageDialog', 'Show-WPFInstallAppBusy',
         'Initialize-WinUtilPackageUiCallbacks', 'Invoke-WinUtilPackageUiAction',
@@ -252,15 +252,20 @@ Describe 'GUI and automatic invocation boundaries' {
         $script:sync.ProcessRunning | Should -BeFalse
     }
     It 'clears busy when automatic execution throws' {
+        $script:sync.LastPackageResults = @([pscustomobject]@{ Name = 'Old success'; Status = 'Succeeded' })
         Mock Invoke-WinUtilPackageBatch { throw 'Unexpected batch failure' }
         { Invoke-WinUtilPackageOperation -Plan $script:onePlan -NonInteractive } | Should -Throw
         $script:sync.ProcessRunning | Should -BeFalse
+        $script:sync.LastPackageResults.Count | Should -Be 0
+        $script:sync.PackageOperationError | Should -Match 'Unexpected batch failure'
     }
     It 'honors cancellation without starting a batch' {
         $script:sync.form = [pscustomobject]@{}
+        $script:sync.LastPackageResults = @([pscustomobject]@{ Name = 'Earlier task'; Status = 'Succeeded' })
         Invoke-WinUtilPackageOperation -Plan $script:onePlan
         Should -Invoke Invoke-WinUtilPackageBatch -Times 0 -Exactly
         $script:sync.ProcessRunning | Should -BeFalse
+        $script:sync.LastPackageResults[0].Name | Should -Be 'Earlier task'
     }
     It 'retains the explicit right-click application instead of installing the entire selection' {
         Mock Invoke-WinUtilPackageOperation {}

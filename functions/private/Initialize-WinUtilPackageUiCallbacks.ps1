@@ -6,7 +6,7 @@ function Initialize-WinUtilPackageUiCallbacks {
         if (@($sync.LastPackageResults | Where-Object Status -eq 'Failed').Count) {
             Set-WinUtilTaskbaritem -state 'Error' -overlay 'warning'
         } else { Set-WinUtilTaskbaritem -state 'None' -overlay 'checkmark' }
-        $choice = Show-WinUtilPackageDialog -Title '软件操作结果' -Description $sync.PackageResultSummary -Details $sync.PackageResultDetails -PrimaryLabel $sync.PackageRetryLabel -CloseLabel '关闭' -LogDirectory $sync.LastPackageRun.LogDirectory
+        $choice = Show-WinUtilPackageDialog -Title '软件操作结果' -Description $sync.PackageResultSummary -Details $sync.PackageResultDetails -Results @($sync.LastPackageResults) -PrimaryLabel $sync.PackageRetryLabel -CloseLabel '关闭' -LogDirectory $sync.LastPackageRun.LogDirectory
         $sync.PackageRetryRequested = ($choice -eq 'Primary')
     }
     $sync.PackageErrorAction = [action]{

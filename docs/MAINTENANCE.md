@@ -11,9 +11,11 @@
 
 开发参考通过 `tools/devdocs-generator.ps1` 从当前配置生成，路径由 `tools/devdocs-routes.json` 中的稳定项目 ID 映射决定；不要手动编辑生成正文，也不要在 config 顶层放归档或示例 JSON。生成器和翻译提取器在失败或零有效输出时保留既有内容。
 
-配置中的 `Type: Button` 使用固定 `Action` 或受允许的 `function`，不能再用 `InvokeScript` 作为按钮入口。新增按钮时同时更新 `Invoke-WinUtilFeatureButton.ps1` 的ID对应关系；新增固定动作还需更新 `Invoke-WinUtilFeatureAction.ps1`、文档生成器的动作校验和 `pester/feature-button-actions.Tests.ps1`。开发工具的确认与退出码处理分别在 `Invoke-WinUtilMirrorAction.ps1`、`Invoke-WinUtilMirrorCommand.ps1`。
+`config/feature.json` 中的 `Type: Button` 使用固定 `Action` 或受允许的 `function`，不能再用 `InvokeScript` 作为按钮入口。新增按钮时同时更新 `Invoke-WinUtilFeatureButton.ps1` 的ID对应关系；新增固定动作还需更新 `Invoke-WinUtilFeatureAction.ps1`、文档生成器的动作校验和 `pester/feature-button-actions.Tests.ps1`。开发工具的确认与退出码处理分别在 `Invoke-WinUtilMirrorAction.ps1`、`Invoke-WinUtilMirrorCommand.ps1`。
 
 非按钮的Windows功能安装脚本走独立流程，不适用上述按钮入口迁移。更新配置后重新生成开发参考，并同时验证取消、异常和未知配置不会执行其他动作。
+
+软件页的搜索、仅看已选和空状态由 `Find-AppsByNameOrDescription.ps1` 统一计算，勾选/导入后的界面刷新走 `Update-WinUtilAppSelectionUi.ps1`。筛选控件不能进入应用勾选的重置集合；清除筛选不能清空选择。软件结果摘要与重试范围由 `Get-WinUtilPackageResultView.ps1` 共用，`Show-WinUtilPackageDialog -Results` 提供结果列表，`Invoke-WPFPackageResults.ps1` 仅回看当前会话并在重试前再次确认。相关真实WPF交互测试位于 `app-selection-ux.Tests.ps1`、`package-dialog.Tests.ps1` 和 `package-results-review.Tests.ps1`。
 
 ## 2026-09 可靠性维护
 

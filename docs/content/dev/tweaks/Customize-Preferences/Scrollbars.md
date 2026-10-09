@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFToggleScrollbars`
 - 当前分类：自定义偏好
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`33f10e42b9f76c8fbd483caa30659ea97f92494332979089db2acdb6f1c63951`
+- 源配置 SHA-256：`09ebd3bfcdbb4a45f67506a5c926f7f468d1da38a2a95e8accaa0d9f7e062fa9`
 
 开启后滚动条会始终可见；关闭后 Windows 会在不使用时自动隐藏滚动条。
 

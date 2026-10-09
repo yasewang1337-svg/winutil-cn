@@ -1,4 +1,4 @@
-function Reset-WPFCheckBoxes {
+﻿function Reset-WPFCheckBoxes {
     <#
 
     .SYNOPSIS
@@ -22,7 +22,7 @@ function Reset-WPFCheckBoxes {
     )
 
     $CheckBoxesToCheck = $sync.selectedApps + $sync.selectedTweaks + $sync.selectedFeatures
-    $CheckBoxes = ($sync.GetEnumerator()).where{ $_.Value -is [System.Windows.Controls.CheckBox] -and $_.Name -notlike "WPFToggle*" -and $_.Name -like "$checkboxfilterpattern"}
+    $CheckBoxes = ($sync.GetEnumerator()).where{ $_.Value -is [System.Windows.Controls.CheckBox] -and $_.Name -ne "InstallSelectedOnly" -and $_.Name -notlike "WPFToggle*" -and $_.Name -like "$checkboxfilterpattern"}
 
     foreach ($CheckBox in $CheckBoxes) {
         $checkboxName = $CheckBox.Key
@@ -41,12 +41,7 @@ function Reset-WPFCheckBoxes {
         }
     }
 
-    # Update Installs tab UI values
-    $count = $sync.SelectedApps.Count
-    $sync.WPFselectedAppsButton.Content = "已选应用: $count"
-    # On every change, remove all entries inside the Popup Menu. This is done, so we can keep the alphabetical order even if elements are selected in a random way
-    $sync.selectedAppsstackPanel.Children.Clear()
-    $sync.selectedApps | Foreach-Object { Add-SelectedAppsMenuItem -name $($sync.configs.applicationsHashtable.$_.Content) -key $_ }
+    Update-WinUtilAppSelectionUi
 
     if($doToggles) {
         # Restore toggle switch states from imported config.

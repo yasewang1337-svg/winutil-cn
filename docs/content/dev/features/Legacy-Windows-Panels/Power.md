@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFPanelPower`
 - 当前分类：传统 Windows 面板
 - 源配置：`config/feature.json`
-- 源配置 SHA-256：`6460128039e8fab2f6e81d750496f65cc7ca181cc0dbf062c7de56c813e31777`
+- 源配置 SHA-256：`956400006e36b3841c7816500199907bb57de94c98a0f05b1e9ee4737a8ab03c`
 - 固定动作：`Panel.Power`
 
 ## 配置定义
