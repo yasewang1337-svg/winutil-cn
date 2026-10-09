@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFTweaksDeBloat`
 - 当前分类：z__高级设置 - 先了解影响
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`3e7f3f2dc0b37b3a858d3faf8151aa53c1ffd5a9bc1baa24e82ad364a5a28952`
+- 源配置 SHA-256：`a85c67780077af4d6f1de65990346bcbbdd597c15afd705794757bce59621453`
 
 移除配置清单中的画图、便笺、录音机、天气、新版 Outlook、Teams 等应用及部分预装包。可能影响其他用户；应用和数据不能通过“恢复所选设置”还原，请先确认确实不需要。
 

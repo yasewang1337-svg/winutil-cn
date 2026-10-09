@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFFeatureMirrorCondaReset`
 - 当前分类：换源 · 恢复官方源
 - 源配置：`config/feature.json`
-- 源配置 SHA-256：`ac97f75eddfb3fc5f085b8dd9b8faa5467671ba7e138c2d4785df4b54416e7fd`
+- 源配置 SHA-256：`56ea30c4ec708287321e017ee42c1e6316d3d197cafba238138466e020d5d4f5`
 
 清除 conda 自定义频道，恢复默认。
 

@@ -1,11 +1,17 @@
 ﻿[CmdletBinding()]
 param(
-    [string]$SourcePath = (Join-Path $PSScriptRoot '../functions/private/Invoke-WinUtilVerifiedTool.ps1'),
-    [string]$TemplatePath = (Join-Path $PSScriptRoot 'autounattend.xml'),
+    [string]$SourcePath,
+    [string]$TemplatePath,
     [switch]$Check
 )
 
 $ErrorActionPreference = 'Stop'
+# Windows PowerShell 5.1 does not reliably populate PSScriptRoot while binding
+# default parameter expressions for -File. Resolve paths after binding instead.
+if (-not $SourcePath) { $SourcePath = Join-Path $PSScriptRoot '../functions/private/Invoke-WinUtilVerifiedTool.ps1' }
+if (-not $TemplatePath) { $TemplatePath = Join-Path $PSScriptRoot 'autounattend.xml' }
+$SourcePath = (Resolve-Path -LiteralPath $SourcePath -ErrorAction Stop).ProviderPath
+$TemplatePath = (Resolve-Path -LiteralPath $TemplatePath -ErrorAction Stop).ProviderPath
 $source = [IO.File]::ReadAllText($SourcePath, [Text.UTF8Encoding]::new($false, $true)).Replace("`r`n", "`n").Trim()
 if ([string]::IsNullOrWhiteSpace($source)) { throw '工具校验源码为空，未修改无人值守模板。' }
 $parseErrors = $null

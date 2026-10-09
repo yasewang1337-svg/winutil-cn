@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFTweaksDisableFSO`
 - 当前分类：z__高级优化 - 谨慎
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`3e7f3f2dc0b37b3a858d3faf8151aa53c1ffd5a9bc1baa24e82ad364a5a28952`
+- 源配置 SHA-256：`a85c67780077af4d6f1de65990346bcbbdd597c15afd705794757bce59621453`
 
 禁用全屏优化（有时可减少某些游戏的输入延迟/兼容问题，但也可能影响色彩管理等）。
 

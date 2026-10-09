@@ -48,9 +48,7 @@ function Invoke-WPFUpdatesdefault {
         Get-ScheduledTask -TaskPath $Task | Enable-ScheduledTask -ErrorAction SilentlyContinue
     }
 
-    Write-Host "Windows Local Policies Reset to Default"
-    secedit /configure /cfg "$Env:SystemRoot\inf\defltbase.inf" /db defltbase.sdb
-
+    # Reset only Windows Update configuration; retain the system security template.
     Write-Host "===================================================" -ForegroundColor Green
     Write-Host "---  Windows Update Settings Reset to Default   ---" -ForegroundColor Green
     Write-Host "===================================================" -ForegroundColor Green

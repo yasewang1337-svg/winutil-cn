@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFTweaksXboxRemoval`
 - 当前分类：z__高级优化 - 谨慎
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`3e7f3f2dc0b37b3a858d3faf8151aa53c1ffd5a9bc1baa24e82ad364a5a28952`
+- 源配置 SHA-256：`a85c67780077af4d6f1de65990346bcbbdd597c15afd705794757bce59621453`
 
 移除 Xbox 服务、Xbox 应用、Game Bar 及相关身份验证组件。
 

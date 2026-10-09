@@ -11,7 +11,7 @@ generated: true
 - 稳定 ID：`WPFchangedns`
 - 当前分类：z__高级优化 - 谨慎
 - 源配置：`config/tweaks.json`
-- 源配置 SHA-256：`3e7f3f2dc0b37b3a858d3faf8151aa53c1ffd5a9bc1baa24e82ad364a5a28952`
+- 源配置 SHA-256：`a85c67780077af4d6f1de65990346bcbbdd597c15afd705794757bce59621453`
 
 本页描述实现，不代表推荐勾选。历史恢复仅覆盖工具实际记录的设置；配置中的 OriginalValue / OriginalType 不等于这台电脑的修改前状态。应用、文件及脚本其他改动不保证可恢复。
 
