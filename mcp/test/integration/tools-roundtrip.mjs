@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 import { toolCommand } from '../../lib/executor.mjs';
+import { windowsEnvironment } from './windows-environment.mjs';
 
 // This file intentionally is not part of npm test. Real commands are permitted
 // only on an explicitly opted-in GitHub-hosted disposable Windows machine.
@@ -68,7 +69,7 @@ async function fileEvidence(file) {
 }
 
 async function openMcp(env, cwd, record) {
-  const transport = new StdioClientTransport({ command: process.execPath, args: [cli, '--allow-write', '--data-mode', 'source'], env, cwd, stderr: 'pipe' });
+  const transport = new StdioClientTransport({ command: process.execPath, args: [cli, '--allow-write', '--data-mode', 'source'], env: windowsEnvironment(env), cwd, stderr: 'pipe' });
   record.serverStderr = '';
   transport.stderr.on('data', chunk => { record.serverStderr = (record.serverStderr + String(chunk)).slice(-30000); });
   const client = new Client({ name: 'disposable-windows-roundtrip', version: '1.0.0' });

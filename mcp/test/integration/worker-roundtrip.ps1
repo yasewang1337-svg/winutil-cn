@@ -185,7 +185,18 @@ function Set-TestDenyWrite {
     try {
         $rights = [Security.AccessControl.RegistryRights]::ChangePermissions -bor [Security.AccessControl.RegistryRights]::ReadPermissions
         $key = $base.OpenSubKey($SubPath, [Microsoft.Win32.RegistryKeyPermissionCheck]::ReadWriteSubTree, $rights)
-        if ($null -ne $RestoreAcl) { $key.SetAccessControl($RestoreAcl); return }
+        if ($null -ne $RestoreAcl) {
+            # A GetAccessControl snapshot has no modified sections. Passing that
+            # object straight back to SetAccessControl is a no-op on Windows.
+            # Reapply its DACL through the setter so the Access section is dirty.
+            $restored = $key.GetAccessControl()
+            $expectedDacl = $RestoreAcl.GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]::Access)
+            $restored.SetSecurityDescriptorSddlForm($expectedDacl, [Security.AccessControl.AccessControlSections]::Access)
+            $key.SetAccessControl($restored)
+            $actualDacl = $key.GetAccessControl().GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]::Access)
+            Assert-That ($actualDacl -ceq $expectedDacl) 'Registry fixture DACL was not restored; do not interpret a later denial as a production restore defect.'
+            return
+        }
         $original = $key.GetAccessControl()
         $restricted = $key.GetAccessControl()
         $deny = New-Object Security.AccessControl.RegistryAccessRule($identity.User, [Security.AccessControl.RegistryRights]::SetValue, [Security.AccessControl.AccessControlType]::Deny)
@@ -347,7 +358,13 @@ try {
             Set-Acl -LiteralPath $path -AclObject $weakAcl
             $badAcl = Invoke-Worker -RestoreId $request.backupId
             Assert-That ($badAcl.result.status -eq 'failed' -and $badAcl.result.message -match 'UNSAFE_BACKUP_ACL') 'Restore accepted a backup readable by another explicit identity.'
-        } finally { Set-Acl -LiteralPath $path -AclObject $originalAcl }
+        } finally {
+            $restoredAcl = Get-Acl -LiteralPath $path
+            $expectedDacl = $originalAcl.GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]::Access)
+            $restoredAcl.SetSecurityDescriptorSddlForm($expectedDacl, [Security.AccessControl.AccessControlSections]::Access)
+            Set-Acl -LiteralPath $path -AclObject $restoredAcl
+            Assert-That ((Get-Acl -LiteralPath $path).GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]::Access) -ceq $expectedDacl) 'Backup fixture DACL was not restored.'
+        }
         foreach ($name in @('EmptyString', 'DwordZero')) { Assert-Equal 'changed-by-disposable-test' (Read-TestValue 'HKCU' $keySubPath $name).value 'ACL rejection unexpectedly restored a value.' }
         try {
             $invalid = [Text.Encoding]::UTF8.GetString($originalBytes) | ConvertFrom-Json

@@ -8,9 +8,23 @@ param(
 
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
-[Console]::OutputEncoding = New-Object Text.UTF8Encoding($false)
-$OutputEncoding = [Console]::OutputEncoding
 try {
+    # Node/.NET parents can pass PowerShell 7 module paths to Windows PowerShell
+    # 5.1. Isolate this worker process before any cmdlet can autoload the wrong
+    # edition. This also protects direct RestoreBackupId invocations; user and
+    # machine environment variables and execution policies remain untouched.
+    $engineModules = [IO.Path]::Combine($PSHOME, 'Modules')
+    $windowsModules = [IO.Path]::Combine([Environment]::GetFolderPath('Windows'), 'System32\WindowsPowerShell\v1.0\Modules')
+    $env:PSModulePath = $engineModules
+    if (-not [string]::Equals($engineModules, $windowsModules, [StringComparison]::OrdinalIgnoreCase)) {
+        $env:PSModulePath += [IO.Path]::PathSeparator + $windowsModules
+    }
+    foreach ($moduleName in @('Microsoft.PowerShell.Utility', 'Microsoft.PowerShell.Management', 'Microsoft.PowerShell.Security')) {
+        $moduleManifest = [IO.Path]::Combine($engineModules, $moduleName, ($moduleName + '.psd1'))
+        Import-Module -Name $moduleManifest -ErrorAction Stop
+    }
+    [Console]::OutputEncoding = New-Object Text.UTF8Encoding($false)
+    $OutputEncoding = [Console]::OutputEncoding
     . (Join-Path $PSScriptRoot 'worker-core.ps1')
     if ($PSCmdlet.ParameterSetName -eq 'Restore') {
         $result = Restore-WinUtilMcpBackup $RestoreBackupId
