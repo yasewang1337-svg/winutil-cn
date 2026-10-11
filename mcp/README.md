@@ -1,8 +1,8 @@
 # WinUtil CN MCP
 
-让支持 MCP 的客户端查询软件、组合、系统设置与 DNS，并按明确选择执行受支持的操作。**0.4.0 默认只读**，不会注册安装、换源或系统修改工具。它是独立的 Node.js 包，不会控制已打开的 WinUtil 窗口，桌面版更新也不会自动更新 npm 包。
+让支持 MCP 的客户端查询软件、组合、系统设置与 DNS，并按明确选择执行受支持的操作。**0.4.1 默认只读**，不会注册安装、换源或系统修改工具。它是独立的 Node.js 包，不会控制已打开的 WinUtil 窗口，桌面版更新也不会自动更新 npm 包。
 
-**当前分发：** [MCP 0.4.0 GitHub 安装包](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/mcp-v0.4.0)已发布，附 SHA256 和源码证据。npm 发布认证尚待处理，registry 仍为 0.3.0；下方使用固定版本的 GitHub 包地址。暂不要使用 `winutil-cn-mcp@0.4.0` 从 npm 安装。
+**分发方式：** [MCP 0.4.1 GitHub 安装包](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/mcp-v0.4.1)提供安装包、SHA256 和源码证据。npm 发布认证尚待处理，registry 仍为 0.3.0；下方使用固定版本的 GitHub 包地址。暂不要使用 `winutil-cn-mcp@0.4.1` 从 npm 安装。
 
 需要 Node.js 22 或 24 LTS。查询可跨平台使用；修改功能仅支持 Windows，并遵循当前用户权限和 PowerShell 执行策略，不自动提权或绕过策略。
 
@@ -15,7 +15,7 @@
   "mcpServers": {
     "winutil-cn": {
       "command": "npx",
-      "args": ["-y", "https://github.com/yasewang1337-svg/winutil-cn/releases/download/mcp-v0.4.0/winutil-cn-mcp-0.4.0.tgz"]
+      "args": ["-y", "https://github.com/yasewang1337-svg/winutil-cn/releases/download/mcp-v0.4.1/winutil-cn-mcp-0.4.1.tgz"]
     }
   }
 }
@@ -24,7 +24,7 @@
 Claude Code 也可注册：
 
 ```bash
-claude mcp add winutil-cn -- npx -y https://github.com/yasewang1337-svg/winutil-cn/releases/download/mcp-v0.4.0/winutil-cn-mcp-0.4.0.tgz
+claude mcp add winutil-cn -- npx -y https://github.com/yasewang1337-svg/winutil-cn/releases/download/mcp-v0.4.1/winutil-cn-mcp-0.4.1.tgz
 ```
 
 如果客户端在 Windows 无法启动 `npx`，使用 Node 的绝对路径运行本地源码入口：
@@ -69,7 +69,7 @@ npm ci --ignore-scripts
 ```json
 {
   "command": "npx",
-  "args": ["-y", "https://github.com/yasewang1337-svg/winutil-cn/releases/download/mcp-v0.4.0/winutil-cn-mcp-0.4.0.tgz", "--allow-write"]
+  "args": ["-y", "https://github.com/yasewang1337-svg/winutil-cn/releases/download/mcp-v0.4.1/winutil-cn-mcp-0.4.1.tgz", "--allow-write"]
 }
 ```
 
@@ -129,8 +129,8 @@ npm run test:pack
 npm pack
 ```
 
-`prepack` 自动生成数据；离线包测试把实际 tarball 放入无源码目录，禁止运行时网络及系统子进程，再验证协议查询。发布工作流先运行 Windows Node 22/24 与 Linux Node 24 专项测试，再构建、验证并发布同一份包，附 SHA256 和源码版本证据。版本来自 package.json，标签和 lock 必须一致。
+`prepack` 自动生成数据；离线包测试把实际 tarball 放入无源码目录，禁止运行时网络及系统子进程，再验证协议查询。发布工作流先运行 Windows Node 22/24 与 Linux Node 24 专项测试及一次性 Windows 实际修改测试，再构建、验证同一份包，附 SHA256 和源码版本证据。版本来自 package.json，标签和 lock 必须一致。默认只生成安装包，npm 上传需维护者手动明确启用。
 
-测试覆盖真实 MCP 握手、查询、预览、一次性确认、拒绝错误输入、失败与并发路径，以及执行器/PowerShell 无害夹具。真实软件安装、生产网卡切换和系统优化需在目标测试环境另行验收，不以模拟通过替代。
+普通测试覆盖真实 MCP 握手、查询、预览、一次性确认、拒绝错误输入、失败与并发路径，以及执行器/PowerShell 无害夹具。另有[实际修改与恢复测试](test/integration/README.md)：在 GitHub 托管的一次性 Windows 测试机上执行注册表/服务、独立环回网卡 DNS、包源及软件安装卸载，并核对恢复结果；禁止在日常电脑运行。这些结果不代表所有桌面 Windows 版本、全部优化项或任意第三方安装程序都已验收。
 
 [版本变更](https://github.com/yasewang1337-svg/winutil-cn/blob/main/mcp/CHANGELOG.md) · [项目主页](https://github.com/yasewang1337-svg/winutil-cn) · MIT

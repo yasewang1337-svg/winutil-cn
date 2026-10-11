@@ -185,21 +185,41 @@ function Set-TestDenyWrite {
     try {
         $rights = [Security.AccessControl.RegistryRights]::ChangePermissions -bor [Security.AccessControl.RegistryRights]::ReadPermissions
         $key = $base.OpenSubKey($SubPath, [Microsoft.Win32.RegistryKeyPermissionCheck]::ReadWriteSubTree, $rights)
+        $deny = New-Object Security.AccessControl.RegistryAccessRule($identity.User, [Security.AccessControl.RegistryRights]::SetValue, [Security.AccessControl.AccessControlType]::Deny)
         if ($null -ne $RestoreAcl) {
-            # A GetAccessControl snapshot has no modified sections. Passing that
-            # object straight back to SetAccessControl is a no-op on Windows.
-            # Reapply its DACL through the setter so the Access section is dirty.
+            # Remove only the exact explicit ACE introduced by this fixture.
+            # Replacing an entire inherited DACL can normalize its SDDL without
+            # preserving byte identity, so retain the original for evidence and
+            # verify the injected denial by its semantics instead.
             $restored = $key.GetAccessControl()
             $expectedDacl = $RestoreAcl.GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]::Access)
-            $restored.SetSecurityDescriptorSddlForm($expectedDacl, [Security.AccessControl.AccessControlSections]::Access)
+            $restrictedDacl = $restored.GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]::Access)
+            $restored.RemoveAccessRuleSpecific($deny)
             $key.SetAccessControl($restored)
-            $actualDacl = $key.GetAccessControl().GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]::Access)
-            Assert-That ($actualDacl -ceq $expectedDacl) 'Registry fixture DACL was not restored; do not interpret a later denial as a production restore defect.'
+            $actualAcl = $key.GetAccessControl()
+            $actualDacl = $actualAcl.GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]::Access)
+            $rules = @($actualAcl.GetAccessRules($true, $true, [Security.Principal.SecurityIdentifier]))
+            $remainingDenials = @($rules | Where-Object {
+                $_.IdentityReference.Value -ceq $identity.User.Value -and $_.AccessControlType -eq 'Deny' -and
+                ($_.RegistryRights -band [Security.AccessControl.RegistryRights]::SetValue) -ne 0
+            })
+            $diagnostic = [ordered]@{
+                path = 'HKCU:\' + $SubPath; operation = 'remove-fixture-deny'; expectedSddl = $expectedDacl
+                restrictedSddl = $restrictedDacl; actualSddl = $actualDacl; remainingSetValueDenials = $remainingDenials.Count
+                rules = @($rules | ForEach-Object { [ordered]@{ sid = $_.IdentityReference.Value; type = [string]$_.AccessControlType; rights = [string]$_.RegistryRights; inherited = $_.IsInherited; inheritance = [string]$_.InheritanceFlags; propagation = [string]$_.PropagationFlags } })
+            }
+            $label = if ($SubPath.Contains('\Partial-restore\')) { 'restore' } else { 'apply' }
+            [IO.File]::WriteAllText((Join-Path $evidenceRoot ('registry-acl-' + $label + '.json')), (ConvertTo-Json -InputObject $diagnostic -Depth 10), $encoding)
+            Assert-That ($remainingDenials.Count -eq 0) 'Registry fixture SetValue denial remains after removing its explicit ACE; see registry-acl evidence.'
             return
         }
         $original = $key.GetAccessControl()
         $restricted = $key.GetAccessControl()
-        $deny = New-Object Security.AccessControl.RegistryAccessRule($identity.User, [Security.AccessControl.RegistryRights]::SetValue, [Security.AccessControl.AccessControlType]::Deny)
+        $priorDenials = @($original.GetAccessRules($true, $true, [Security.Principal.SecurityIdentifier]) | Where-Object {
+            $_.IdentityReference.Value -ceq $identity.User.Value -and $_.AccessControlType -eq 'Deny' -and
+            ($_.RegistryRights -band [Security.AccessControl.RegistryRights]::SetValue) -ne 0
+        })
+        Assert-That ($priorDenials.Count -eq 0) 'Unique registry fixture already denies SetValue; refusing to alter an existing denial.'
         $restricted.AddAccessRule($deny)
         $key.SetAccessControl($restricted)
         $original
@@ -352,18 +372,26 @@ try {
         $path = Join-Path $backupRoot ($request.backupId + '.json')
         $originalBytes = [IO.File]::ReadAllBytes($path)
         $originalAcl = Get-Acl -LiteralPath $path
+        $weakRule = New-Object Security.AccessControl.FileSystemAccessRule($identity.User, 'Read', 'Allow')
         try {
             $weakAcl = Get-Acl -LiteralPath $path
-            $weakAcl.AddAccessRule((New-Object Security.AccessControl.FileSystemAccessRule($identity.User, 'Read', 'Allow')))
+            $weakAcl.AddAccessRule($weakRule)
             Set-Acl -LiteralPath $path -AclObject $weakAcl
             $badAcl = Invoke-Worker -RestoreId $request.backupId
             Assert-That ($badAcl.result.status -eq 'failed' -and $badAcl.result.message -match 'UNSAFE_BACKUP_ACL') 'Restore accepted a backup readable by another explicit identity.'
         } finally {
             $restoredAcl = Get-Acl -LiteralPath $path
             $expectedDacl = $originalAcl.GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]::Access)
-            $restoredAcl.SetSecurityDescriptorSddlForm($expectedDacl, [Security.AccessControl.AccessControlSections]::Access)
+            $restrictedDacl = $restoredAcl.GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]::Access)
+            $restoredAcl.RemoveAccessRuleSpecific($weakRule)
             Set-Acl -LiteralPath $path -AclObject $restoredAcl
-            Assert-That ((Get-Acl -LiteralPath $path).GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]::Access) -ceq $expectedDacl) 'Backup fixture DACL was not restored.'
+            $actualAcl = Get-Acl -LiteralPath $path
+            $unexpectedAllows = @($actualAcl.GetAccessRules($true, $true, [Security.Principal.SecurityIdentifier]) | Where-Object {
+                $_.AccessControlType -eq 'Allow' -and @('S-1-5-18', 'S-1-5-32-544') -notcontains $_.IdentityReference.Value
+            })
+            $diagnostic = [ordered]@{ backupId = $request.backupId; operation = 'remove-fixture-read-allow'; expectedSddl = $expectedDacl; restrictedSddl = $restrictedDacl; actualSddl = $actualAcl.GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]::Access); unexpectedAllows = $unexpectedAllows.Count }
+            [IO.File]::WriteAllText((Join-Path $evidenceRoot 'backup-acl.json'), (ConvertTo-Json -InputObject $diagnostic -Depth 10), $encoding)
+            Assert-That ($unexpectedAllows.Count -eq 0) 'Backup fixture still has an unauthorized allow ACE; see backup-acl evidence.'
         }
         foreach ($name in @('EmptyString', 'DwordZero')) { Assert-Equal 'changed-by-disposable-test' (Read-TestValue 'HKCU' $keySubPath $name).value 'ACL rejection unexpectedly restored a value.' }
         try {

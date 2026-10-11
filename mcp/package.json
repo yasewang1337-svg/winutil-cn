@@ -1,6 +1,6 @@
 {
   "name": "winutil-cn-mcp",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "WinUtil 中文版 MCP：默认只读查询软件、组合、优化项与 DNS，可显式启用受约束的修改工具。",
   "type": "module",
   "bin": {

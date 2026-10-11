@@ -10,7 +10,7 @@
 | 仓库整洁 | [remove-winutil.yaml](workflows/remove-winutil.yaml) | push 与 PR；检查生成文件没有入库，仅报告失败，不再自动删文件并提交 |
 | MCP 回归 | [mcp-tests.yaml](workflows/mcp-tests.yaml) | MCP 及其数据配置的 main/PR 改动、手动和可复用调用；Windows Node 22 + PowerShell 5.1、Node 24 + PowerShell 7，及 Linux Node 24 协议/执行器夹具测试；干净打包后的离线连接验证 |
 | MCP 实际修改验证 | [mcp-integration.yaml](workflows/mcp-integration.yaml) | PR 相关改动或手动；三台 GitHub 托管一次性 Windows 测试机分别验证注册表/服务、DNS、包源/安装的实际修改与恢复，失败证据也保留；禁止在日常电脑或自托管 runner 上运行，见 [测试范围](../mcp/test/integration/README.md) |
-| MCP 发布 | [publish-mcp.yaml](workflows/publish-mcp.yaml) | mcp-v* 标签或手动；先通过 MCP 回归，严格核对标签/package/lock 版本；构建并测试唯一 tarball，跨 job 验哈希后发布同一包并核对 npm registry |
+| MCP 发布包 | [publish-mcp.yaml](workflows/publish-mcp.yaml) | mcp-v* 标签或手动；先通过 MCP 回归和一次性 Windows 实际修改测试，再构建并测试唯一 tarball。默认只生成安装包；手动明确勾选 publish_npm 才上传 npm，跨 job 验哈希并核对 registry |
 | PR 标签 | [label-pr.yaml](workflows/label-pr.yaml) | 读取 PR 中选中的变更类型并添加标签 |
 | Issue 管理 | [issue-slash-commands.yaml](workflows/issue-slash-commands.yaml) | 仅仓库所有者评论中的管理命令生效 |
 | Issue 活跃状态 | [close-old-issues.yaml](workflows/close-old-issues.yaml) | 每日或手动；90 天无活动标记，标记后 365 天无活动关闭；Keep Issue Open 豁免，PR 不处理 |
@@ -24,6 +24,6 @@
 
 令牌值保存在 GitHub Secrets 或本机凭据存储中，文档只记录用途，不保存凭据。未来需要中文网站时，应单独配置实际站点地址和部署流程。
 
-MCP 与桌面版独立发版。先在 `mcp/package.json` 与 `mcp/package-lock.json` 提交相同版本并合入 main，再推送对应 `mcp-v<版本>` 标签；手动发布只接受 main 或匹配版本的标签，版本输入仅用于校验，不会修改文件。工作流产物 `mcp-npm-release` 保存实际发布包、SHA256、SHA512 integrity、源码提交及版本证据；`mcp-npm-registry-verification` 保存 registry 对照结果。
+MCP 与桌面版独立发版。先在 `mcp/package.json` 与 `mcp/package-lock.json` 提交相同版本并合入 main，再推送对应 `mcp-v<版本>` 标签；手动发布只接受 main 或匹配版本的标签，版本输入仅用于校验，不会修改文件。工作流产物 `mcp-npm-release` 保存可用于 GitHub Release 的实际安装包、SHA256、SHA512 integrity、源码提交及版本证据。标签默认只构建，不尝试 npm 上传；npm 授权完成后由维护者手动勾选 `publish_npm`，启用时另有 `mcp-npm-registry-verification` 保存 registry 对照结果。
 
 当前发布沿用 `NPM_TOKEN` secret。npm 已停用旧式 classic/Automation token，需由包所有者维护有发布权限的 granular token，并按包策略启用发布用 bypass 2FA；token 失效或缺失会明确失败。也可由所有者在 npm 配置 [trusted publishing](https://docs.npmjs.com/trusted-publishers/)，配置完成后再调整工作流；不能把 GitHub OIDC 权限本身当作 npm 已授权。详见 [npm 发布双因素认证要求](https://docs.npmjs.com/requiring-2fa-for-package-publishing-and-settings-modification/)。

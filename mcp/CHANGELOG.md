@@ -1,5 +1,11 @@
 # MCP 版本变更
 
+## 0.4.1
+
+- 修复从 PowerShell 7 经 Node/.NET 启动 Windows PowerShell 5.1 时，继承的模块搜索路径导致备份或恢复加载错误模块的问题。worker 仅调整自身进程的模块目录，同时覆盖修改和直接恢复入口。
+- 新增三台 GitHub 托管一次性 Windows 测试机的实际修改与恢复验证，覆盖注册表类型、服务启动配置、DNS、包源、软件安装，以及真实写入后取消再恢复；详见 [测试范围](test/integration/README.md)。
+- 发布包构建以普通回归和实际修改测试为前置条件。npm 上传改为手动明确启用，按维护者决定继续暂缓；GitHub 安装包独立交付。
+
 ## 0.4.0
 
 2026-10-11 已[发布 GitHub 安装包](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/mcp-v0.4.0)；npm 上架暂缓，接入方式见 [当前指南](https://github.com/yasewang1337-svg/winutil-cn/blob/main/mcp/README.md)。

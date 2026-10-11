@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths: ['mcp/test/integration/**', 'mcp/lib/executor.mjs', 'mcp/lib/server.mjs', 'mcp/powershell/**', '.github/workflows/mcp-integration.yaml']
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read

@@ -1,4 +1,4 @@
-name: 发布 MCP 到 npm
+name: 构建 MCP 发布包（npm 可选）
 
 # 单独发布 MCP 包，不触发桌面 PS1/EXE 发布。
 # NPM_TOKEN 须为有此包发布权限的有效 granular token；需要时启用发布用 bypass 2FA。
@@ -11,6 +11,11 @@ on:
       version:
         description: '待发布版本，必须等于 package.json / package-lock.json；留空使用现有版本'
         type: string
+        required: false
+      publish_npm:
+        description: '同时发布 npm（仅在所有者已完成 npm 授权后勾选）'
+        type: boolean
+        default: false
         required: false
 
 permissions:
@@ -26,9 +31,14 @@ jobs:
     permissions:
       contents: read
 
+  integration:
+    uses: ./.github/workflows/mcp-integration.yaml
+    permissions:
+      contents: read
+
   package:
     name: Verify version and package once
-    needs: tests
+    needs: [tests, integration]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     outputs:
@@ -117,6 +127,7 @@ jobs:
 
   publish:
     name: Publish tested tarball
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_npm }}
     needs: package
     runs-on: ubuntu-latest
     timeout-minutes: 10
