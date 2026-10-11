@@ -266,10 +266,12 @@ $xaml.SelectNodes("//*[@Name]") | ForEach-Object {$sync["$("$($psitem.Name)")"] 
 #Persist Package Manager preference across winutil restarts
 $sync.ChocoRadioButton.Add_Checked({
     $sync.preferences.packagemanager = [PackageManagers]::Choco
+    Invalidate-WinUtilInventory -Reason '已切换安装来源，'
     Set-Preferences -save
 })
 $sync.WingetRadioButton.Add_Checked({
     $sync.preferences.packagemanager = [PackageManagers]::Winget
+    Invalidate-WinUtilInventory -Reason '已切换安装来源，'
     Set-Preferences -save
 })
 
@@ -414,7 +416,8 @@ $sync["Form"].Add_ContentRendered({
         $sync.WPFInstall.IsEnabled = $false
         $sync.WPFUninstall.IsEnabled = $false
         $sync.WPFInstallUpgrade.IsEnabled = $false
-        $sync.WPFGetInstalled.IsEnabled = $false
+        # WinGet detection can contact its source; Chocolatey's local inventory remains available.
+        Update-WinUtilInventoryUi
 
         # Show offline indicator
         Write-Host "离线模式：可以查看软件和准备清单，安装和升级需联网后重新打开。" -ForegroundColor Yellow

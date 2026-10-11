@@ -17,8 +17,11 @@
         return
     }
 
+    $manager = [string]$sync.preferences.packagemanager
+    if ($manager -notin @('Winget', 'Choco')) { $manager = 'Winget' }
+    $inventory = if (-not $sync.InventoryScanRunning -and -not $sync.InventoryOperationError) { $sync.SoftwareInventory } else { $null }
     $plan = @(Get-WinUtilBundlePlan -Bundle $bundle -Applications $sync.configs.applications `
-        -SelectedApps @($sync.selectedApps) -InstalledPrograms @($sync.InstalledPrograms))
+        -SelectedApps @($sync.selectedApps) -Inventory $inventory -Manager $manager)
     $result = Show-WinUtilBundleDialog -Bundle $bundle -Plan $plan -Owner $sync.Form
     if (-not $result.Confirmed) { return }
 

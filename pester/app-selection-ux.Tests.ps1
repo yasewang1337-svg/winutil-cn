@@ -2,7 +2,7 @@
     Add-Type -AssemblyName PresentationFramework
     $script:root = Split-Path $PSScriptRoot -Parent
     foreach ($file in @(
-        'private/Initialize-InstallAppArea.ps1', 'private/Initialize-InstallAppEntry.ps1',
+        'private/Test-WinUtilInventoryCurrent.ps1', 'private/Update-WinUtilInventoryUi.ps1', 'private/Invalidate-WinUtilInventory.ps1', 'private/Initialize-InstallAppArea.ps1', 'private/Initialize-InstallAppEntry.ps1',
         'private/Initialize-InstallCategoryAppList.ps1', 'private/Initialize-WinUtilAppFilterBar.ps1',
         'private/Initialize-WinUtilSelectedAppsPopup.ps1', 'private/Add-SelectedAppsMenuItem.ps1',
         'private/Initialize-WinUtilAppActions.ps1', 'private/Show-WinUtilAppActions.ps1',
@@ -79,6 +79,51 @@ Describe 'Software search and selected-list experience' {
         $sync[$Expected].Parent.Visibility | Should -Be 'Visible'
         $sync.InstallFilterStatus.Text | Should -Be '显示 1 / 3 项    已选 0 项'
         $sync.selectedApps.Count | Should -Be 0
+    }
+
+    It 'starts with installed filtering unavailable and explains how to enable it' {
+        $sync.InstallInstalledOnly.IsEnabled | Should -BeFalse
+        $sync.InstallInstalledOnly.ToolTip | Should -Match '先.*检测已安装'
+        [Windows.Controls.ToolTipService]::GetShowOnDisabled($sync.InstallInstalledOnly) | Should -BeTrue
+    }
+
+    It 'combines detected-installed, selected and text filters without changing selections' {
+        $sync.SoftwareInventory = [pscustomobject]@{ Manager='Winget'; CompletedAt=[datetime]::Now; MatchedKeys=@('WPFInstallAlpha') }
+        Update-WinUtilInventoryUi
+        $sync.WPFInstallAlpha.IsChecked = $true
+        $sync.WPFInstallBeta.IsChecked = $true
+        $sync.InstallInstalledOnly.IsEnabled | Should -BeTrue
+        $sync.InstallInstalledOnly.IsChecked = $true
+        $sync.InstallSelectedOnly.IsChecked = $true
+        $sync.SearchBar.Text = 'Alpha'
+        $sync.InstallFilterStatus.Text | Should -Be '显示 1 / 3 项    已选 2 项'
+        $sync.WPFInstallBeta.IsChecked | Should -BeTrue
+        Reset-WinUtilAppFilter
+        $sync.InstallInstalledOnly.IsChecked | Should -BeFalse
+        $sync.InstallFilterStatus.Text | Should -Be '显示 3 / 3 项    已选 2 项'
+    }
+
+    It 'expires installed filtering after a source switch without removing selections or history' {
+        $sync.SoftwareInventory = [pscustomobject]@{ Manager='Winget'; CompletedAt=[datetime]::Now; MatchedKeys=@('WPFInstallAlpha') }
+        Update-WinUtilInventoryUi
+        $sync.WPFInstallBeta.IsChecked = $true
+        $sync.InstallInstalledOnly.IsChecked = $true
+        $sync.preferences.packagemanager = 'Choco'
+        Invalidate-WinUtilInventory -Reason '已切换安装来源，'
+        $sync.SoftwareInventory.MatchedKeys | Should -Be 'WPFInstallAlpha'
+        $sync.SoftwareInventory.IsStale | Should -BeTrue
+        $sync.InstallInstalledOnly.IsEnabled | Should -BeFalse
+        $sync.InstallInstalledOnly.IsChecked | Should -BeFalse
+        $sync.InstallFilterStatus.Text | Should -Be '显示 3 / 3 项    已选 1 项'
+        $sync.WPFInstallBeta.IsChecked | Should -BeTrue
+    }
+
+    It 'never interprets an empty detection snapshot as proof that no software is installed' {
+        $sync.SoftwareInventory = [pscustomobject]@{ Manager='Winget'; CompletedAt=[datetime]::Now; MatchedKeys=@() }
+        Update-WinUtilInventoryUi
+        $sync.InstallInstalledOnly.IsChecked = $true
+        $sync.InstallFilterStatus.Text | Should -Be '显示 0 / 3 项    已选 0 项'
+        $sync.InstallFilterEmptyText.Text | Should -Match '未识别不代表未安装'
     }
     It 'combines selected-only and keyword filters without changing any selection' {
         $sync.WPFInstallAlpha.IsChecked = $true
@@ -172,7 +217,7 @@ Describe 'Software search and selected-list experience' {
         $panel.Measure([Windows.Size]::new(340,480))
         $panel.Arrange([Windows.Rect]::new(0,0,340,480))
         $panel.UpdateLayout()
-        foreach ($control in @($sync.InstallFilterStatus, $sync.InstallSelectedOnly, $sync.InstallClearFilter)) {
+        foreach ($control in @($sync.InstallFilterStatus, $sync.InstallSelectedOnly, $sync.InstallInstalledOnly, $sync.InstallClearFilter)) {
             $point = $control.TranslatePoint([Windows.Point]::new(0,0),$panel)
             ($point.X + $control.ActualWidth) | Should -BeLessOrEqual 341
         }

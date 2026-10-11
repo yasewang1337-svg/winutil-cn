@@ -2,7 +2,25 @@
 
 更新：2026-10-12。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
 
-## 当前任务：恢复 npm 发布（已完成，0.4.1 已交付）
+## 当前任务：软件检测与库存可靠性升级（实施中）
+
+2026-10-12 用户要求继续研究升级项目。核对 main `c96c148`、桌面35版及 MCP 0.4.1 的实际交付后，在 `codex/software-inventory-20261012` 开始新阶段。官方上游仍为26.10.07/`07ccd8e`；本轮不做整库覆盖，也不变更 MCP 已发布包。
+
+本轮范围：增加不改变勾选的“检测已安装”入口和已装筛选；来源、时间、目录识别范围可见。修复 Chocolatey 组合包漏检、原生命令失败当作空清单、WinGet 表格解析和 PS7 不兼容，改用官方结构化导出；切换来源或执行软件操作后使旧库存失效。保留“勾选已装应用”的明确追加选择行为。未识别不代表未安装，逐软件待更新清单仍属后续工作。
+
+并行分工：`inventory_review` 扫描后端/解析/无害测试；`inventory_ui` 检测入口、筛选、库存失效和 WPF/worker 回归；`upstream_review` 官方来源核对与一次性 Windows 真实检测验收；主助手负责范围、审查、文档、集成测试与 GitHub/本地交付。本机仅无害夹具、界面渲染与构建；实际安装卸载只在 GitHub-hosted 一次性 runner 执行，不修改用户正在用的系统。
+
+已实现上述功能。初始缺陷通过假 Chocolatey 输出复现；后端支持 Unicode ID、并存版本、来源验证、60秒查询期限及完整 stdout/stderr。独立审查修复了“优化设置扫描失败污染软件检测状态”的联动问题。WinGet 关联源查询部分失败时可能警告但退出0，因此只称“当前来源识别到的软件”，成功时也保存原始诊断，不承诺全系统覆盖。官方源码证据 `upstream-evidence.md`。
+
+本地完整回归 PS5.1/7 各622项通过，定向UI各107项、后端各19项通过；20份真实WPF明暗/800px/150%预览已生成并视检软件页，README预览已更新。证据统一保存在 `.artifacts/software-inventory-20261012/`，包括 `tests-ps51.log`、`tests-ps7.log`、`previews/` 和 `screenshot-delivery.json`。
+
+本机根目录EXE仍为35版哈希，两份旧PS1当前已不存在，原因未确认；记录 `before-delivery.json`。隔离源码构建先在沙箱原子替换时报拒绝，普通临时目录可完成编译但紧接读取产物也被拒绝；火绒进程正在运行，未确认具体拦截事件，没有关闭防护、加排除或改名规避。保留 `build.log`、`build-final.log`。
+
+[PR #30](https://github.com/yasewang1337-svg/winutil-cn/pull/30) 已创建。首轮 [真实检测38173478485](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38173478485) 双PS全部通过：各识别49个WinGet/45个Choco包，现有组合/跨源拒绝及hexyl0.17.0安装后出现、卸载后消失正确；包与链接删除、Choco原清单不变、临时导出无遗留。完整JSON/日志在 `pr-integration/`、`pr-integration.log`。同源码 [编译38173478452](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38173478452) 双PS语法/BOM通过。测试机为Windows Server2025镜像20260925.250.1，不扩展为所有桌面版本已验收。Hugo161页、6518站点引用及150条修改文档相对链接通过，见 `docs-qa.json`。
+
+追加8种成功/失败WPF夹具预览发现长错误文本会挤压800px/150%软件列表，已缩短状态行，完整原因保留在对话框、Tooltip及日志；定向回归和最终CI待确认。当前仍待PR最终检查、发布与本地交付复核。
+
+## 上一阶段：恢复 npm 发布（已完成，0.4.1 已交付）
 
 用户要求解决 npm 问题，撤销此前暂缓 npm 发布的安排。[PR #28](https://github.com/yasewang1337-svg/winutil-cn/pull/28) 与 [PR #29](https://github.com/yasewang1337-svg/winutil-cn/pull/29) 均已通过全部检查并合并，最终发布流程与指南提交 `cfa2713fa98668c24f17740e932fb00737b1d8b9`。原账号 `hloha` 已找回，本机 CLI 无需登录；原包名保持 `winutil-cn-mcp`。原令牌失败未确诊为过期，现改用已验证的 OIDC 可信发布。
 

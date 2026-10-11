@@ -17,10 +17,11 @@ function Initialize-WinUtilAppCommandBar {
     $sync.InstallCommandBar = $commands
     $sync.InstallSourceBar = $options
 
-    $primaryNames = @('WPFInstall', 'WPFUninstall', 'WPFselectedAppsButton')
+    $primaryNames = @('WPFInstall', 'WPFUninstall', 'WPFDetectInstalled', 'WPFselectedAppsButton')
     $captions = @{
         WPFInstall = '安装 / 升级…'
         WPFUninstall = '卸载…'
+        WPFDetectInstalled = '检测已安装'
         WPFselectedAppsButton = '已选应用: 0'
     }
     foreach ($name in $primaryNames) {
@@ -29,6 +30,7 @@ function Initialize-WinUtilAppCommandBar {
         $button.Name = $name
         $button.Content = $captions[$name]
         $button.ToolTip = $Configuration.$name.Description
+        [Windows.Controls.ToolTipService]::SetShowOnDisabled($button, $true)
         $button.SetResourceReference([Windows.Controls.Control]::StyleProperty, $(if ($name -eq 'WPFInstall') { 'PrimaryButtonStyle' } else { 'HoverButtonStyle' }))
         $button.SetResourceReference([Windows.Controls.Control]::FontSizeProperty, 'ButtonFontSize')
         $button.Width = [double]::NaN
@@ -66,6 +68,7 @@ function Initialize-WinUtilAppCommandBar {
             $item.Name = $entry.Name
             $item.Header = $entry.Value.Content
             $item.ToolTip = $entry.Value.Description
+            [Windows.Controls.ToolTipService]::SetShowOnDisabled($item, $true)
             $item.Padding = '12,7'
             $item.SetResourceReference([Windows.Controls.Control]::ForegroundProperty, 'MainForegroundColor')
             $item.SetResourceReference([Windows.Controls.Control]::BackgroundProperty, 'PanelBackgroundColor')
@@ -116,4 +119,14 @@ function Initialize-WinUtilAppCommandBar {
         $sync.WPFToggleFOSSHighlight = $foss
         $null = $options.Children.Add($foss)
     }
+
+    $inventoryStatus = [Windows.Controls.TextBlock]::new()
+    $inventoryStatus.Margin = '0,5,0,0'
+    $inventoryStatus.TextWrapping = 'Wrap'
+    $inventoryStatus.SetResourceReference([Windows.Controls.TextBlock]::ForegroundProperty, 'SecondaryForegroundColor')
+    $inventoryStatus.SetResourceReference([Windows.Controls.TextBlock]::FontSizeProperty, 'ButtonFontSize')
+    $inventoryStatus.SetResourceReference([Windows.Controls.TextBlock]::FontFamilyProperty, 'FontFamily')
+    $sync.InstallInventoryStatus = $inventoryStatus
+    $null = $layout.Children.Add($inventoryStatus)
+    Update-WinUtilInventoryUi
 }

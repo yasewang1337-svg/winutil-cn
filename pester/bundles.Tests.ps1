@@ -1,9 +1,16 @@
 ﻿BeforeAll {
     $script:bundleRoot = Split-Path $PSScriptRoot -Parent
-    foreach ($name in @('Get-WinUtilBundlePlan', 'New-WinUtilBundleDialog', 'Show-WinUtilBundleDialog', 'Update-WinUtilSelections')) {
+    foreach ($name in @('Test-WinUtilInventoryCurrent', 'Get-WinUtilBundlePlan', 'New-WinUtilBundleDialog', 'Show-WinUtilBundleDialog', 'Update-WinUtilSelections')) {
         . ([scriptblock]::Create((Get-Content (Join-Path $script:bundleRoot "functions/private/$name.ps1") -Raw -Encoding UTF8)))
     }
     . ([scriptblock]::Create((Get-Content (Join-Path $script:bundleRoot 'functions/public/Invoke-WPFBundle.ps1') -Raw -Encoding UTF8)))
+    function New-TestInventory($Programs, $Manager = 'Winget', [switch]$Stale) {
+        [pscustomobject]@{
+            Manager = $Manager; CompletedAt = [datetime]'2026-10-12T10:30:00'; IsStale = $Stale.IsPresent
+            MatchedKeys = @('WPFInstallone')
+            Programs = @($Programs | ForEach-Object { [pscustomobject]@{ Id=$_.Id; Version=$_.Version; Manager=$Manager } })
+        }
+    }
     function Reset-WPFCheckBoxes { param($doToggles, $checkboxfilterpattern) }
 }
 
@@ -40,7 +47,7 @@ Describe 'Bundle selection plans' {
 
     It 'keeps installed apps available for updates without automatically selecting them' {
         $cache = @([pscustomobject]@{ Id = 'Vendor.One'; Version = '1.2' })
-        $plan = @(Get-WinUtilBundlePlan -Bundle $bundle -Applications $catalog -InstalledPrograms $cache)
+        $plan = @(Get-WinUtilBundlePlan -Bundle $bundle -Applications $catalog -Inventory (New-TestInventory $cache))
         $plan[0].InstallState | Should -Be 'Installed'
         $plan[0].InstalledVersion | Should -Be '1.2'
         $plan[0].IsAvailable | Should -BeTrue
@@ -50,9 +57,9 @@ Describe 'Bundle selection plans' {
 
     It 'does not mistake a dependency for the application or carry cache state across calls' {
         $cache = @([pscustomobject]@{ Id = 'Dependency.Shared'; Version = '2.0' })
-        $first = @(Get-WinUtilBundlePlan -Bundle $bundle -Applications $catalog -InstalledPrograms $cache)
+        $first = @(Get-WinUtilBundlePlan -Bundle $bundle -Applications $catalog -Inventory (New-TestInventory $cache))
         $first[0].InstallState | Should -Be 'Unknown'
-        $null = Get-WinUtilBundlePlan -Bundle $bundle -Applications $catalog -InstalledPrograms @([pscustomobject]@{ Id = 'Vendor.One' })
+        $null = Get-WinUtilBundlePlan -Bundle $bundle -Applications $catalog -Inventory (New-TestInventory @([pscustomobject]@{ Id = 'Vendor.One' }))
         $next = @(Get-WinUtilBundlePlan -Bundle $bundle -Applications $catalog)
         $next[0].InstallState | Should -Be 'Unknown'
         $next[0].IsSelected | Should -BeTrue
@@ -74,8 +81,32 @@ Describe 'Bundle selection plans' {
         $selected.Add('WPFInstalltwo')
         $cache = @([pscustomobject]@{ Id = 'Vendor.One'; Version = '1.2' })
         $before = @{ Bundle = $bundle; Selected = @($selected); Cache = $cache } | ConvertTo-Json -Depth 10
-        $null = Get-WinUtilBundlePlan -Bundle $bundle -Applications $catalog -SelectedApps $selected -InstalledPrograms $cache
+        $null = Get-WinUtilBundlePlan -Bundle $bundle -Applications $catalog -SelectedApps $selected -Inventory (New-TestInventory $cache)
         (@{ Bundle = $bundle; Selected = @($selected); Cache = $cache } | ConvertTo-Json -Depth 10) | Should -Be $before
+    }
+
+    It 'keeps stale, mismatched-source and unqualified snapshots unknown' {
+        $cache = @([pscustomobject]@{ Id='Vendor.One'; Version='1.2' })
+        foreach ($inventory in @(
+            (New-TestInventory $cache -Stale),
+            (New-TestInventory $cache -Manager Choco),
+            ([pscustomobject]@{ Programs=$cache; MatchedKeys=@('WPFInstallone') })
+        )) {
+            $plan = @(Get-WinUtilBundlePlan -Bundle $bundle -Applications $catalog -Inventory $inventory)
+            $plan[0].InstallState | Should -Be 'Unknown'
+            $plan[0].IsSelected | Should -BeTrue
+        }
+    }
+
+    It 'uses Chocolatey IDs only for a complete current Chocolatey catalog match' {
+        $catalog.WPFInstallone | Add-Member NoteProperty choco 'shared;one'
+        $inventory = New-TestInventory @([pscustomobject]@{ Id='one'; Version='4.0' }) -Manager Choco
+        $plan = @(Get-WinUtilBundlePlan -Bundle $bundle -Applications $catalog -Inventory $inventory -Manager Choco)
+        $plan[0].InstallState | Should -Be 'Installed'
+        $plan[0].InstalledVersion | Should -Be '4.0'
+        $inventory.MatchedKeys = @()
+        $plan = @(Get-WinUtilBundlePlan -Bundle $bundle -Applications $catalog -Inventory $inventory -Manager Choco)
+        $plan[0].InstallState | Should -Be 'Unknown'
     }
 }
 

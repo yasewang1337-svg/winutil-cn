@@ -6,7 +6,13 @@
     $searchTerm = $SearchString.Trim()
     $sync.InstallSearchText = $SearchString
     $onlySelected = $null -ne $sync.InstallSelectedOnly -and $sync.InstallSelectedOnly.IsChecked -eq $true
-    $filterActive = $onlySelected -or $searchTerm.Length -gt 0
+    $manager = [string]$sync.preferences.packagemanager
+    if ($manager -notin @('Winget', 'Choco')) { $manager = 'Winget' }
+    $inventoryCurrent = (Test-WinUtilInventoryCurrent -Inventory $sync.SoftwareInventory -Manager $manager) -and
+        -not $sync.InventoryScanRunning -and -not $sync.InventoryOperationError
+    $onlyInstalled = $inventoryCurrent -and $null -ne $sync.InstallInstalledOnly -and $sync.InstallInstalledOnly.IsChecked -eq $true
+    $installedKeys = if ($inventoryCurrent) { @($sync.SoftwareInventory.MatchedKeys) } else { @() }
+    $filterActive = $onlySelected -or $onlyInstalled -or $searchTerm.Length -gt 0
     $selected = @($sync.selectedApps)
     $matchCount = 0
     $totalCount = 0
@@ -39,7 +45,8 @@
                     }
                 }
             }
-            if ($matchesText -and (-not $onlySelected -or $selected -contains $key)) {
+            if ($matchesText -and (-not $onlySelected -or $selected -contains $key) -and
+                (-not $onlyInstalled -or $installedKeys -contains $key)) {
                 $border.Visibility = 'Visible'
                 $categoryMatches++
                 $matchCount++
@@ -65,7 +72,9 @@
     if ($sync.InstallClearFilter) { $sync.InstallClearFilter.IsEnabled = $filterActive }
     if ($sync.InstallFilterEmpty) {
         $sync.InstallFilterEmpty.Visibility = if ($matchCount -eq 0) { 'Visible' } else { 'Collapsed' }
-        $sync.InstallFilterEmptyText.Text = if ($onlySelected -and $selected.Count -eq 0) {
+        $sync.InstallFilterEmptyText.Text = if ($onlyInstalled) {
+            '本次检测到的目录软件中没有匹配项。未识别不代表未安装；可清除筛选查看全部，已有勾选会保留。'
+        } elseif ($onlySelected -and $selected.Count -eq 0) {
             '还没有选择软件。关闭“仅看已选”，从列表勾选想安装的软件。'
         } elseif ($onlySelected) {
             '已选软件中没有匹配项。换个关键词，或清除筛选查看全部软件；已有勾选会保留。'

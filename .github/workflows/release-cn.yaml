@@ -35,8 +35,13 @@ jobs:
     permissions:
       contents: read
 
+  inventory-integration:
+    uses: ./.github/workflows/software-inventory-integration.yaml
+    permissions:
+      contents: read
+
   build-release:
-    needs: tests
+    needs: [tests, inventory-integration]
     if: github.ref == 'refs/heads/main'
     runs-on: windows-latest
     steps:
@@ -116,6 +121,14 @@ jobs:
 
           EXE 内嵌本版本脚本，使用 Windows 自带 PowerShell 5.1。首次准备包管理器、下载安装软件和更新仍需要联网；单文件启动不等于离线安装所有软件。
 
+          ## 本版更新：已安装软件检测
+
+          - 新增“检测已安装”：不改变勾选，完成后可用“仅看已装”筛选当前来源识别到的目录软件
+          - 状态行显示来源、检测时间和目录识别数量；未识别不代表未安装
+          - WinGet 改用官方 JSON 导出，避免中文列宽、截断名称和 PowerShell 7 旧解析器不兼容；Chocolatey 2+ 正确识别组合软件
+          - 非零退出、超时、无效数据明确报错；失败保留选择，切换来源或开始软件操作后使旧检测失效
+          - 已安装检测不等于逐软件待更新清单；“查看全部升级操作”仍提供整批结果
+
           ## 功能与使用方式
 
           - 软件管理提供名称与用途列表，整行悬停显示完整介绍；操作前核对选择清单
@@ -157,6 +170,7 @@ jobs:
           - 中文维护：Holha1337；基于 Chris Titus Tech Windows Utility，沿用 MIT 许可
           - Defender：${{ steps.defender.outputs.status }}
           - PowerShell 5.1 / 7 回归测试、产物语法和编码检查通过
+          - 一次性 Windows runner 已验证 WinGet / Chocolatey 实际检测、测试软件安装后识别和卸载后消失；不代表所有第三方软件都可被识别
           - 签名检查：$signatureSummary（NotSigned 表示未签名）；校验文件见 SHA256SUMS.txt
           - 逐文件哈希、实际签名状态、Defender 引擎/病毒库版本、原始扫描输出见 security-scan.json；扫描通过不能保证其他厂商或未来版本不再告警
           - 若被安全软件拦截，请先保留告警名称与文件 SHA256，核对版本并向维护者及检测厂商报告；不要关闭防护或添加排除

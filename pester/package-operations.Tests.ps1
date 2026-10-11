@@ -1,8 +1,8 @@
-BeforeAll {
+﻿BeforeAll {
     $privateNames = @(
         'Get-WinUtilPackagePlan', 'Get-WinUtilPackageResultView', 'Get-WinUtilPackageExitResult', 'Invoke-WinUtilPackageProcess',
         'Install-WinUtilProgramWinget', 'Install-WinUtilProgramChoco', 'Invoke-WinUtilPackageBatch',
-        'Invoke-WinUtilPackageOperation', 'Show-WinUtilPackageDialog', 'Show-WPFInstallAppBusy',
+        'Test-WinUtilInventoryCurrent', 'Update-WinUtilInventoryUi', 'Invalidate-WinUtilInventory', 'Invoke-WinUtilPackageOperation', 'Show-WinUtilPackageDialog', 'Show-WPFInstallAppBusy',
         'Initialize-WinUtilPackageUiCallbacks', 'Invoke-WinUtilPackageUiAction',
         'Hide-WPFInstallAppBusy', 'Install-WinUtilWinget', 'Install-WinUtilChoco', 'Set-WinUtilTaskbaritem'
     )
@@ -246,10 +246,13 @@ Describe 'GUI and automatic invocation boundaries' {
         Mock Invoke-WPFRunspace { & $ScriptBlock -Plan $ParameterList[0][1] }
     }
     It 'runs automatic imports synchronously without opening dialogs and releases busy state' {
+        $sync.SoftwareInventory = [pscustomobject]@{ Manager='Winget'; CompletedAt=[datetime]::Now; MatchedKeys=@('WPFInstallExample') }
         Invoke-WinUtilPackageOperation -Plan $script:onePlan -NonInteractive | Out-Null
         Should -Invoke Show-WinUtilPackageDialog -Times 0 -Exactly
         Should -Invoke Invoke-WPFRunspace -Times 0 -Exactly
         $script:sync.ProcessRunning | Should -BeFalse
+        $sync.SoftwareInventory.IsStale | Should -BeTrue
+        $sync.SoftwareInventory.MatchedKeys | Should -Be 'WPFInstallExample'
     }
     It 'clears busy when automatic execution throws' {
         $script:sync.LastPackageResults = @([pscustomobject]@{ Name = 'Old success'; Status = 'Succeeded' })
@@ -261,11 +264,13 @@ Describe 'GUI and automatic invocation boundaries' {
     }
     It 'honors cancellation without starting a batch' {
         $script:sync.form = [pscustomobject]@{}
+        $sync.SoftwareInventory = [pscustomobject]@{ Manager='Winget'; CompletedAt=[datetime]::Now; MatchedKeys=@('WPFInstallExample') }
         $script:sync.LastPackageResults = @([pscustomobject]@{ Name = 'Earlier task'; Status = 'Succeeded' })
         Invoke-WinUtilPackageOperation -Plan $script:onePlan
         Should -Invoke Invoke-WinUtilPackageBatch -Times 0 -Exactly
         $script:sync.ProcessRunning | Should -BeFalse
         $script:sync.LastPackageResults[0].Name | Should -Be 'Earlier task'
+        (Test-WinUtilInventoryCurrent -Inventory $sync.SoftwareInventory) | Should -BeTrue
     }
     It 'retains the explicit right-click application instead of installing the entire selection' {
         Mock Invoke-WinUtilPackageOperation {}

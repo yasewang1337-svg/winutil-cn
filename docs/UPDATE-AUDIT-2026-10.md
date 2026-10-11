@@ -6,7 +6,15 @@
 
 追加实际验证（2026-10-11）：三个一次性 Windows Server 2025 runner 已完成注册表/服务、独立环回 DNS、包源、软件安装卸载和写入后取消恢复，[实测全部通过](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38103578536)。过程中发现跨 PowerShell 模块路径继承会导致备份或恢复失败，已由 [PR #27](https://github.com/yasewang1337-svg/winutil-cn/pull/27) 修复，纳入 MCP 0.4.1。测试范围见 [说明](../mcp/test/integration/README.md)；这不代表所有桌面系统和任意优化脚本均已真机验收。
 
-## 当前基线
+## 10 月 12 日续查与本轮范围
+
+以 `c96c148` 为起点重新核对：桌面版已到35版，MCP 0.4.1 已在 GitHub 与 npm 交付；上游稳定版和主干仍是26.10.07 / `07ccd8e`。已合入的 Windows 10/11 镜像修复和 MCP 执行／恢复修复，不再作为未完成的代码问题重复安排。镜像真实启动、安装和写盘的验收边界仍保留。
+
+本轮选择软件检测作为升级入口：修复 Chocolatey 组合包漏识别、WinGet 固定跳行解析、PS7 缺少旧解析命令，以及原生命令失败被吞掉；新增不改变勾选的检测与已装筛选，展示来源、时间和识别范围。后端使用[WinGet 官方 JSON 导出](https://learn.microsoft.com/en-us/windows/package-manager/winget/export)与[Chocolatey 本地精简清单](https://docs.chocolatey.org/en-us/choco/commands/list/)，不沿用有中文列宽问题的终端表格解析。安装检测不能替代逐软件待更新列表。
+
+后续优先级仍为：逐软件更新清单、Windows 更新模式切换与恢复、SSH 管理员密钥及只读诊断。开放的依赖 PR #25 是 Zod 3 → 4 的大版本变化，应单独检查兼容性，不能当成普通补丁直接合入。当前阶段的实施、实测与交付证据见 [WORKSTATE.md](../WORKSTATE.md)。
+
+## 10 月 9 日调查基线（历史记录）
 
 | 对象 | 核对结果 |
 | --- | --- |

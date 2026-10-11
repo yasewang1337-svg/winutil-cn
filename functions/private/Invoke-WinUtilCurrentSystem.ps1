@@ -13,32 +13,17 @@ Function Invoke-WinUtilCurrentSystem {
     param(
         $CheckBox
     )
-    if ($CheckBox -eq "choco") {
-        $apps = (choco list | Select-String -Pattern "^\S+").Matches.Value
-        $filter = Get-WinUtilVariables -Type Checkbox | Where-Object {$psitem -like "WPFInstall*"}
-        $sync.GetEnumerator() | Where-Object {$psitem.Key -in $filter} | ForEach-Object {
-            $dependencies = @($sync.configs.applications.$($psitem.Key).choco -split ";")
-            if ($dependencies -in $apps) {
-                Write-Output $psitem.name
-            }
-        }
-    }
-
-    if ($checkbox -eq "winget") {
-
-        $originalEncoding = [Console]::OutputEncoding
-        [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
-        $Sync.InstalledPrograms = winget list -s winget | Select-Object -skip 3 | ConvertFrom-String -PropertyNames "Name", "Id", "Version", "Available" -Delimiter '\s{2,}'
-        [Console]::OutputEncoding = $originalEncoding
-
-        $filter = Get-WinUtilVariables -Type Checkbox | Where-Object {$psitem -like "WPFInstall*"}
-        $sync.GetEnumerator() | Where-Object {$psitem.Key -in $filter} | ForEach-Object {
-            $dependencies = @($sync.configs.applications.$($psitem.Key).winget -split ";")
-
-            if ($dependencies[-1] -in $sync.InstalledPrograms.Id) {
-                Write-Output $psitem.name
-            }
-        }
+    if ($CheckBox -in @('winget', 'choco')) {
+        $manager = if ($CheckBox -eq 'choco') { 'Choco' } else { 'Winget' }
+        $inventory = Get-WinUtilInstalledInventory -Manager $manager
+        # Publish only a fully validated successful snapshot. Failures retain the old one.
+        [Threading.Monitor]::Enter($sync.SyncRoot)
+        try {
+            $sync.SoftwareInventory = $inventory
+            $sync.InstalledPrograms = @($inventory.Programs)
+        } finally { [Threading.Monitor]::Exit($sync.SyncRoot) }
+        $inventory.MatchedKeys
+        return
     }
 
     if ($CheckBox -eq "tweaks") {

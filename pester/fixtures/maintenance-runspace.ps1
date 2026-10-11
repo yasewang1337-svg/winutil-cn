@@ -4,6 +4,7 @@ $root = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 foreach ($relative in @(
     'functions/public/Invoke-WPFFeatureInstall.ps1',
     'functions/public/Invoke-WPFGetInstalled.ps1',
+    'functions/private/Test-WinUtilInventoryCurrent.ps1', 'functions/private/Update-WinUtilInventoryUi.ps1', 'functions/private/Invalidate-WinUtilInventory.ps1',
     'functions/public/Invoke-WPFRunspace.ps1',
     'functions/private/Complete-WinUtilRunspaceJobs.ps1'
 )) {
@@ -16,6 +17,12 @@ $sync = [hashtable]::Synchronized(@{
     preferences = @{ packagemanager = 'Winget' }
     selectedFeatures = @('Feature.One', 'Feature.Two')
     WPFInstallExample = [Windows.Controls.CheckBox]::new()
+    InstallInventoryStatus = [Windows.Controls.TextBlock]::new()
+    InstallInstalledOnly = [Windows.Controls.CheckBox]::new()
+    WPFDetectInstalled = [Windows.Controls.Button]::new()
+    WPFGetInstalled = [Windows.Controls.MenuItem]::new()
+    WingetRadioButton = [Windows.Controls.RadioButton]::new()
+    ChocoRadioButton = [Windows.Controls.RadioButton]::new()
     Events = [System.Collections.Concurrent.ConcurrentQueue[object]]::new()
     Scenario = ''
     FailOperation = $false
@@ -39,6 +46,7 @@ function Invoke-WinUtilCurrentSystem {
     param($CheckBox)
     Add-WinUtilFixtureEvent 'InventoryWorker' $CheckBox
     if ($sync.FailOperation) { throw 'simulated inventory failure' }
+    $sync.SoftwareInventory = [pscustomobject]@{ Manager='Winget'; Programs=@(); MatchedKeys=@('WPFInstallExample'); CompletedAt=[datetime]::Now }
     'WPFInstallExample'
 }
 function Test-WinUtilPackageManager { param([switch]$winget); 'installed' }
@@ -71,11 +79,11 @@ $timer.Add_Tick({
 })
 try {
     # Success after failure exercises dispatch reuse rather than only first-call initialization.
-    foreach ($scenario in @('InventorySuccess', 'InventoryFailure', 'InventoryRetry', 'FeatureSuccess', 'FeatureFailure', 'FeatureRetry')) {
+    foreach ($scenario in @('InventorySuccess', 'InventoryFailure', 'InventoryRetry', 'InventoryReadOnly', 'FeatureSuccess', 'FeatureFailure', 'FeatureRetry')) {
         $sync.Scenario = $scenario
         $sync.FailOperation = $scenario -match 'Failure$'
         $sync.WPFInstallExample.IsChecked = $false
-        if ($scenario -like 'Inventory*') { Invoke-WPFGetInstalled -checkbox winget }
+        if ($scenario -like 'Inventory*') { Invoke-WPFGetInstalled -checkbox winget -SelectDetected:($scenario -ne 'InventoryReadOnly') }
         else { Invoke-WPFFeatureInstall }
         if (-not $sync.ProcessRunning) { throw "$scenario did not reserve busy before returning to the UI" }
         $jobs = @($sync.RunspaceJobs.Values)
@@ -107,8 +115,14 @@ try {
             if (@($events | Where-Object { $_.Kind -eq 'Taskbar' -and $_.Value -match 'checkmark' }).Count) { throw "$scenario reported false success" }
         } else {
             if ($dialogs.Count) { throw "$scenario unexpectedly opened an error dialog" }
-            if ($scenario -like 'Inventory*' -and (-not $sync.WPFInstallExample.IsChecked -or @($events | Where-Object Kind -eq 'Checkbox').Count -ne 1)) {
+            if ($scenario -like 'Inventory*' -and $scenario -ne 'InventoryReadOnly' -and (-not $sync.WPFInstallExample.IsChecked -or @($events | Where-Object Kind -eq 'Checkbox').Count -ne 1)) {
                 throw "$scenario did not apply the checkbox through the UI dispatcher"
+            }
+            if ($scenario -eq 'InventoryReadOnly' -and ($sync.WPFInstallExample.IsChecked -or @($events | Where-Object Kind -eq 'Checkbox').Count -ne 0)) {
+                throw "$scenario changed software selection"
+            }
+            if ($scenario -like 'Inventory*' -and (-not $sync.InstallInstalledOnly.IsEnabled -or -not $sync.WPFDetectInstalled.IsEnabled -or $sync.InstallInventoryStatus.Text -notmatch 'WinGet')) {
+                throw "$scenario did not refresh detection controls on the UI thread"
             }
         }
         Complete-WinUtilRunspaceJobs
@@ -126,4 +140,4 @@ try {
     $sync.runspace.Dispose()
     $sync.Form.Close()
 }
-Write-Output "PowerShell $($PSVersionTable.PSVersion): maintenance worker and real WPF dispatcher passed; scenarios=6; callbacks kept busy; no system commands"
+Write-Output "PowerShell $($PSVersionTable.PSVersion): maintenance worker and real WPF dispatcher passed; scenarios=7; callbacks kept busy; no system commands"

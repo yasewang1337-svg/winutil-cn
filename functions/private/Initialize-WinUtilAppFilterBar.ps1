@@ -30,9 +30,23 @@
     $onlySelected.Add_Unchecked($filterChanged)
     $sync.InstallSelectedOnly = $onlySelected
     $null = $toolbar.Children.Add($onlySelected)
+    $onlyInstalled = [Windows.Controls.CheckBox]::new()
+    $onlyInstalled.Content = '仅看已装'
+    $onlyInstalled.Margin = '0,5,16,5'
+    $onlyInstalled.VerticalAlignment = 'Center'
+    $onlyInstalled.IsEnabled = $false
+    $onlyInstalled.SetResourceReference([Windows.Controls.Control]::ForegroundProperty, 'MainForegroundColor')
+    $onlyInstalled.SetResourceReference([Windows.Controls.Control]::FontFamilyProperty, 'FontFamily')
+    $onlyInstalled.SetResourceReference([Windows.Controls.Control]::FontSizeProperty, 'ButtonFontSize')
+    [Windows.Controls.ToolTipService]::SetShowOnDisabled($onlyInstalled, $true)
+    [Windows.Automation.AutomationProperties]::SetName($onlyInstalled, '仅看检测到的已装软件')
+    $onlyInstalled.Add_Checked($filterChanged)
+    $onlyInstalled.Add_Unchecked($filterChanged)
+    $sync.InstallInstalledOnly = $onlyInstalled
+    $null = $toolbar.Children.Add($onlyInstalled)
     $clear = [Windows.Controls.Button]::new()
     $clear.Content = '清除筛选'
-    $clear.ToolTip = '清空搜索并关闭“仅看已选”，保留已有勾选。'
+    $clear.ToolTip = '清空搜索并关闭“仅看已选”和“仅看已装”，保留已有勾选。'
     $clear.Padding = '8,3,8,3'
     $clear.Margin = '0,1,0,1'
     $clear.SetResourceReference([Windows.Controls.Control]::StyleProperty, 'HoverButtonStyle')
@@ -42,5 +56,6 @@
     $clear.Add_Click({ Reset-WinUtilAppFilter })
     $sync.InstallClearFilter = $clear
     $null = $toolbar.Children.Add($clear)
+    Update-WinUtilInventoryUi
     return $toolbar
 }
