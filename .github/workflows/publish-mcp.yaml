@@ -1,8 +1,8 @@
 name: 构建 MCP 发布包（npm 可选）
 
 # 单独发布 MCP 包，不触发桌面 PS1/EXE 发布。
-# NPM_TOKEN 须为有此包发布权限的有效 granular token；需要时启用发布用 bypass 2FA。
-# Trusted publishing 需要 npm 包所有者另行配置；本工作流不更改账号认证设置。
+# 使用 npm Trusted Publisher 的短期 OIDC 凭据，不读取 NPM_TOKEN。
+# npm 端必须授权本仓库 publish-mcp.yaml 直接发布；此处不更改账号设置。
 on:
   push:
     tags: ['mcp-v*']
@@ -17,6 +17,10 @@ on:
         type: boolean
         default: false
         required: false
+      existing_run_id:
+        description: '可选：复用成功的同版本标签构建 run ID，上传原包，不重新打包'
+        type: string
+        required: false
 
 permissions:
   contents: read
@@ -27,22 +31,27 @@ concurrency:
 
 jobs:
   tests:
+    if: ${{ !inputs.existing_run_id }}
     uses: ./.github/workflows/mcp-tests.yaml
     permissions:
       contents: read
 
   integration:
+    if: ${{ !inputs.existing_run_id }}
     uses: ./.github/workflows/mcp-integration.yaml
     permissions:
       contents: read
 
   package:
     name: Verify version and package once
+    if: ${{ !inputs.existing_run_id }}
     needs: [tests, integration]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     outputs:
       version: ${{ steps.version.outputs.version }}
+      source_commit: ${{ github.sha }}
+      source_run_id: ${{ github.run_id }}
     defaults:
       run:
         working-directory: mcp
@@ -125,10 +134,97 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
+  reuse:
+    name: Verify and reuse a released tarball
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.existing_run_id }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      version: ${{ steps.source.outputs.version }}
+      source_commit: ${{ steps.source.outputs.source_commit }}
+      source_run_id: ${{ inputs.existing_run_id }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Resolve and validate the original version tag
+        id: source
+        env:
+          REQUESTED_VERSION: ${{ inputs.version }}
+          EXISTING_RUN_ID: ${{ inputs.existing_run_id }}
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import assert from 'node:assert/strict';
+          import { execFileSync } from 'node:child_process';
+          assert.match(process.env.EXISTING_RUN_ID, /^[1-9]\d*$/);
+          const pkg = JSON.parse(fs.readFileSync('mcp/package.json', 'utf8'));
+          const version = process.env.REQUESTED_VERSION || pkg.version;
+          assert.match(version, /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/);
+          assert.equal(pkg.name, 'winutil-cn-mcp');
+          assert.equal(version, pkg.version, 'reuse must match the checked-out package version');
+          const tag = `refs/tags/mcp-v${version}`;
+          assert.ok(['refs/heads/main', tag].includes(process.env.GITHUB_REF), 'only main or the version tag can publish');
+          const source = execFileSync('git', ['rev-parse', `${tag}^{commit}`], { encoding: 'utf8' }).trim();
+          assert.match(source, /^[0-9a-f]{40}$/);
+          execFileSync('git', ['merge-base', '--is-ancestor', source, 'origin/main']);
+          const original = JSON.parse(execFileSync('git', ['show', `${source}:mcp/package.json`], { encoding: 'utf8' }));
+          assert.equal(original.name, pkg.name);
+          assert.equal(original.version, version);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\nsource_commit=${source}\n`);
+          NODE
+      - name: Verify the original successful build
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXISTING_RUN_ID: ${{ inputs.existing_run_id }}
+          PACKAGE_VERSION: ${{ steps.source.outputs.version }}
+          PACKAGE_SOURCE_COMMIT: ${{ steps.source.outputs.source_commit }}
+          PACKAGE_RUN_ID: ${{ inputs.existing_run_id }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$EXISTING_RUN_ID" > "$RUNNER_TEMP/build-run.json"
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import { verifyBuildRun } from './mcp/release/verify-artifact.mjs';
+          verifyBuildRun(JSON.parse(fs.readFileSync(`${process.env.RUNNER_TEMP}/build-run.json`, 'utf8')), {
+            runId: process.env.PACKAGE_RUN_ID, repository: process.env.GITHUB_REPOSITORY,
+            version: process.env.PACKAGE_VERSION, sourceCommit: process.env.PACKAGE_SOURCE_COMMIT,
+          });
+          NODE
+      - uses: actions/download-artifact@v8
+        with:
+          name: mcp-npm-release
+          path: ${{ runner.temp }}/mcp-package
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.existing_run_id }}
+      - name: Verify the original artifact and offline entry
+        env:
+          PACKAGE_VERSION: ${{ steps.source.outputs.version }}
+          PACKAGE_SOURCE_COMMIT: ${{ steps.source.outputs.source_commit }}
+          PACKAGE_RUN_ID: ${{ inputs.existing_run_id }}
+          EXISTING_RUN_ID: ${{ inputs.existing_run_id }}
+          BUILD_RUN_FILE: ${{ runner.temp }}/build-run.json
+        run: |
+          node mcp/release/verify-artifact.mjs "$RUNNER_TEMP/mcp-package"
+          npm ci --ignore-scripts --prefix mcp
+          npm --prefix mcp run test:pack -- --tarball "$RUNNER_TEMP/mcp-package/winutil-cn-mcp-$PACKAGE_VERSION.tgz"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: mcp-npm-release
+          path: ${{ runner.temp }}/mcp-package/
+          if-no-files-found: error
+          retention-days: 90
+
   publish:
     name: Publish tested tarball
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_npm }}
-    needs: package
+    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' && inputs.publish_npm && (needs.package.result == 'success' || needs.reuse.result == 'success') }}
+    needs: [package, reuse]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -140,6 +236,7 @@ jobs:
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false
       - uses: actions/download-artifact@v8
         with:
           name: mcp-npm-release
@@ -147,20 +244,17 @@ jobs:
       - name: Verify downloaded package identity and hashes
         id: evidence
         env:
-          PACKAGE_VERSION: ${{ needs.package.outputs.version }}
+          PACKAGE_VERSION: ${{ needs.reuse.outputs.version || needs.package.outputs.version }}
+          PACKAGE_SOURCE_COMMIT: ${{ needs.reuse.outputs.source_commit || needs.package.outputs.source_commit }}
+          PACKAGE_RUN_ID: ${{ needs.reuse.outputs.source_run_id || needs.package.outputs.source_run_id }}
         run: |
           node --input-type=module <<'NODE'
           import fs from 'node:fs';
-          import assert from 'node:assert/strict';
-          import { createHash } from 'node:crypto';
-          const evidence = JSON.parse(fs.readFileSync('package/release-evidence.json', 'utf8'));
-          assert.equal(evidence.package, 'winutil-cn-mcp');
-          assert.equal(evidence.version, process.env.PACKAGE_VERSION);
-          assert.equal(evidence.sourceCommit, process.env.GITHUB_SHA);
-          assert.equal(evidence.filename, `winutil-cn-mcp-${evidence.version}.tgz`);
-          const bytes = fs.readFileSync(`package/${evidence.filename}`);
-          assert.equal(createHash('sha256').update(bytes).digest('hex'), evidence.sha256);
-          assert.equal('sha512-' + createHash('sha512').update(bytes).digest('base64'), evidence.integrity);
+          import { verifyArtifact } from './mcp/release/verify-artifact.mjs';
+          const evidence = await verifyArtifact('package', {
+            version: process.env.PACKAGE_VERSION, sourceCommit: process.env.PACKAGE_SOURCE_COMMIT,
+            runId: process.env.PACKAGE_RUN_ID,
+          });
           fs.appendFileSync(process.env.GITHUB_OUTPUT, `filename=${evidence.filename}\n`);
           NODE
       - name: Check whether this exact package is already published
@@ -187,17 +281,13 @@ jobs:
       - name: Publish without rebuilding
         if: steps.registry.outputs.exists == 'false'
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           PACKAGE_FILENAME: ${{ steps.evidence.outputs.filename }}
         run: |
-          if [ -z "$NODE_AUTH_TOKEN" ]; then
-            echo "::error::NPM_TOKEN 缺失。需要包所有者配置有效且仅具所需包发布权限的 granular token（按包策略启用发布用 bypass 2FA），或另行配置 npm trusted publishing。"
-            exit 1
-          fi
+          node -e "const v=require('node:child_process').execFileSync('npm',['--version'],{encoding:'utf8'}).trim().split('.').map(Number);if(v[0]<11||(v[0]===11&&(v[1]<5||(v[1]===5&&v[2]<1))))throw new Error('Trusted publishing requires npm >=11.5.1')"
           npm publish "./package/$PACKAGE_FILENAME" --ignore-scripts --provenance --access public
       - name: Verify registry integrity
         env:
-          PACKAGE_VERSION: ${{ needs.package.outputs.version }}
+          PACKAGE_VERSION: ${{ needs.reuse.outputs.version || needs.package.outputs.version }}
         run: |
           npm view "winutil-cn-mcp@$PACKAGE_VERSION" dist --json > package/registry-dist.json
           node --input-type=module <<'NODE'

@@ -26,4 +26,6 @@
 
 MCP 与桌面版独立发版。先在 `mcp/package.json` 与 `mcp/package-lock.json` 提交相同版本并合入 main，再推送对应 `mcp-v<版本>` 标签；手动发布只接受 main 或匹配版本的标签，版本输入仅用于校验，不会修改文件。工作流产物 `mcp-npm-release` 保存可用于 GitHub Release 的实际安装包、SHA256、SHA512 integrity、源码提交及版本证据。标签默认只构建，不尝试 npm 上传；npm 授权完成后由维护者手动勾选 `publish_npm`，启用时另有 `mcp-npm-registry-verification` 保存 registry 对照结果。
 
-当前发布沿用 `NPM_TOKEN` secret。npm 已停用旧式 classic/Automation token，需由包所有者维护有发布权限的 granular token，并按包策略启用发布用 bypass 2FA；token 失效或缺失会明确失败。也可由所有者在 npm 配置 [trusted publishing](https://docs.npmjs.com/trusted-publishers/)，配置完成后再调整工作流；不能把 GitHub OIDC 权限本身当作 npm 已授权。详见 [npm 发布双因素认证要求](https://docs.npmjs.com/requiring-2fa-for-package-publishing-and-settings-modification/)。
+发布使用 npm [trusted publishing](https://docs.npmjs.com/trusted-publishers/) 的短期 OIDC 凭据，不再读取 `NPM_TOKEN`。包所有者须在 npm 的 Settings → Trusted Publisher 配置 GitHub 用户 `yasewang1337-svg`、仓库 `winutil-cn`、工作流文件名 `publish-mcp.yaml`，环境留空，并允许 `npm publish`；不需要额外授权管理 dist-tags。发布 job 使用 GitHub 托管 runner、Node 24、npm ≥11.5.1 和 `id-token: write`，自动附带来源证明。工作流不会替所有者修改 npm 账号或包权限，未建立信任时上传仍会失败。
+
+补发已经测试并保留的原包时，在 main 手动填写同版本及 `existing_run_id`（最初成功的 `mcp-v<版本>` 标签构建运行 ID），再按需要勾选 `publish_npm`。流程核对原运行所属仓库、工作流、标签、源码提交和成功结果，从该运行下载 `mcp-npm-release`，验证 SHA256/SHA512、原版本证据与离线 MCP 入口，然后上传同一份 tarball；不重新打包。当前源码的包版本及数据必须仍与原包匹配。原构建附件过期、版本或哈希不符都会停止，不会回退为重新构建同版本。留空 `existing_run_id` 时仍执行完整回归与实际修改/恢复测试，再构建新包。
