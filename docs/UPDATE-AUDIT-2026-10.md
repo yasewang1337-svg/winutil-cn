@@ -2,7 +2,7 @@
 
 调查日期：2026-10-09（Asia/Taipei）。范围覆盖中文桌面版、官方上游、软件目录、MCP npm 包、依赖、测试、文档和 GitHub 维护。按真实影响安排顺序，区分已复现问题、代码差距与产品建议。
 
-后续进度（2026-10-11）：MCP 0.4.0 已实现默认只读、一次性确认、受控执行与备份、准确错误反馈、数据溯源和离线打包验证，发布验收进行中。具体兼容性变化见 [MCP 变更记录](../mcp/CHANGELOG.md)，交付状态以 [WORKSTATE.md](../WORKSTATE.md) 为准。下文保留 10 月 9 日调查时的基线与发现。
+后续进度（2026-10-11）：MCP 0.4.0 已实现默认只读、一次性确认、受控执行与备份、准确错误反馈、数据溯源和离线打包验证，通过 Windows/Linux CI 后[发布 GitHub 安装包](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/mcp-v0.4.0)。npm 上传被现有认证拒绝，按维护者决定暂缓；当前通过 GitHub 包接入。具体兼容性变化见 [MCP 变更记录](../mcp/CHANGELOG.md)，交付状态以 [WORKSTATE.md](../WORKSTATE.md) 为准。下文保留 10 月 9 日调查时的基线与发现。
 
 ## 当前基线
 
