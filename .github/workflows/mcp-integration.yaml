@@ -1,0 +1,64 @@
+name: MCP disposable Windows integration
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ['mcp/test/integration/**', 'mcp/lib/executor.mjs', 'mcp/lib/server.mjs', 'mcp/powershell/**', '.github/workflows/mcp-integration.yaml']
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mcp-disposable-integration-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  integration:
+    name: Real Windows changes (${{ matrix.suite }})
+    runs-on: windows-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [worker, dns, tools]
+    env:
+      WINUTIL_MCP_DISPOSABLE_TEST: '1'
+    steps:
+      - name: Require a disposable GitHub-hosted Windows VM
+        run: |
+          if ($env:GITHUB_ACTIONS -ne 'true' -or $env:RUNNER_ENVIRONMENT -ne 'github-hosted' -or $env:RUNNER_OS -ne 'Windows') { throw 'Local and self-hosted execution is forbidden' }
+          "WINUTIL_MCP_EVIDENCE_DIR=$(Join-Path $env:RUNNER_TEMP 'mcp-integration-evidence')" >> $env:GITHUB_ENV
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: mcp/package-lock.json
+      - name: Install locked test dependencies
+        run: npm ci --ignore-scripts
+        working-directory: mcp
+      - name: Registry and service roundtrip (PowerShell 5.1)
+        if: matrix.suite == 'worker'
+        run: ./mcp/test/integration/worker-roundtrip.ps1 -PowerShellExecutable powershell.exe -EvidenceDirectory $env:WINUTIL_MCP_EVIDENCE_DIR
+      - name: Registry and service roundtrip (PowerShell 7)
+        if: ${{ !cancelled() && matrix.suite == 'worker' }}
+        run: ./mcp/test/integration/worker-roundtrip.ps1 -PowerShellExecutable pwsh.exe -EvidenceDirectory $env:WINUTIL_MCP_EVIDENCE_DIR
+      - name: Real MCP confirmation, cancellation and restoration
+        if: ${{ !cancelled() && matrix.suite == 'worker' }}
+        run: node mcp/test/integration/mcp-roundtrip.mjs
+      - name: DNS roundtrip on a new isolated loopback adapter
+        if: matrix.suite == 'dns'
+        run: ./mcp/test/integration/dns-roundtrip.ps1 -EvidenceDirectory $env:WINUTIL_MCP_EVIDENCE_DIR
+      - name: Package installation and mirror roundtrip
+        if: matrix.suite == 'tools'
+        run: node mcp/test/integration/tools-roundtrip.mjs
+      - name: Preserve real-system evidence, including failures
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mcp-real-${{ matrix.suite }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}\mcp-integration-evidence\
+          if-no-files-found: error
+          retention-days: 30

@@ -2,7 +2,19 @@
 
 更新：2026-10-11。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
 
-## 当前任务：MCP 修复与 GitHub 0.4.0 发布（已交付；npm 按用户决定暂缓）
+## 当前任务：MCP 隔离环境实际修改与恢复验证（进行中）
+
+用户要求继续在测试环境验证实际修改和恢复，明确不动正在使用的系统。基于 main `5b856c2`，分支 `codex/mcp-disposable-validation-20261011`。采用三个独立 GitHub-hosted 一次性 Windows runner；不在宿主运行真实修改、不启用本机虚拟化。npm 发布仍按用户决定暂缓。
+
+并行实现：`mcp_real_worker_tests` 负责真实注册表/服务/备份 ACL 与部分失败；`mcp_real_dns_tests` 负责独立内置环回网卡的 DNS 修改/恢复和已有网卡不变；`mcp_real_tools_tests` 负责真实 MCP 包源及 WinGet 安装/卸载。主助手负责真实 stdio 确认、写入后取消与恢复、工作流、整合验收。脚本入口均限制 GitHub 托管 Windows 环境；本机只做语法检查和无害测试。
+
+实现位于 `mcp/test/integration/`，执行入口 `.github/workflows/mcp-integration.yaml`。当前脚本已完成，真实 runner 结果待执行，不能将静态检查计作实际通过。后续先提交 PR 触发隔离 CI，依据真实证据区分生产缺陷、测试脚本问题和环境缺项，再修复复测。
+
+[PR #27](https://github.com/yasewang1337-svg/winutil-cn/pull/27) 首轮隔离运行 `38103188490`（分支 `abb49e1`，PR 测试合并提交 `808d7e3`）完成：双 PowerShell 的 HKCU/HKLM 全类型实际写入/恢复、请求拒绝和备份碰撞通过；npm/Yarn/Go 配置改动后逐字节恢复，以及 WinGet 安装/运行 hexyl/卸载通过。DNS 新建独立环回设备、错误身份拒绝、清理及原有 DNS 未变通过，但备份时模块加载失败；MCP 独立恢复入口同样失败。真实证据在 `.artifacts/mcp-real-20261011/run1/`。
+
+已定位：PS7→中间进程→PS5.1 继承的 PSModulePath 导致系统模块误加载，属生产兼容性缺陷，修复 worker 本进程模块路径；另两处属测试问题：ACL 快照直接写回未标记变更、SDK 的 PATH/Path 重复键使 pip 夹具选择了另一工具，已修测试并补回归。尚待第二轮真机实测，首轮红灯不算通过。宿主未执行真实系统写入。
+
+## 上一阶段：MCP 修复与 GitHub 0.4.0 发布（已交付；npm 按用户决定暂缓）
 
 用户要求根据 MCP 检查结果，多智能体并行修复、完善功能、测试通过后发布新版并同步 GitHub 说明。基于 main `05785e2`，分支 `codex/mcp-reliability-20261011`；目标包 `winutil-cn-mcp@0.4.0`，桌面35版保持现有发布。
 
