@@ -1,67 +1,211 @@
 name: 发布 MCP 到 npm
 
-# 打 mcp-v* 标签(如 mcp-v0.2.1)或手动触发 → 自动发布 mcp/ 到 npm。
-# 前置:仓库 Settings → Secrets and variables → Actions 里加一个 NPM_TOKEN(npm 的 Automation 访问令牌)。
-
+# 单独发布 MCP 包，不触发桌面 PS1/EXE 发布。
+# NPM_TOKEN 须为有此包发布权限的有效 granular token；需要时启用发布用 bypass 2FA。
+# Trusted publishing 需要 npm 包所有者另行配置；本工作流不更改账号认证设置。
 on:
   push:
     tags: ['mcp-v*']
   workflow_dispatch:
     inputs:
       version:
-        description: '版本号(如 0.2.1);留空=用 package.json 现有版本'
+        description: '待发布版本，必须等于 package.json / package-lock.json；留空使用现有版本'
+        type: string
         required: false
 
 permissions:
   contents: read
-  id-token: write   # npm provenance 供应链溯源需要
+
+concurrency:
+  group: publish-mcp
+  cancel-in-progress: false
 
 jobs:
-  publish:
+  tests:
+    uses: ./.github/workflows/mcp-tests.yaml
+    permissions:
+      contents: read
+
+  package:
+    name: Verify version and package once
+    needs: tests
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     defaults:
       run:
         working-directory: mcp
     steps:
-      - name: 检出仓库
-        uses: actions/checkout@v7
-
-      - name: 配置 Node + npm 源
-        uses: actions/setup-node@v7
+      - uses: actions/checkout@v7
         with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: 确定版本(标签优先)
-        id: ver
-        shell: bash
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: mcp/package-lock.json
+      - name: Verify release ref and committed versions
+        id: version
+        env:
+          REQUESTED_VERSION: ${{ inputs.version }}
         run: |
-          if [ "${{ github.event_name }}" = "push" ]; then
-            V="${GITHUB_REF_NAME#mcp-v}"
-          else
-            V="${{ github.event.inputs.version }}"
-          fi
-          if [ -n "$V" ]; then
-            npm version "$V" --no-git-tag-version --allow-same-version
-          fi
-          echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+          git merge-base --is-ancestor HEAD origin/main
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import assert from 'node:assert/strict';
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          const lock = JSON.parse(fs.readFileSync('package-lock.json', 'utf8'));
+          const version = pkg.version;
+          assert.match(version, /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/);
+          assert.equal(pkg.name, 'winutil-cn-mcp');
+          assert.equal(lock.version, version, 'lockfile top-level version differs');
+          assert.equal(lock.packages?.['']?.version, version, 'lockfile root version differs');
+          const ref = process.env.GITHUB_REF;
+          const tag = `refs/tags/mcp-v${version}`;
+          if (process.env.GITHUB_EVENT_NAME === 'push') {
+            assert.equal(ref, tag, 'tag must match the committed package version');
+          } else {
+            assert.ok(ref === 'refs/heads/main' || ref === tag, 'manual releases must use main or the matching version tag');
+          }
+          if (process.env.REQUESTED_VERSION) assert.equal(process.env.REQUESTED_VERSION, version, 'requested version differs');
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\n`);
+          NODE
+      - name: Install locked dependencies without lifecycle scripts
+        run: npm ci --ignore-scripts
+      - name: Build the release tarball once
+        env:
+          WINUTIL_MCP_REQUIRE_CLEAN: '1'
+        run: |
+          mkdir -p "$RUNNER_TEMP/mcp-package"
+          npm pack --json --offline --pack-destination "$RUNNER_TEMP/mcp-package" > "$RUNNER_TEMP/mcp-package/pack.json"
+      - name: Verify that exact tarball offline
+        env:
+          PACKAGE_VERSION: ${{ steps.version.outputs.version }}
+        run: npm run test:pack -- --tarball "$RUNNER_TEMP/mcp-package/winutil-cn-mcp-$PACKAGE_VERSION.tgz"
+      - name: Record tarball hash and source
+        env:
+          PACKAGE_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import path from 'node:path';
+          import { createHash } from 'node:crypto';
+          const version = process.env.PACKAGE_VERSION;
+          const filename = `winutil-cn-mcp-${version}.tgz`;
+          const directory = path.join(process.env.RUNNER_TEMP, 'mcp-package');
+          const bytes = fs.readFileSync(path.join(directory, filename));
+          const sha256 = createHash('sha256').update(bytes).digest('hex');
+          const integrity = 'sha512-' + createHash('sha512').update(bytes).digest('base64');
+          const evidence = {
+            package: 'winutil-cn-mcp', version, filename, sha256, integrity,
+            sourceCommit: process.env.GITHUB_SHA, sourceRef: process.env.GITHUB_REF,
+            runId: process.env.GITHUB_RUN_ID, node: process.version,
+            verification: 'Windows Node 22/24 and Linux Node 24 regression; exact tarball offline stdio',
+          };
+          fs.writeFileSync(path.join(directory, 'release-evidence.json'), JSON.stringify(evidence, null, 2) + '\n');
+          fs.writeFileSync(path.join(directory, 'SHA256SUMS.txt'), `${sha256}  ${filename}\n`);
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `MCP ${version}\n\nSource: ${evidence.sourceCommit}\n\nSHA256: ${sha256}\n`);
+          NODE
+      - name: Retain the tested package and evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: mcp-npm-release
+          path: ${{ runner.temp }}/mcp-package/
+          if-no-files-found: error
+          retention-days: 90
 
-      - name: 安装依赖
-        run: npm ci
-
-      - name: 生成打包快照 data.json
-        run: node build-data.js
-
-      - name: 发布到 npm
+  publish:
+    name: Publish tested tarball
+    needs: package
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+      - uses: actions/download-artifact@v8
+        with:
+          name: mcp-npm-release
+          path: package
+      - name: Verify downloaded package identity and hashes
+        id: evidence
+        env:
+          PACKAGE_VERSION: ${{ needs.package.outputs.version }}
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import assert from 'node:assert/strict';
+          import { createHash } from 'node:crypto';
+          const evidence = JSON.parse(fs.readFileSync('package/release-evidence.json', 'utf8'));
+          assert.equal(evidence.package, 'winutil-cn-mcp');
+          assert.equal(evidence.version, process.env.PACKAGE_VERSION);
+          assert.equal(evidence.sourceCommit, process.env.GITHUB_SHA);
+          assert.equal(evidence.filename, `winutil-cn-mcp-${evidence.version}.tgz`);
+          const bytes = fs.readFileSync(`package/${evidence.filename}`);
+          assert.equal(createHash('sha256').update(bytes).digest('hex'), evidence.sha256);
+          assert.equal('sha512-' + createHash('sha512').update(bytes).digest('base64'), evidence.integrity);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `filename=${evidence.filename}\n`);
+          NODE
+      - name: Check whether this exact package is already published
+        id: registry
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import assert from 'node:assert/strict';
+          import { spawnSync } from 'node:child_process';
+          const evidence = JSON.parse(fs.readFileSync('package/release-evidence.json', 'utf8'));
+          const result = spawnSync('npm', ['view', `${evidence.package}@${evidence.version}`, 'dist', '--json'], { encoding: 'utf8', timeout: 60000 });
+          if (result.error) throw result.error;
+          let data;
+          try { data = JSON.parse(result.stdout); } catch { throw new Error('npm registry response was not valid JSON; publication was not attempted'); }
+          if (result.status === 0) {
+            assert.equal(data.integrity, evidence.integrity, 'this version already exists with different content; choose a new committed version');
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'exists=true\n');
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, '同版本及相同 integrity 已存在，跳过重复发布并继续验证。\n');
+          } else {
+            assert.equal(data.error?.code, 'E404', 'registry lookup failed; publication was not attempted');
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'exists=false\n');
+          }
+          NODE
+      - name: Publish without rebuilding
+        if: steps.registry.outputs.exists == 'false'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          PACKAGE_FILENAME: ${{ steps.evidence.outputs.filename }}
         run: |
-          if [ -z "${NODE_AUTH_TOKEN}" ]; then
-            echo "::error::NPM_TOKEN secret 未设置或为空 —— 请到 仓库 Settings → Secrets and variables → Actions → Repository secrets 添加名为 NPM_TOKEN 的 npm Automation 令牌"
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "::error::NPM_TOKEN 缺失。需要包所有者配置有效且仅具所需包发布权限的 granular token（按包策略启用发布用 bypass 2FA），或另行配置 npm trusted publishing。"
             exit 1
           fi
-          npm config set //registry.npmjs.org/:_authToken "${NODE_AUTH_TOKEN}"
-          npm publish --provenance --access public
-
-      - name: 摘要
-        run: echo "已发布 winutil-cn-mcp@${{ steps.ver.outputs.version }} 到 npm" >> "$GITHUB_STEP_SUMMARY"
+          npm publish "./package/$PACKAGE_FILENAME" --ignore-scripts --provenance --access public
+      - name: Verify registry integrity
+        env:
+          PACKAGE_VERSION: ${{ needs.package.outputs.version }}
+        run: |
+          npm view "winutil-cn-mcp@$PACKAGE_VERSION" dist --json > package/registry-dist.json
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import assert from 'node:assert/strict';
+          const evidence = JSON.parse(fs.readFileSync('package/release-evidence.json', 'utf8'));
+          const dist = JSON.parse(fs.readFileSync('package/registry-dist.json', 'utf8'));
+          assert.equal(dist.integrity, evidence.integrity, 'registry package differs from tested tarball');
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,
+            `已发布 [winutil-cn-mcp@${evidence.version}](https://www.npmjs.com/package/winutil-cn-mcp/v/${evidence.version})，registry SHA512 与已测试包一致。\n\nSHA256: ${evidence.sha256}\n`);
+          NODE
+      - name: Retain registry verification evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mcp-npm-registry-verification
+          path: |
+            package/release-evidence.json
+            package/SHA256SUMS.txt
+            package/registry-dist.json
+          if-no-files-found: error
+          retention-days: 90

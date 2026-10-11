@@ -152,7 +152,7 @@ powershell -NoProfile -File tools\Test-Build.ps1
 
 自动模式仅支持软件操作及可记录的基础注册表设置（含受支持的开关）；脚本、服务、预装应用移除（Appx）、DNS 和系统功能等复杂操作需要在图形界面核对。具体项目见 [config/preset.json](config/preset.json)。
 
-[MCP 服务器](mcp/README.md)可供支持 MCP 的客户端查询软件、组合和系统设置。截至 2026-10-09，npm 发布仍为独立的 0.3.0，未包含桌面版 30 的工具下载安全修复；其系统修改接口还有错误反馈和恢复缺口，当前建议只使用查询工具。GitHub EXE/PS1 的更新不会自动更新 npm 包，详情见 [MCP 使用边界](mcp/README.md)。
+[MCP 服务器](mcp/README.md)供支持 MCP 的客户端查询软件、组合、系统设置和 DNS。0.4.0 默认只读；显式启用修改后，仍须先预览，再用同一参数与一次性计划确认。支持指定软件安装、开发工具换源、受支持的注册表/服务设置和选定网卡 DNS；复杂脚本优化会明确拒绝，并指引使用桌面版。数据来源、执行错误和恢复范围均可查看。MCP 是独立 npm 包，GitHub EXE/PS1 更新不会自动更新它；接入与版本说明见 [MCP 指南](mcp/README.md)。
 
 </details>
 

@@ -1,27 +1,32 @@
 {
   "name": "winutil-cn-mcp",
-  "version": "0.3.0",
-  "description": "MCP 服务器:让 AI 智能体按意图驱动 WinUtil 中文汉化版 —— 搜索/安装软件、套用组合、一键换源、查询/应用优化项、配置 DNS。让 Claude 帮你按意图配 Windows。",
+  "version": "0.4.0",
+  "description": "WinUtil 中文版 MCP：默认只读查询软件、组合、优化项与 DNS，可显式启用受约束的修改工具。",
   "type": "module",
   "bin": {
     "winutil-cn-mcp": "index.js"
   },
   "files": [
     "index.js",
+    "build-data.js",
     "data.json",
+    "lib/",
+    "powershell/",
     "README.md"
   ],
   "scripts": {
     "build": "node build-data.js",
-    "prepublishOnly": "node build-data.js"
+    "prepack": "node build-data.js",
+    "test": "node --test test/*.test.mjs",
+    "test:pack": "node test/verify-package.mjs"
   },
   "keywords": ["mcp", "winutil", "windows", "ai", "claude", "chinese", "winget"],
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.4",
-    "zod": "^3.23.8"
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "zod": "^3.25.76"
   },
   "license": "MIT",
   "author": "Holha1337",

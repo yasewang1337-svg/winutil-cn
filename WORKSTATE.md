@@ -1,8 +1,24 @@
 # WinUtil CN 维护状态
 
-更新：2026-10-09。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
+更新：2026-10-11。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
 
-## 当前任务：更新页布局、Windows 10/11 镜像与仓库展示（已交付35版）
+## 当前任务：MCP 修复、专项测试与独立新版发布（进行中）
+
+用户要求根据 MCP 检查结果，多智能体并行修复、完善功能、测试通过后发布新版并同步 GitHub 说明。基于 main `05785e2`，分支 `codex/mcp-reliability-20261011`；目标包 `winutil-cn-mcp@0.4.0`，桌面35版保持现有发布。
+
+检查记录 `.artifacts/mcp-check-20261011/REPORT.md`：真实stdio五组连接/48次调用正常，但修改层失败误报成功、缺函数上下文、无强制只读、旧快照优先和干净打包漏数据；npm仍为0.3.0。此记录是检查结果，不代表已修复。
+
+分工：`mcp_executor` 执行层/静态PowerShell worker/备份与无害fixture；`mcp_data_package` 数据来源/溯源快照/依赖与离线打包；`mcp_protocol_ci` 真实协议与Windows/Linux专项CI/发布流程；主助手负责默认只读、一次性确认计划、互斥/取消衔接、文档和GitHub/npm交付。
+
+确定范围：默认五个查询工具；显式 --allow-write 才提供修改和网卡查询。修改须先预览、相同参数与一次性planId确认，五分钟过期。注册表/服务仅受控声明式项目可执行，复杂脚本整项拒绝并标明桌面入口；不通过动态执行旧脚本消除缺函数错误。DNS显式选择稳定网卡身份。仅使用mock/fixture验证系统操作，不修改用户实际系统、网络或包源。实施和发布证据将保存 `.artifacts/mcp-repair-20261011/`。
+
+实现已冻结：0.4.0、Node>=22、SDK1.32.1；查询保留组合推荐/用途并支持分页。执行器支持16/66项声明式优化，先完整备份，逐项返回真实结果；取消/超时保留备份ID、检查点及未知范围，客户端可从get_status.execution.lastResult回看。只读查询的权限/策略失败保留稳定错误码和原始原因，不提示修改恢复。源码优先、包内快照溯源、prepack及唯一tarball发布/registry完整性核验已接入。
+
+本地最终回归在真实宿主环境PowerShell5.1/7各92项全部通过、0跳过；干净源码首次npm pack和无源码离线stdio查询通过，五工具可用，禁止操作0次，缺失/损坏快照均拒启动。npm审计0告警，actionlint/语法/diff通过。真实CLI入口只读查询成功（6张网卡），未调用修改。沙箱PS5.1因其隔离策略视图阻止脚本，单独保留失败证据；宿主CurrentUser既有RemoteSigned正常，未更改执行策略。系统修改/恢复/备份ACL仍为无害夹具验收，未在生产系统验证实际写入。
+
+证据：`.artifacts/mcp-repair-20261011/{tests-final-ps51.log,tests-final-ps7.log,package-final.log,npm-audit-final.json,local-readonly.json}`；独立审查修复取消后恢复结果丢失、Binary/MultiString空/单元素备份展开。GitHub PR、CI与npm正式发布待后续记录，当前不能称已发布。
+
+## 上一阶段：更新页布局、Windows 10/11 镜像与仓库展示（已交付35版）
 
 用户要求修复 Windows 更新页标题裁剪、镜像页不再只限 Win11、GitHub 仓库页及预览图随版本更新；进一步明确选择 Windows 10 / 11 都能制作镜像。基于 main `f94b988`，分支 `codex/windows-pages-repo-20261009`。
 

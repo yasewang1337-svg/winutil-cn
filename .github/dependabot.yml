@@ -7,3 +7,13 @@ updates:
     ignore:
       - dependency-name: "actions/stale"
         versions: '>= 9'
+  - package-ecosystem: "npm"
+    directory: "/mcp"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    groups:
+      mcp-runtime:
+        patterns:
+          - "@modelcontextprotocol/sdk"
+          - "zod"
