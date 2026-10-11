@@ -1,8 +1,18 @@
 # WinUtil CN 维护状态
 
-更新：2026-10-11。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
+更新：2026-10-12。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
 
-## 当前任务：MCP 隔离环境实际修改与恢复验证（已完成，0.4.1 已交付）
+## 当前任务：恢复 npm 发布（原账号已找回，准备可信发布）
+
+用户要求解决 npm 问题，撤销此前暂缓 npm 发布的安排。当前分支 `codex/npm-trusted-publishing-20261012`，基于 main `733f6b691a3095ad0830d14447966dccde54405b`。npm registry 仍为 `winutil-cn-mcp@0.3.0`，维护者为 `hloha`；本机 CLI 未登录，浏览器已完成原账号登录。原发布失败只证明认证/权限未被接受，未确诊凭据过期。
+
+用户后来找回原账号密码，取消新账号迁移方向，保持原包名。已登录原包设置页，并填写只允许 `yasewang1337-svg/winutil-cn` 的 `publish-mcp.yaml` 直接发布的 Trusted Publisher 配置，环境留空、额外 dist-tag 管理权限未勾选。用户已明确批准保存；npm 保存前要求再次确认账号密码，已交由用户在网站操作，尚未确认连接已保存。
+
+已实现工作流切换 OIDC、不读取静态 NPM_TOKEN；手动输入 `existing_run_id` 时仅复用同仓库/同工作流/同版本标签的成功构建，验证源码提交、原证据、SHA256/SHA512 和离线 MCP 后上传原 tarball。常规新版本仍保留完整测试门禁。`mcp/release/verify-artifact.mjs` 与两组拒绝篡改/错误来源测试已接入，工作流说明同步。两组测试、Actionlint、diff 检查通过；原运行38103739854及正式0.4.1包身份/哈希核对成功。离线原包验证通过：五个只读工具、两类损坏快照拒绝、禁止操作0次。第一次沙箱临时文件重命名EPERM，普通临时目录重跑通过，未修改运行时源码或主机系统设置。证据目录 `.artifacts/npm-publish-20261012/`。
+
+下一步：核对 npm 可信发布连接已保存，提交工作流修复并通过 GitHub 检查，再补发正式 0.4.1 原包，核对 registry 完整性与真实只读 MCP 入口，最后同步 GitHub 安装说明。账号验证由用户操作，凭据不写入工作记录；不在宿主进行真实系统修改。
+
+## 上一阶段：MCP 隔离环境实际修改与恢复验证（已完成，0.4.1 已交付）
 
 用户要求继续在测试环境验证实际修改和恢复，明确不动正在使用的系统。基于 main `5b856c2`，分支 `codex/mcp-disposable-validation-20261011`。采用三个独立 GitHub-hosted 一次性 Windows runner；不在宿主运行真实修改、不启用本机虚拟化。npm 发布仍按用户决定暂缓。
 
