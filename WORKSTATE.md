@@ -2,17 +2,25 @@
 
 更新：2026-10-11。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
 
-## 当前任务：MCP 隔离环境实际修改与恢复验证（进行中）
+## 当前任务：MCP 隔离环境实际修改与恢复验证（已完成，0.4.1 已交付）
 
 用户要求继续在测试环境验证实际修改和恢复，明确不动正在使用的系统。基于 main `5b856c2`，分支 `codex/mcp-disposable-validation-20261011`。采用三个独立 GitHub-hosted 一次性 Windows runner；不在宿主运行真实修改、不启用本机虚拟化。npm 发布仍按用户决定暂缓。
 
 并行实现：`mcp_real_worker_tests` 负责真实注册表/服务/备份 ACL 与部分失败；`mcp_real_dns_tests` 负责独立内置环回网卡的 DNS 修改/恢复和已有网卡不变；`mcp_real_tools_tests` 负责真实 MCP 包源及 WinGet 安装/卸载。主助手负责真实 stdio 确认、写入后取消与恢复、工作流、整合验收。脚本入口均限制 GitHub 托管 Windows 环境；本机只做语法检查和无害测试。
 
-实现位于 `mcp/test/integration/`，执行入口 `.github/workflows/mcp-integration.yaml`。当前脚本已完成，真实 runner 结果待执行，不能将静态检查计作实际通过。后续先提交 PR 触发隔离 CI，依据真实证据区分生产缺陷、测试脚本问题和环境缺项，再修复复测。
+实现位于 `mcp/test/integration/`，执行入口 `.github/workflows/mcp-integration.yaml`。实际测试操作全部在 GitHub-hosted Windows Server 2025（镜像 `win25-vs2026` / `20260925.250.1`）完成，不代表所有桌面 Windows 版本都已验收。
 
 [PR #27](https://github.com/yasewang1337-svg/winutil-cn/pull/27) 首轮隔离运行 `38103188490`（分支 `abb49e1`，PR 测试合并提交 `808d7e3`）完成：双 PowerShell 的 HKCU/HKLM 全类型实际写入/恢复、请求拒绝和备份碰撞通过；npm/Yarn/Go 配置改动后逐字节恢复，以及 WinGet 安装/运行 hexyl/卸载通过。DNS 新建独立环回设备、错误身份拒绝、清理及原有 DNS 未变通过，但备份时模块加载失败；MCP 独立恢复入口同样失败。真实证据在 `.artifacts/mcp-real-20261011/run1/`。
 
-已定位：PS7→中间进程→PS5.1 继承的 PSModulePath 导致系统模块误加载，属生产兼容性缺陷，修复 worker 本进程模块路径；另两处属测试问题：ACL 快照直接写回未标记变更、SDK 的 PATH/Path 重复键使 pip 夹具选择了另一工具，已修测试并补回归。尚待第二轮真机实测，首轮红灯不算通过。宿主未执行真实系统写入。
+已定位并修复：PS7→中间进程→PS5.1 继承的 PSModulePath 导致系统模块误加载，属生产兼容性缺陷。worker 仅固定自身进程的内置模块目录，覆盖修改与直接恢复入口；相同只读 ACL 夹具对照旧入口失败、新入口通过。另两处属测试问题：拒写 ACL 夹具撤销失败、SDK 的 PATH/Path 重复键使 pip 夹具选择了另一工具。测试改为精确移除所注入 ACE 并保留 ACL 证据，以及规范化传给 SDK 的环境键。宿主未执行真实系统写入。
+
+最终 [隔离运行38103578536](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38103578536) 全部通过：PowerShell5.1/7各8组注册表/服务/真实权限失败恢复、8组独立环回DNS、5组包源/安装卸载、2组真实MCP确认及写入后取消恢复。已有网卡DNS不变，测试服务/设备/键清理通过。证据 `.artifacts/mcp-real-20261011/run3/`。MCP [普通CI38103578535](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38103578535) Windows Node22/24各96通过，Linux91通过/5项Windows专属不适用；[原有回归38103578517](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38103578517)也全部通过。完整日志在同证据目录根下 `pr-mcp-tests.log`、`pr-real-tests.log`。
+
+PR #27 已合并，源码 `1fcf523757d82b6a723e734165388ee3ddb75052`。[正式发布构建38103739854](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38103739854) 普通与真实测试再次全通过，唯一 tarball 打包/离线验证成功，npm job 按预期 skipped。npm 只有手动明确勾选 `publish_npm` 才上传，默认关闭。
+
+[MCP 0.4.1 GitHub Release](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/mcp-v0.4.1) 已发布四份附件：tgz、SHA256SUMS、release-evidence、integration-verification；显式 latest=false，GitHub latest 仍为桌面35版。正式包下载后离线连接/源码核对通过，四份附件本地SHA256均与GitHub digest一致；实际从GitHub包URL用npx建立连接，0.4.1、默认五查询工具、只读、包内干净源码SHA及微信查询均正确，修改调用0次。
+
+包 SHA256：`acd61d58045dde2cba77d21f2557b564fc64748a4fa998b1201ecee4686e3b8a`；SHA512：`sha512-VmO9ijirgaL3w1c9j5VdpFXkvICah7hZtptQ76Gq2s4ctguWgv3urdYvAxaa1ENzECzcs743f5pb/qUpCvs9OQ==`。正式附件 `.artifacts/released/mcp-v0.4.1/`；完整发布CI证据 `release-ci/`、`github-release-metadata.json`、`github-asset-digests.json`、`published-entry-verification.json` 位于 `.artifacts/mcp-real-20261011/`。本轮已完成；宿主未执行真实修改、安装卸载、网卡或权限调整，桌面EXE/PS1未更换。测试范围不扩展为所有桌面Windows/全部优化脚本的验收。
 
 ## 上一阶段：MCP 修复与 GitHub 0.4.0 发布（已交付；npm 按用户决定暂缓）
 
