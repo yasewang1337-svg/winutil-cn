@@ -2,15 +2,15 @@
 
 ## 0.4.1
 
-2026-10-11 已[发布 GitHub 安装包](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/mcp-v0.4.1)，附实际 Windows 验证摘要；npm 继续暂缓。
+2026-10-11 已[发布 GitHub 安装包](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/mcp-v0.4.1)，附实际 Windows 验证摘要；2026-10-12 已通过可信发布补发至 [npm 0.4.1](https://www.npmjs.com/package/winutil-cn-mcp/v/0.4.1)，SHA512 与原 GitHub 安装包一致。
 
 - 修复从 PowerShell 7 经 Node/.NET 启动 Windows PowerShell 5.1 时，继承的模块搜索路径导致备份或恢复加载错误模块的问题。worker 仅调整自身进程的模块目录，同时覆盖修改和直接恢复入口。
 - 新增三台 GitHub 托管一次性 Windows 测试机的实际修改与恢复验证，覆盖注册表类型、服务启动配置、DNS、包源、软件安装，以及真实写入后取消再恢复；详见 [测试范围](test/integration/README.md)。
-- 发布包构建以普通回归和实际修改测试为前置条件。npm 上传改为手动明确启用，按维护者决定继续暂缓；GitHub 安装包独立交付。
+- 发布包构建以普通回归和实际修改测试为前置条件。npm 上传由维护者手动明确启用；可信发布限定本仓库工作流，支持验证来源与哈希后补发原包，不重建不同内容覆盖同版本。
 
 ## 0.4.0
 
-2026-10-11 已[发布 GitHub 安装包](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/mcp-v0.4.0)；npm 上架暂缓，接入方式见 [当前指南](https://github.com/yasewang1337-svg/winutil-cn/blob/main/mcp/README.md)。
+2026-10-11 已[发布 GitHub 安装包](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/mcp-v0.4.0)；该版本未上传 npm，请使用后续 0.4.1，接入方式见 [当前指南](https://github.com/yasewang1337-svg/winutil-cn/blob/main/mcp/README.md)。
 
 - 默认只读；修改工具须显式启用，全部改为先预览、相同参数与一次性计划确认。
 - 修复错误被成功文本覆盖的问题，提供逐项结果、原始输出与 MCP 错误标记；增加互斥、过期计划和取消处理。

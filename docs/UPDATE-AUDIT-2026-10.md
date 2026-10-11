@@ -2,7 +2,7 @@
 
 调查日期：2026-10-09（Asia/Taipei）。范围覆盖中文桌面版、官方上游、软件目录、MCP npm 包、依赖、测试、文档和 GitHub 维护。按真实影响安排顺序，区分已复现问题、代码差距与产品建议。
 
-后续进度（2026-10-11）：MCP 0.4.0 已实现默认只读、一次性确认、受控执行与备份、准确错误反馈、数据溯源和离线打包验证，通过 Windows/Linux CI 后[发布 GitHub 安装包](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/mcp-v0.4.0)。npm 上传被现有认证拒绝，按维护者决定暂缓；当前通过 GitHub 包接入。具体兼容性变化见 [MCP 变更记录](../mcp/CHANGELOG.md)，交付状态以 [WORKSTATE.md](../WORKSTATE.md) 为准。下文保留 10 月 9 日调查时的基线与发现。
+后续进度（2026-10-11）：MCP 0.4.0 已实现默认只读、一次性确认、受控执行与备份、准确错误反馈、数据溯源和离线打包验证，通过 Windows/Linux CI 后[发布 GitHub 安装包](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/mcp-v0.4.0)。当时 npm 上传被现有认证拒绝，先通过 GitHub 包交付。2026-10-12 已恢复原账号并配置可信发布，将后续 [MCP 0.4.1](https://www.npmjs.com/package/winutil-cn-mcp/v/0.4.1) 原包同步到 npm；两处分发内容一致。具体兼容性变化见 [MCP 变更记录](../mcp/CHANGELOG.md)，交付状态以 [WORKSTATE.md](../WORKSTATE.md) 为准。下文保留 10 月 9 日调查时的基线与发现。
 
 追加实际验证（2026-10-11）：三个一次性 Windows Server 2025 runner 已完成注册表/服务、独立环回 DNS、包源、软件安装卸载和写入后取消恢复，[实测全部通过](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38103578536)。过程中发现跨 PowerShell 模块路径继承会导致备份或恢复失败，已由 [PR #27](https://github.com/yasewang1337-svg/winutil-cn/pull/27) 修复，纳入 MCP 0.4.1。测试范围见 [说明](../mcp/test/integration/README.md)；这不代表所有桌面系统和任意优化脚本均已真机验收。
 

@@ -2,15 +2,17 @@
 
 更新：2026-10-12。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
 
-## 当前任务：恢复 npm 发布（原账号已找回，准备可信发布）
+## 当前任务：恢复 npm 发布（0.4.1 已上架，收尾同步与回归）
 
-用户要求解决 npm 问题，撤销此前暂缓 npm 发布的安排。当前分支 `codex/npm-trusted-publishing-20261012`，基于 main `733f6b691a3095ad0830d14447966dccde54405b`。npm registry 仍为 `winutil-cn-mcp@0.3.0`，维护者为 `hloha`；本机 CLI 未登录，浏览器已完成原账号登录。原发布失败只证明认证/权限未被接受，未确诊凭据过期。
+用户要求解决 npm 问题，撤销此前暂缓 npm 发布的安排。[PR #28](https://github.com/yasewang1337-svg/winutil-cn/pull/28) 已通过全部检查并合并，main `c4782ab1d4de45f4a64a11d967c10ff59cef2dbd`；当前收尾分支 `codex/npm-delivery-docs-20261012`。原账号 `hloha` 已找回并完成浏览器登录，本机 CLI 无需登录。原令牌失败未确诊为过期；改用 OIDC 发布已经被 npm 接受。
 
-用户后来找回原账号密码，取消新账号迁移方向，保持原包名。已登录原包设置页，并填写只允许 `yasewang1337-svg/winutil-cn` 的 `publish-mcp.yaml` 直接发布的 Trusted Publisher 配置，环境留空、额外 dist-tag 管理权限未勾选。用户已明确批准保存；npm 保存前要求再次确认账号密码，已交由用户在网站操作，尚未确认连接已保存。
+用户后来找回原账号密码，取消新账号迁移方向，保持原包名。用户明确批准只允许 `yasewang1337-svg/winutil-cn` 的 `publish-mcp.yaml` 直接发布的 Trusted Publisher，环境留空、额外 dist-tag 管理权限未勾选。用户亲自完成密码复核、启用双因素认证及安全密钥验证，并确认保存了恢复码；网站已回显 Successfully added new Trusted Publisher connection。凭据不保存到项目。
 
 已实现工作流切换 OIDC、不读取静态 NPM_TOKEN；手动输入 `existing_run_id` 时仅复用同仓库/同工作流/同版本标签的成功构建，验证源码提交、原证据、SHA256/SHA512 和离线 MCP 后上传原 tarball。常规新版本仍保留完整测试门禁。`mcp/release/verify-artifact.mjs` 与两组拒绝篡改/错误来源测试已接入，工作流说明同步。两组测试、Actionlint、diff 检查通过；原运行38103739854及正式0.4.1包身份/哈希核对成功。离线原包验证通过：五个只读工具、两类损坏快照拒绝、禁止操作0次。第一次沙箱临时文件重命名EPERM，普通临时目录重跑通过，未修改运行时源码或主机系统设置。证据目录 `.artifacts/npm-publish-20261012/`。
 
-下一步：核对 npm 可信发布连接已保存，提交工作流修复并通过 GitHub 检查，再补发正式 0.4.1 原包，核对 registry 完整性与真实只读 MCP 入口，最后同步 GitHub 安装说明。账号验证由用户操作，凭据不写入工作记录；不在宿主进行真实系统修改。
+PR #28 的 MCP CI `38171549554` 三平台及打包验证通过，Windows Node22/24各98项、Linux93通过/5项Windows专属不适用；原有回归 `38171549631` 和编译检查均通过。补发运行 `38171833196` 成功复用原构建 `38103739854`，npm 已接受上传并生成来源证明，但紧接的查询遇到 npm 处理期 E404，导致最后校验步骤失败。数分钟后 registry 0.4.1 可读，实际下载 tarball 的 SHA256/SHA512 均与 GitHub 原包一致；没有再次上传。证据 `publish-ci.log`、`registry-view.json`、`registry-verification.json`。
+
+针对真实处理延迟已加入有界查询重试：仅临时E404等待15秒、最多21次，认证错误/无效响应/内容不符立即失败，不自动重复上传。四组发布来源/篡改/延迟/失败测试、Actionlint及diff通过。实际 `npx -y winutil-cn-mcp@0.4.1` 连接通过：版本0.4.1、五查询工具、bundled数据及原源码SHA正确、软件查询正常、修改调用0次，见 `published-entry-verification.json`。正在同步 README、接入配置、变更记录和调查状态；待提交后CI通过、验证工作流幂等补跑、核对 npm 页面，再交付。桌面EXE/PS1和主机系统设置未修改。
 
 ## 上一阶段：MCP 隔离环境实际修改与恢复验证（已完成，0.4.1 已交付）
 
