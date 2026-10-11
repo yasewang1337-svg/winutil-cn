@@ -14,7 +14,11 @@
 
 本地完整回归 PS5.1/7 各622项通过，定向UI各107项、后端各19项通过；20份真实WPF明暗/800px/150%预览已生成并视检软件页，README预览已更新。证据统一保存在 `.artifacts/software-inventory-20261012/`，包括 `tests-ps51.log`、`tests-ps7.log`、`previews/` 和 `screenshot-delivery.json`。
 
-本机根目录EXE仍为35版哈希，两份旧PS1当前已不存在，原因未确认；记录 `before-delivery.json`。隔离源码构建先在沙箱原子替换时报拒绝，普通临时目录可完成编译但紧接读取产物也被拒绝；火绒进程正在运行，未确认具体拦截事件，没有关闭防护、加排除或改名规避。保留 `build.log`、`build-final.log`。正式编译与真实WinGet/Chocolatey检测、hexyl安装/卸载将在GitHub一次性runner验收；当前仍待CI、发布及本地交付复核。
+本机根目录EXE仍为35版哈希，两份旧PS1当前已不存在，原因未确认；记录 `before-delivery.json`。隔离源码构建先在沙箱原子替换时报拒绝，普通临时目录可完成编译但紧接读取产物也被拒绝；火绒进程正在运行，未确认具体拦截事件，没有关闭防护、加排除或改名规避。保留 `build.log`、`build-final.log`。
+
+[PR #30](https://github.com/yasewang1337-svg/winutil-cn/pull/30) 已创建。首轮 [真实检测38173478485](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38173478485) 双PS全部通过：各识别49个WinGet/45个Choco包，现有组合/跨源拒绝及hexyl0.17.0安装后出现、卸载后消失正确；包与链接删除、Choco原清单不变、临时导出无遗留。完整JSON/日志在 `pr-integration/`、`pr-integration.log`。同源码 [编译38173478452](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38173478452) 双PS语法/BOM通过。测试机为Windows Server2025镜像20260925.250.1，不扩展为所有桌面版本已验收。Hugo161页、6518站点引用及150条修改文档相对链接通过，见 `docs-qa.json`。
+
+追加8种成功/失败WPF夹具预览发现长错误文本会挤压800px/150%软件列表，已缩短状态行，完整原因保留在对话框、Tooltip及日志；定向回归和最终CI待确认。当前仍待PR最终检查、发布与本地交付复核。
 
 ## 上一阶段：恢复 npm 发布（已完成，0.4.1 已交付）
 

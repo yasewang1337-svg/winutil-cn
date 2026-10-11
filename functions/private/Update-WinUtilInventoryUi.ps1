@@ -46,9 +46,8 @@ function Update-WinUtilInventoryUi {
         $status = if ($sync.InventoryScanRunning) {
             "正在检测 $label 已安装软件，请稍候…"
         } elseif ($sync.InventoryOperationError) {
-            $detail = ([string]$sync.InventoryOperationError -replace '[\r\n]+', ' ').Trim()
-            if ($detail.Length -gt 120) { $detail = $detail.Substring(0, 120) + '…' }
-            "检测失败：$detail" + $(if ($previous) { "`n历史结果：$previous（请重新检测）" } else { '' })
+            # Keep the list usable in a narrow window; the dialog and tooltip retain the full error.
+            '检测失败 · 悬停查看原因，检查后重新检测。' + $(if ($previous) { "`n历史结果：$previous" } else { '' })
         } elseif ($current) {
             "$previous · 未识别不代表未安装"
         } elseif ($previous) {
