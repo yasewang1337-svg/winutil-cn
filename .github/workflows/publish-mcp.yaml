@@ -286,19 +286,7 @@ jobs:
           node -e "const v=require('node:child_process').execFileSync('npm',['--version'],{encoding:'utf8'}).trim().split('.').map(Number);if(v[0]<11||(v[0]===11&&(v[1]<5||(v[1]===5&&v[2]<1))))throw new Error('Trusted publishing requires npm >=11.5.1')"
           npm publish "./package/$PACKAGE_FILENAME" --ignore-scripts --provenance --access public
       - name: Verify registry integrity
-        env:
-          PACKAGE_VERSION: ${{ needs.reuse.outputs.version || needs.package.outputs.version }}
-        run: |
-          npm view "winutil-cn-mcp@$PACKAGE_VERSION" dist --json > package/registry-dist.json
-          node --input-type=module <<'NODE'
-          import fs from 'node:fs';
-          import assert from 'node:assert/strict';
-          const evidence = JSON.parse(fs.readFileSync('package/release-evidence.json', 'utf8'));
-          const dist = JSON.parse(fs.readFileSync('package/registry-dist.json', 'utf8'));
-          assert.equal(dist.integrity, evidence.integrity, 'registry package differs from tested tarball');
-          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,
-            `已发布 [winutil-cn-mcp@${evidence.version}](https://www.npmjs.com/package/winutil-cn-mcp/v/${evidence.version})，registry SHA512 与已测试包一致。\n\nSHA256: ${evidence.sha256}\n`);
-          NODE
+        run: node mcp/release/wait-registry.mjs package
       - name: Retain registry verification evidence
         if: always()
         uses: actions/upload-artifact@v7
