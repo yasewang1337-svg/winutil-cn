@@ -2,7 +2,15 @@
 
 更新：2026-10-11。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
 
-## 当前任务：MCP 修复与 GitHub 0.4.0 发布（已交付；npm 按用户决定暂缓）
+## 当前任务：MCP 隔离环境实际修改与恢复验证（进行中）
+
+用户要求继续在测试环境验证实际修改和恢复，明确不动正在使用的系统。基于 main `5b856c2`，分支 `codex/mcp-disposable-validation-20261011`。采用三个独立 GitHub-hosted 一次性 Windows runner；不在宿主运行真实修改、不启用本机虚拟化。npm 发布仍按用户决定暂缓。
+
+并行实现：`mcp_real_worker_tests` 负责真实注册表/服务/备份 ACL 与部分失败；`mcp_real_dns_tests` 负责独立内置环回网卡的 DNS 修改/恢复和已有网卡不变；`mcp_real_tools_tests` 负责真实 MCP 包源及 WinGet 安装/卸载。主助手负责真实 stdio 确认、写入后取消与恢复、工作流、整合验收。脚本入口均限制 GitHub 托管 Windows 环境；本机只做语法检查和无害测试。
+
+实现位于 `mcp/test/integration/`，执行入口 `.github/workflows/mcp-integration.yaml`。当前脚本已完成，真实 runner 结果待执行，不能将静态检查计作实际通过。后续先提交 PR 触发隔离 CI，依据真实证据区分生产缺陷、测试脚本问题和环境缺项，再修复复测。
+
+## 上一阶段：MCP 修复与 GitHub 0.4.0 发布（已交付；npm 按用户决定暂缓）
 
 用户要求根据 MCP 检查结果，多智能体并行修复、完善功能、测试通过后发布新版并同步 GitHub 说明。基于 main `05785e2`，分支 `codex/mcp-reliability-20261011`；目标包 `winutil-cn-mcp@0.4.0`，桌面35版保持现有发布。
 

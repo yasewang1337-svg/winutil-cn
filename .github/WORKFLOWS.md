@@ -9,6 +9,7 @@
 | 构建检查 | [compile-check.yaml](workflows/compile-check.yaml) | main、PR、手动和可复用调用；中文脚本构建及双版本语法/BOM |
 | 仓库整洁 | [remove-winutil.yaml](workflows/remove-winutil.yaml) | push 与 PR；检查生成文件没有入库，仅报告失败，不再自动删文件并提交 |
 | MCP 回归 | [mcp-tests.yaml](workflows/mcp-tests.yaml) | MCP 及其数据配置的 main/PR 改动、手动和可复用调用；Windows Node 22 + PowerShell 5.1、Node 24 + PowerShell 7，及 Linux Node 24 协议/执行器夹具测试；干净打包后的离线连接验证 |
+| MCP 实际修改验证 | [mcp-integration.yaml](workflows/mcp-integration.yaml) | PR 相关改动或手动；三台 GitHub 托管一次性 Windows 测试机分别验证注册表/服务、DNS、包源/安装的实际修改与恢复，失败证据也保留；禁止在日常电脑或自托管 runner 上运行，见 [测试范围](../mcp/test/integration/README.md) |
 | MCP 发布 | [publish-mcp.yaml](workflows/publish-mcp.yaml) | mcp-v* 标签或手动；先通过 MCP 回归，严格核对标签/package/lock 版本；构建并测试唯一 tarball，跨 job 验哈希后发布同一包并核对 npm registry |
 | PR 标签 | [label-pr.yaml](workflows/label-pr.yaml) | 读取 PR 中选中的变更类型并添加标签 |
 | Issue 管理 | [issue-slash-commands.yaml](workflows/issue-slash-commands.yaml) | 仅仓库所有者评论中的管理命令生效 |
