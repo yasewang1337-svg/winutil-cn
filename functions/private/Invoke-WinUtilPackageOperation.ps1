@@ -11,6 +11,7 @@
         return
     }
     if ($NonInteractive -or -not $sync.form) {
+        Invalidate-WinUtilInventory -Reason '已启动软件操作，'
         $sync.ProcessRunning = $true
         $sync.PackageOperationError = ''
         $sync.LastPackageResults = @()
@@ -47,6 +48,7 @@
     }
     if ((Show-WinUtilPackageDialog -Title '确认软件操作' -Description $description -Details $details) -ne 'Primary') { return }
     Initialize-WinUtilPackageUiCallbacks
+    Invalidate-WinUtilInventory -Reason '已启动软件操作，'
     # Reserve busy before dispatch so rapid clicks cannot start competing batches.
     $sync.ProcessRunning = $true
     $sync.PackageOperationError = ''

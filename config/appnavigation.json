@@ -59,12 +59,19 @@
         "Order": "3",
         "Description": "清除已选应用"
     },
+    "WPFDetectInstalled": {
+        "Content": "检测已安装",
+        "Category": "____操作",
+        "Type": "Button",
+        "Order": "5",
+        "Description": "检测当前来源识别到的已装软件，不改变勾选。WinGet 可能联网同步源并接受源协议；检测不会安装或卸载软件"
+    },
     "WPFGetInstalled": {
         "Content": "勾选已装应用",
         "Category": "__选择",
         "Type": "Button",
         "Order": "4",
-        "Description": "扫描并将识别到的已安装应用加入勾选清单；不会立即安装或卸载，也不会清除原有选择"
+        "Description": "检测并将识别到的已装应用追加到勾选清单，保留原有选择。WinGet 可能联网同步源并接受源协议；不会立即安装或卸载"
     },
     "WPFselectedAppsButton": {
         "Content": "已选应用: 0",

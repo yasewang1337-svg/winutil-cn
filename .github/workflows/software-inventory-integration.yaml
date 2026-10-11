@@ -1,0 +1,56 @@
+name: Software inventory disposable Windows integration
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'functions/private/*Inventory*.ps1'
+      - 'functions/private/Invoke-WinUtilCurrentSystem.ps1'
+      - 'functions/public/Invoke-WPFGetInstalled.ps1'
+      - 'config/applications.json'
+      - 'tools/Test-SoftwareInventoryIntegration.ps1'
+      - '.github/workflows/software-inventory-integration.yaml'
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: software-inventory-integration-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  inventory:
+    name: Real package inventory (${{ matrix.shell }})
+    runs-on: windows-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        shell: [powershell, pwsh]
+    env:
+      WINUTIL_INVENTORY_DISPOSABLE_TEST: '1'
+    steps:
+      - name: Require a disposable GitHub-hosted Windows VM
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_ACTIONS -ne 'true' -or $env:RUNNER_ENVIRONMENT -ne 'github-hosted' -or $env:RUNNER_OS -ne 'Windows') { throw 'Local and self-hosted execution is forbidden' }
+          "WINUTIL_INVENTORY_EVIDENCE_DIR=$(Join-Path $env:RUNNER_TEMP 'software-inventory-evidence')" >> $env:GITHUB_ENV
+      - uses: actions/checkout@v7
+      - name: Detect real packages and verify installation roundtrip (PowerShell 5.1)
+        if: matrix.shell == 'powershell'
+        shell: powershell
+        run: ./tools/Test-SoftwareInventoryIntegration.ps1 -EvidenceDirectory $env:WINUTIL_INVENTORY_EVIDENCE_DIR
+      - name: Detect real packages and verify installation roundtrip (PowerShell 7)
+        if: matrix.shell == 'pwsh'
+        shell: pwsh
+        run: ./tools/Test-SoftwareInventoryIntegration.ps1 -EvidenceDirectory $env:WINUTIL_INVENTORY_EVIDENCE_DIR
+      - name: Preserve real detection and cleanup evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: software-inventory-${{ matrix.shell }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}\software-inventory-evidence\
+          if-no-files-found: error
+          retention-days: 30

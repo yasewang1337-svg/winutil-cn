@@ -17,6 +17,10 @@
 
 软件页的搜索、仅看已选和空状态由 `Find-AppsByNameOrDescription.ps1` 统一计算，勾选/导入后的界面刷新走 `Update-WinUtilAppSelectionUi.ps1`。筛选控件不能进入应用勾选的重置集合；清除筛选不能清空选择。软件结果摘要与重试范围由 `Get-WinUtilPackageResultView.ps1` 共用，`Show-WinUtilPackageDialog -Results` 提供结果列表，`Invoke-WPFPackageResults.ps1` 仅回看当前会话并在重试前再次确认。相关真实WPF交互测试位于 `app-selection-ux.Tests.ps1`、`package-dialog.Tests.ps1` 和 `package-results-review.Tests.ps1`。
 
+已安装检测使用 `Get-WinUtilInstalledInventory.ps1`：WinGet 导出官方源 JSON、Chocolatey 2+ 返回本地精简清单，独立查询进程有超时并保留两条输出流。只在完整验证成功后发布带来源和时间的库存；失败不能写入空清单冒充成功。目录组合包需全部匹配。检测入口默认不改变勾选，旧“勾选已装应用”入口才追加选择；状态与筛选必须在 UI 线程更新。切换来源、扫描失败或实际软件操作开始时，使旧库存失效，不能继续影响组合推荐。未识别始终表示未知，不推断为未安装。
+
+相关实测入口为 `tools/Test-SoftwareInventoryIntegration.ps1` 和 `.github/workflows/software-inventory-integration.yaml`。仅在显式启用的一次性 GitHub-hosted Windows runner 验证实际检测与测试软件安装／卸载；本机不运行该脚本。正式桌面发布要求此实测与普通回归均通过。实测保存 PowerShell、包管理器版本、原始输出和每阶段结果，不能扩展为对所有桌面 Windows 或第三方软件的覆盖保证。
+
 界面采用侧栏导航、命令栏与全宽软件行，设计参考 [Files](https://files.community/)、[UniGetUI](https://github.com/Devolutions/UniGetUI) 和 [Windows 导航规范](https://learn.microsoft.com/en-us/windows/apps/develop/ui/controls/navigationview)。软件命令栏由 `Initialize-WinUtilAppCommandBar.ps1` 读取原 `appnavigation.json` 生成，保留稳定控件ID；Button由main统一注册Click，MenuItem由命令栏注册，避免重复派发。条目的完整介绍只设置在最外层Border，子名称和说明不设Tooltip，防止遮蔽。改布局时同时检查整窗深浅色、800px及150%字号，不只检查单独组件。
 
 ## 镜像与界面预览维护

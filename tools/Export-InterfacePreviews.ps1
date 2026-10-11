@@ -1,4 +1,4 @@
-﻿[CmdletBinding()]
+[CmdletBinding()]
 param(
     [string]$OutputDirectory = (Join-Path $PSScriptRoot '../.artifacts/interface-previews'),
     [switch]$IncludeCompact
@@ -19,7 +19,7 @@ foreach ($file in @(
     'public/Initialize-WPFUI.ps1', 'public/Invoke-WPFUIElements.ps1', 'public/Invoke-WPFTab.ps1',
     'private/Invoke-WinutilThemeChange.ps1', 'private/Invoke-WinUtilFontScaling.ps1',
     'private/Initialize-WinUtilAppActions.ps1',
-    'private/Initialize-WinUtilAppCommandBar.ps1', 'private/Show-WinUtilAppActions.ps1',
+    'private/Test-WinUtilInventoryCurrent.ps1', 'private/Update-WinUtilInventoryUi.ps1', 'private/Invalidate-WinUtilInventory.ps1', 'private/Initialize-WinUtilAppCommandBar.ps1', 'private/Show-WinUtilAppActions.ps1',
     'private/Initialize-WinUtilWindowChrome.ps1', 'private/Set-WinUtilNavigationLayout.ps1',
     'private/Test-WinUtilTitleBarSource.ps1', 'private/Initialize-WinUtilISOControls.ps1'
 )) { . ([scriptblock]::Create([IO.File]::ReadAllText((Join-Path $root "functions/$file")))) }

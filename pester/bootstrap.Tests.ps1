@@ -2,7 +2,7 @@
     $script:bootstrapRoot = Split-Path $PSScriptRoot -Parent
     foreach ($name in @(
         'Install-WinUtilChoco', 'Test-WinUtilPackageManager', 'Invoke-WinUtilInstallPSProfile',
-        'Invoke-WinUtilPackageOperation', 'Invoke-WinUtilPackageBatch', 'Get-WinUtilPackagePlan',
+        'Test-WinUtilInventoryCurrent', 'Update-WinUtilInventoryUi', 'Invalidate-WinUtilInventory', 'Invoke-WinUtilPackageOperation', 'Invoke-WinUtilPackageBatch', 'Get-WinUtilPackagePlan',
         'Get-WinUtilPackageExitResult', 'Install-WinUtilWinget', 'Install-WinUtilProgramWinget',
         'Install-WinUtilProgramChoco', 'Show-WinUtilPackageDialog'
     )) {

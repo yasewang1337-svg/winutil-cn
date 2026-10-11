@@ -8,9 +8,11 @@
         [Parameter(Mandatory)]$Bundle,
         [Parameter(Mandatory)]$Applications,
         [string[]]$SelectedApps = @(),
-        [object[]]$InstalledPrograms = @()
+        $Inventory,
+        [ValidateSet('Winget', 'Choco')][string]$Manager = 'Winget'
     )
 
+    $inventoryCurrent = Test-WinUtilInventoryCurrent -Inventory $Inventory -Manager $Manager
     $seen = @{}
     foreach ($id in $Bundle.apps) {
         $id = [string]$id
@@ -20,11 +22,12 @@
         $valid = $id.StartsWith('WPFInstall') -and $null -ne $app
         $alreadySelected = $valid -and $SelectedApps -contains $id
         $installed = $null
-        if ($valid -and $app.winget) {
+        $packageValue = if ($Manager -eq 'Choco') { $app.choco } else { $app.winget }
+        if ($valid -and $inventoryCurrent -and $Inventory.MatchedKeys -contains $id -and $packageValue) {
             # The final package is the application; preceding IDs can be dependencies.
-            $packageId = ([string]$app.winget -split ';')[-1].Trim()
-            $installed = $InstalledPrograms | Where-Object {
-                $_.Id -and ([string]$_.Id).Trim() -eq $packageId
+            $packageId = ([string]$packageValue -split ';')[-1].Trim()
+            $installed = $Inventory.Programs | Where-Object {
+                $_.Manager -eq $Manager -and $_.Id -and ([string]$_.Id).Trim() -eq $packageId
             } | Select-Object -First 1
         }
         $purpose = if ($Bundle.purposes) { [string]$Bundle.purposes.$id } else { '' }

@@ -3,6 +3,7 @@
     foreach ($name in @('Invoke-WPFFeatureInstall', 'Invoke-WPFGetInstalled')) {
         . ([scriptblock]::Create([IO.File]::ReadAllText((Join-Path $root "functions/public/$name.ps1"))))
     }
+    foreach ($name in @('Test-WinUtilInventoryCurrent', 'Update-WinUtilInventoryUi', 'Invalidate-WinUtilInventory')) { . ([scriptblock]::Create([IO.File]::ReadAllText((Join-Path $root "functions/private/$name.ps1")))) }
     function Invoke-WPFRunspace { [CmdletBinding()] param($ScriptBlock, $ParameterList); throw 'Real workers are prohibited in these tests.' }
     function Invoke-WinUtilFeatureInstall { param($CheckBox); throw 'Real feature installation is prohibited.' }
     function Invoke-WinUtilCurrentSystem { param($CheckBox); throw 'Real inventory commands are prohibited.' }
@@ -40,7 +41,10 @@ Describe 'Legacy task failure cleanup' {
             $script:workerParameters = $ParameterList
         }
         Mock Invoke-WinUtilFeatureInstall {}
-        Mock Invoke-WinUtilCurrentSystem { 'WPFInstallExample' }
+        Mock Invoke-WinUtilCurrentSystem {
+            $sync.SoftwareInventory = [pscustomobject]@{ Manager=$sync.InventoryScanManager; Programs=@(); MatchedKeys=@('WPFInstallExample'); CompletedAt=[datetime]::Now }
+            'WPFInstallExample'
+        }
         Mock Test-WinUtilPackageManager { 'installed' }
         Mock Set-WinUtilTaskbaritem {}
         Mock Show-WinUtilTweakDialog { $sync.ProcessRunning | Should -BeTrue }
@@ -53,7 +57,7 @@ Describe 'Legacy task failure cleanup' {
         @{ Entry = 'features' }, @{ Entry = 'inventory' }
     ) {
         if ($Entry -eq 'features') { Invoke-WPFFeatureInstall; Invoke-WPFFeatureInstall }
-        else { Invoke-WPFGetInstalled winget; Invoke-WPFGetInstalled winget }
+        else { Invoke-WPFGetInstalled winget -SelectDetected; Invoke-WPFGetInstalled winget -SelectDetected }
         $sync.ProcessRunning | Should -BeTrue
         Should -Invoke Invoke-WPFRunspace -Times 1 -Exactly -ParameterFilter { $ErrorAction -eq 'Stop' }
         Should -Invoke Invoke-WinUtilFeatureInstall -Times 0 -Exactly
@@ -64,7 +68,7 @@ Describe 'Legacy task failure cleanup' {
         @{ Entry = 'features' }, @{ Entry = 'inventory' }
     ) {
         Mock Invoke-WPFRunspace { throw 'pool unavailable' }
-        if ($Entry -eq 'features') { Invoke-WPFFeatureInstall } else { Invoke-WPFGetInstalled winget }
+        if ($Entry -eq 'features') { Invoke-WPFFeatureInstall } else { Invoke-WPFGetInstalled winget -SelectDetected }
         $sync.ProcessRunning | Should -BeFalse
         Should -Invoke Show-WinUtilTweakDialog -Times 1 -Exactly -ParameterFilter { $Message -match 'pool unavailable' }
         Should -Invoke Set-WinUtilTaskbaritem -Times 1 -Exactly -ParameterFilter { $state -eq 'Error' }
@@ -79,13 +83,13 @@ Describe 'Legacy task failure cleanup' {
             Invoke-WPFFeatureInstall
         } else {
             Mock Invoke-WinUtilCurrentSystem { throw 'inventory unavailable' }
-            Invoke-WPFGetInstalled winget
+            Invoke-WPFGetInstalled winget -SelectDetected
         }
         Invoke-TestMaintenanceWorker
         $sync.ProcessRunning | Should -BeFalse
         Should -Invoke Show-WinUtilTweakDialog -Times 1 -Exactly -ParameterFilter { $Message -match 'unsupported|unavailable' }
         Should -Invoke Set-WinUtilTaskbaritem -Times 0 -Exactly -ParameterFilter { $overlay -eq 'checkmark' }
-        if ($Entry -eq 'features') { Invoke-WPFFeatureInstall } else { Invoke-WPFGetInstalled winget }
+        if ($Entry -eq 'features') { Invoke-WPFFeatureInstall } else { Invoke-WPFGetInstalled winget -SelectDetected }
         Should -Invoke Invoke-WPFRunspace -Times 2 -Exactly
     }
 
@@ -93,7 +97,7 @@ Describe 'Legacy task failure cleanup' {
         @{ Entry = 'features' }, @{ Entry = 'inventory' }
     ) {
         $sync.Form.Dispatcher | Add-Member -MemberType ScriptMethod -Name Invoke -Force -Value { throw 'dispatcher unavailable' }
-        if ($Entry -eq 'features') { Invoke-WPFFeatureInstall } else { Invoke-WPFGetInstalled winget }
+        if ($Entry -eq 'features') { Invoke-WPFFeatureInstall } else { Invoke-WPFGetInstalled winget -SelectDetected }
         { Invoke-TestMaintenanceWorker } | Should -Not -Throw
         $sync.ProcessRunning | Should -BeFalse
         Should -Invoke Write-Warning -Times 2 -Exactly
@@ -123,7 +127,7 @@ Describe 'Legacy task failure cleanup' {
         @{ Manager = 'Winget'; Expected = 'winget' }, @{ Manager = 'Choco'; Expected = 'choco' }
     ) {
         $sync.preferences.packagemanager = $Manager
-        Invoke-WPFGetInstalled winget
+        Invoke-WPFGetInstalled winget -SelectDetected
         Invoke-TestMaintenanceWorker
         $sync.WPFInstallExample.IsChecked | Should -BeTrue
         $sync.ProcessRunning | Should -BeFalse
@@ -131,10 +135,78 @@ Describe 'Legacy task failure cleanup' {
         Should -Invoke Show-WinUtilTweakDialog -Times 0 -Exactly
     }
 
-    It 'does not dispatch a WinGet scan when the manager is absent' {
-        Mock Test-WinUtilPackageManager { 'not-installed' }
+    It 'does not call manager preparation from the read-only detection entry' {
         Invoke-WPFGetInstalled winget
-        Should -Invoke Invoke-WPFRunspace -Times 0 -Exactly
+        Invoke-TestMaintenanceWorker
+        Should -Invoke Test-WinUtilPackageManager -Times 0 -Exactly
+        Should -Invoke Start-Process -Times 0 -Exactly
+        $sync.WPFInstallExample.IsChecked | Should -BeFalse
+        $sync.ProcessRunning | Should -BeFalse
+    }
+
+    It 'keeps detection read-only while retaining existing selections and enabling explicit append' {
+        $sync.WPFInstallEarlier = [pscustomobject]@{ IsChecked=$true }
+        Invoke-WPFGetInstalled winget
+        Invoke-TestMaintenanceWorker
+        $sync.WPFInstallEarlier.IsChecked | Should -BeTrue
+        $sync.WPFInstallExample.IsChecked | Should -BeFalse
+        $sync.SoftwareInventory.MatchedKeys | Should -Be 'WPFInstallExample'
+        Invoke-WPFGetInstalled winget -SelectDetected
+        Invoke-TestMaintenanceWorker
+        $sync.WPFInstallEarlier.IsChecked | Should -BeTrue
+        $sync.WPFInstallExample.IsChecked | Should -BeTrue
+    }
+
+    It 'retains historical evidence and diagnostics but invalidates a failed refresh' {
+        $previous = [pscustomobject]@{ Manager='Winget'; CompletedAt=[datetime]'2026-10-12T10:30:00'; MatchedKeys=@('WPFInstallEarlier') }
+        $sync.SoftwareInventory = $previous
+        Mock Invoke-WinUtilCurrentSystem {
+            $error = [InvalidOperationException]::new('source unavailable')
+            $error.Data['InventoryDiagnostics'] = @([pscustomobject]@{ StandardError='source network failure'; StandardOutput='previous output' })
+            throw $error
+        }
+        Invoke-WPFGetInstalled winget
+        Invoke-TestMaintenanceWorker
+        $sync.SoftwareInventory | Should -Be $previous
+        $sync.SoftwareInventory.IsStale | Should -BeTrue
+        $sync.InventoryDiagnostics[0].StandardError | Should -Be 'source network failure'
+        $sync.InventoryOperationError | Should -Match 'source unavailable'
+        Should -Invoke Write-Warning -Times 1 -Exactly -ParameterFilter { $Message -eq 'source network failure' }
+        $sync.ProcessRunning | Should -BeFalse
+        $sync.InventoryScanRunning | Should -BeFalse
+    }
+
+    It 'refuses to append selections from a source changed during detection' {
+        Invoke-WPFGetInstalled winget -SelectDetected
+        $sync.preferences.packagemanager = 'Choco'
+        Invoke-TestMaintenanceWorker
+        $sync.WPFInstallExample.IsChecked | Should -BeFalse
+        $sync.SoftwareInventory.IsStale | Should -BeTrue
+        $sync.ProcessRunning | Should -BeFalse
+    }
+
+    It 'does not dispatch WinGet in offline mode but allows the local Chocolatey provider' {
+        $script:PARAM_OFFLINE = $true
+        try {
+            Invoke-WPFGetInstalled winget
+            Should -Invoke Invoke-WPFRunspace -Times 0 -Exactly
+            $sync.preferences.packagemanager = 'Choco'
+            Invoke-WPFGetInstalled winget
+            Invoke-TestMaintenanceWorker
+            Should -Invoke Invoke-WinUtilCurrentSystem -Times 1 -Exactly -ParameterFilter { $CheckBox -eq 'choco' }
+        } finally { $script:PARAM_OFFLINE = $false }
+    }
+
+    It 'does not let an unrelated tweak detection failure invalidate software inventory' {
+        $sync.SoftwareInventory = [pscustomobject]@{ Manager='Winget'; CompletedAt=[datetime]::Now; MatchedKeys=@('WPFInstallEarlier') }
+        $sync.InventoryOperationError = ''
+        $sync.InventoryDiagnostics = @('software diagnostic')
+        Mock Invoke-WinUtilCurrentSystem { throw 'tweak detection failed' }
+        Invoke-WPFGetInstalled tweaks
+        Invoke-TestMaintenanceWorker
+        $sync.InventoryOperationError | Should -Be ''
+        $sync.InventoryDiagnostics[0] | Should -Be 'software diagnostic'
+        (Test-WinUtilInventoryCurrent -Inventory $sync.SoftwareInventory) | Should -BeTrue
         $sync.ProcessRunning | Should -BeFalse
     }
 }
@@ -190,7 +262,7 @@ Describe 'Real maintenance workers and WPF dispatcher boundary' {
             $process.Refresh()
             $finished | Should -BeTrue -Because 'workers and UI callbacks must not wait on each other indefinitely'
             $process.ExitCode | Should -Be 0 -Because ((Get-Content $stderr -Raw) + (Get-Content $stdout -Raw))
-            (Get-Content $stdout -Raw) | Should -Match 'scenarios=6; callbacks kept busy; no system commands'
+            (Get-Content $stdout -Raw) | Should -Match 'scenarios=7; callbacks kept busy; no system commands'
         } finally { $process.Dispose() }
     }
 }

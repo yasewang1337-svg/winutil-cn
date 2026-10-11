@@ -6,6 +6,7 @@
 | --- | --- | --- |
 | 正式发布 | [release-cn.yaml](workflows/release-cn.yaml) | main 的相关代码改动或手动触发；测试通过后构建中文 PS1/EXE、分别扫描；未完成扫描则停止，成功时附扫描报告与校验和 |
 | 回归 | [unittests.yaml](workflows/unittests.yaml) | main、PR、手动和可复用调用；双 PowerShell 回归及无害夹具启动器测试 |
+| 软件检测实测 | [software-inventory-integration.yaml](workflows/software-inventory-integration.yaml) | 相关 PR、手动和发布前调用；一次性 GitHub Windows runner 检查 WinGet / Chocolatey 真实库存，并验证小型测试软件安装、检测、卸载后的变化；禁止日常电脑和自托管 runner 执行 |
 | 构建检查 | [compile-check.yaml](workflows/compile-check.yaml) | main、PR、手动和可复用调用；中文脚本构建及双版本语法/BOM |
 | 仓库整洁 | [remove-winutil.yaml](workflows/remove-winutil.yaml) | push 与 PR；检查生成文件没有入库，仅报告失败，不再自动删文件并提交 |
 | MCP 回归 | [mcp-tests.yaml](workflows/mcp-tests.yaml) | MCP 及其数据配置的 main/PR 改动、手动和可复用调用；Windows Node 22 + PowerShell 5.1、Node 24 + PowerShell 7，及 Linux Node 24 协议/执行器夹具测试；干净打包后的离线连接验证 |
