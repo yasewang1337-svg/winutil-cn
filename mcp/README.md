@@ -2,6 +2,8 @@
 
 让支持 MCP 的客户端查询软件、组合、系统设置与 DNS，并按明确选择执行受支持的操作。**0.4.0 默认只读**，不会注册安装、换源或系统修改工具。它是独立的 Node.js 包，不会控制已打开的 WinUtil 窗口，桌面版更新也不会自动更新 npm 包。
 
+**当前分发：** [MCP 0.4.0 GitHub 安装包](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/mcp-v0.4.0)已发布，附 SHA256 和源码证据。npm 发布认证尚待处理，registry 仍为 0.3.0；下方使用固定版本的 GitHub 包地址。暂不要使用 `winutil-cn-mcp@0.4.0` 从 npm 安装。
+
 需要 Node.js 22 或 24 LTS。查询可跨平台使用；修改功能仅支持 Windows，并遵循当前用户权限和 PowerShell 执行策略，不自动提权或绕过策略。
 
 ## 接入
@@ -13,7 +15,7 @@
   "mcpServers": {
     "winutil-cn": {
       "command": "npx",
-      "args": ["-y", "winutil-cn-mcp@0.4.0"]
+      "args": ["-y", "https://github.com/yasewang1337-svg/winutil-cn/releases/download/mcp-v0.4.0/winutil-cn-mcp-0.4.0.tgz"]
     }
   }
 }
@@ -22,7 +24,7 @@
 Claude Code 也可注册：
 
 ```bash
-claude mcp add winutil-cn -- npx -y winutil-cn-mcp@0.4.0
+claude mcp add winutil-cn -- npx -y https://github.com/yasewang1337-svg/winutil-cn/releases/download/mcp-v0.4.0/winutil-cn-mcp-0.4.0.tgz
 ```
 
 如果客户端在 Windows 无法启动 `npx`，使用 Node 的绝对路径运行本地源码入口：
@@ -67,7 +69,7 @@ npm ci --ignore-scripts
 ```json
 {
   "command": "npx",
-  "args": ["-y", "winutil-cn-mcp@0.4.0", "--allow-write"]
+  "args": ["-y", "https://github.com/yasewang1337-svg/winutil-cn/releases/download/mcp-v0.4.0/winutil-cn-mcp-0.4.0.tgz", "--allow-write"]
 }
 ```
 

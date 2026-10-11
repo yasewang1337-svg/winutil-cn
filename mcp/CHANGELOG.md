@@ -2,6 +2,8 @@
 
 ## 0.4.0
 
+2026-10-11 已[发布 GitHub 安装包](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/mcp-v0.4.0)；npm 上架暂缓，接入方式见 [当前指南](https://github.com/yasewang1337-svg/winutil-cn/blob/main/mcp/README.md)。
+
 - 默认只读；修改工具须显式启用，全部改为先预览、相同参数与一次性计划确认。
 - 修复错误被成功文本覆盖的问题，提供逐项结果、原始输出与 MCP 错误标记；增加互斥、过期计划和取消处理。
 - 取消或超时后保留备份编号和已确认范围；客户端可通过 `get_status` 回看当前连接最近一次执行结果，未知范围会明确标记。

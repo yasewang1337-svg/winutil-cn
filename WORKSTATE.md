@@ -2,7 +2,7 @@
 
 更新：2026-10-11。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
 
-## 当前任务：MCP 修复、专项测试与独立新版发布（进行中）
+## 当前任务：MCP 修复与 GitHub 0.4.0 发布（已交付；npm 按用户决定暂缓）
 
 用户要求根据 MCP 检查结果，多智能体并行修复、完善功能、测试通过后发布新版并同步 GitHub 说明。基于 main `05785e2`，分支 `codex/mcp-reliability-20261011`；目标包 `winutil-cn-mcp@0.4.0`，桌面35版保持现有发布。
 
@@ -16,7 +16,13 @@
 
 本地最终回归在真实宿主环境PowerShell5.1/7各92项全部通过、0跳过；干净源码首次npm pack和无源码离线stdio查询通过，五工具可用，禁止操作0次，缺失/损坏快照均拒启动。npm审计0告警，actionlint/语法/diff通过。真实CLI入口只读查询成功（6张网卡），未调用修改。沙箱PS5.1因其隔离策略视图阻止脚本，单独保留失败证据；宿主CurrentUser既有RemoteSigned正常，未更改执行策略。系统修改/恢复/备份ACL仍为无害夹具验收，未在生产系统验证实际写入。
 
-证据：`.artifacts/mcp-repair-20261011/{tests-final-ps51.log,tests-final-ps7.log,package-final.log,npm-audit-final.json,local-readonly.json}`；独立审查修复取消后恢复结果丢失、Binary/MultiString空/单元素备份展开。GitHub PR、CI与npm正式发布待后续记录，当前不能称已发布。
+证据：`.artifacts/mcp-repair-20261011/{tests-final-ps51.log,tests-final-ps7.log,package-final.log,npm-audit-final.json,local-readonly.json}`；独立审查修复取消后恢复结果丢失、Binary/MultiString空/单元素备份展开。
+
+- [PR #24](https://github.com/yasewang1337-svg/winutil-cn/pull/24)检查全部通过并合并，发布源码 `1c6c7b108cadf352bcb81b111e2ce8d1f471630d`。MCP [PR CI](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38101371428)：Windows Node22/PS5.1及Node24/PS7各92通过、0跳过；Linux Node24为88通过、4项Windows夹具不适用。三组打包验收通过；[原有回归](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38101371429)双PS各582项、启动器与编译通过。
+- [正式发布运行38101523078](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38101523078)测试和唯一tarball打包/离线验证均成功，npm上传返回E404权限/资源不可用；本机npm未登录，registry仍为0.3.0。仅能确认当前发布认证未被接受，不将其猜为确切过期原因。用户明确选择“先完成GitHub发布，npm稍后处理”，未再次尝试npm上传或修改认证。
+- [MCP 0.4.0 GitHub Release](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/mcp-v0.4.0)已发布，含实际CI包、SHA256SUMS、release-evidence.json；显式latest=false，GitHub latest仍为桌面35版。正式包下载后再次验证源码、SHA256/SHA512与离线stdio通过；SHA256 `9891b43ea2c426efb9f745ae7e086c16b0e6fda314bcbaa1d058149a104bba6f`。本地附件在 `.artifacts/released/mcp-v0.4.0/`，证据 `release-package-local.log`、`github-release-metadata.json`、`publish-failure.log`。
+- 主README、MCP接入/变更与调查进度已改用固定GitHub包URL，明确npm0.4.0当前不可用。包内README保留构建时内容，Release说明明确以当前GitHub指南为准。后续npm恢复应先由包所有者完成认证，再复用这份已测试tarball，只重跑失败的publish job，不重建不同内容覆盖同版本。系统实际修改/恢复及备份ACL创建仍待目标测试机验收。
+- 用户入口验证：实际用`npx -y <GitHub包URL>`建立MCP连接，0.4.0/默认只读/包内数据/干净源码SHA均正确，五个工具与微信查询正常，修改调用0次。证据 `published-entry-verification.json`；三个正式附件均与GitHub digest一致，证据 `github-asset-digests.json`。
 
 ## 上一阶段：更新页布局、Windows 10/11 镜像与仓库展示（已交付35版）
 
