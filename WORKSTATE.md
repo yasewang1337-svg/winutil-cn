@@ -2,9 +2,9 @@
 
 更新：2026-10-12。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
 
-## 当前任务：恢复 npm 发布（0.4.1 已上架，收尾同步与回归）
+## 当前任务：恢复 npm 发布（已完成，0.4.1 已交付）
 
-用户要求解决 npm 问题，撤销此前暂缓 npm 发布的安排。[PR #28](https://github.com/yasewang1337-svg/winutil-cn/pull/28) 已通过全部检查并合并，main `c4782ab1d4de45f4a64a11d967c10ff59cef2dbd`；当前收尾分支 `codex/npm-delivery-docs-20261012`。原账号 `hloha` 已找回并完成浏览器登录，本机 CLI 无需登录。原令牌失败未确诊为过期；改用 OIDC 发布已经被 npm 接受。
+用户要求解决 npm 问题，撤销此前暂缓 npm 发布的安排。[PR #28](https://github.com/yasewang1337-svg/winutil-cn/pull/28) 与 [PR #29](https://github.com/yasewang1337-svg/winutil-cn/pull/29) 均已通过全部检查并合并，最终发布流程与指南提交 `cfa2713fa98668c24f17740e932fb00737b1d8b9`。原账号 `hloha` 已找回，本机 CLI 无需登录；原包名保持 `winutil-cn-mcp`。原令牌失败未确诊为过期，现改用已验证的 OIDC 可信发布。
 
 用户后来找回原账号密码，取消新账号迁移方向，保持原包名。用户明确批准只允许 `yasewang1337-svg/winutil-cn` 的 `publish-mcp.yaml` 直接发布的 Trusted Publisher，环境留空、额外 dist-tag 管理权限未勾选。用户亲自完成密码复核、启用双因素认证及安全密钥验证，并确认保存了恢复码；网站已回显 Successfully added new Trusted Publisher connection。凭据不保存到项目。
 
@@ -12,7 +12,11 @@
 
 PR #28 的 MCP CI `38171549554` 三平台及打包验证通过，Windows Node22/24各98项、Linux93通过/5项Windows专属不适用；原有回归 `38171549631` 和编译检查均通过。补发运行 `38171833196` 成功复用原构建 `38103739854`，npm 已接受上传并生成来源证明，但紧接的查询遇到 npm 处理期 E404，导致最后校验步骤失败。数分钟后 registry 0.4.1 可读，实际下载 tarball 的 SHA256/SHA512 均与 GitHub 原包一致；没有再次上传。证据 `publish-ci.log`、`registry-view.json`、`registry-verification.json`。
 
-针对真实处理延迟已加入有界查询重试：仅临时E404等待15秒、最多21次，认证错误/无效响应/内容不符立即失败，不自动重复上传。四组发布来源/篡改/延迟/失败测试、Actionlint及diff通过。实际 `npx -y winutil-cn-mcp@0.4.1` 连接通过：版本0.4.1、五查询工具、bundled数据及原源码SHA正确、软件查询正常、修改调用0次，见 `published-entry-verification.json`。正在同步 README、接入配置、变更记录和调查状态；待提交后CI通过、验证工作流幂等补跑、核对 npm 页面，再交付。桌面EXE/PS1和主机系统设置未修改。
+针对真实处理延迟已加入有界查询重试：仅临时E404等待15秒、最多21次，认证错误/无效响应/内容不符立即失败，不自动重复上传。四组发布来源/篡改/延迟/失败测试、Actionlint及diff通过。PR #29 的 [MCP CI38172122896](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38172122896) Windows Node22/24各100通过，Linux95通过/5项Windows专属不适用；三组打包验证及原有回归 `38172122938`、编译检查全部通过，证据 `final-mcp-tests.log`。
+
+实际 `npx -y winutil-cn-mcp@0.4.1` 连接通过：版本0.4.1、五查询工具、bundled数据及原源码SHA正确、软件查询正常、修改调用0次，见 `published-entry-verification.json`。npm 页面显示版本0.4.1、可信发布状态Valid；[最终发布校验38172290353](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38172290353) 全成功，确认同版本同内容已存在，跳过再次上传，registry SHA512验证通过；日志 `publish-final-ci.log` 与 `final-registry/` 保存正式证据。复用安装包的原源码仍为 `1fcf523757d82b6a723e734165388ee3ddb75052`，没有重建或改写0.4.1原包。
+
+README、MCP接入配置、变更记录、调查状态和GitHub Release说明均已更新并回读。npm包内README保留构建时状态，当前GitHub指南明确给出正式npm接入与仍可用的GitHub附件入口。该限制需要后续新版本更新包内文档，不能修改已经发布版本的原始字节。本轮npm恢复已完成，无待授权或待发布事项；桌面latest仍为 `cn-2026.10.09-35`，本地EXE/PS1和主机系统设置未修改。
 
 ## 上一阶段：MCP 隔离环境实际修改与恢复验证（已完成，0.4.1 已交付）
 
