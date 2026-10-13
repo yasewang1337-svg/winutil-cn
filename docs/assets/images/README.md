@@ -3,7 +3,7 @@
 | 目录 | 用途 |
 | --- | --- |
 | [branding](branding/) | README 横幅与 yesewang1337 标识，保留 SVG 源文件和 PNG 展示文件 |
-| [screenshots](screenshots/) | 当前首页、组合预览，以及仍被用户指南引用的界面截图；`install-pics/` 保留原分组 |
+| [screenshots](screenshots/) | 当前首页、组合预览、真实终端的皇冠启动截图与动图，以及仍被用户指南引用的界面截图；`install-pics/` 保留原分组 |
 | [archive](archive/) | 暂无当前页面引用的推广素材，保留 SVG 与 PNG |
 
 `archive/ad-slot.svg`、`archive/ad-slot.png` 是保留的推广素材源文件与展示文件。带旧署名且无引用的历史中文界面图已移出当前目录，可从 Git 历史查阅；它们不作为当前功能的验收证据。
