@@ -42,6 +42,13 @@
             $key = [string]$border.Tag
             $entry = $sync.configs.applicationsHashtable[$key]
             if ($null -eq $entry) { $border.Visibility = 'Collapsed'; continue }
+            $detected = $inventoryCurrent -and $installedKeys -contains $key
+            if ([bool]$border.Resources['WinUtilAppDetected'] -ne $detected) {
+                $border.Resources['WinUtilAppDetected'] = $detected
+                $summary = ([string]$entry.Description -replace '\s+', ' ').Trim()
+                if ([string]::IsNullOrWhiteSpace($summary)) { $summary = '暂无详细介绍。安装前请先通过软件官方资料了解其用途。' }
+                $border.Child.Content.Children[1].Text = $(if ($detected) { '已识别安装 · ' } else { '' }) + $summary
+            }
             $totalCount++
             $matchesText = $searchTerm.Length -eq 0
             if (-not $matchesText) {
@@ -63,22 +70,21 @@
         if ($filterActive) {
             $category.Visibility = if ($categoryMatches -gt 0) { 'Visible' } else { 'Collapsed' }
             $wrap.Visibility = 'Visible'
-            $label.Content = ([string]$label.Content) -replace '^\+ ', '- '
         } else {
             $category.Visibility = 'Visible'
             if ($null -ne $sync.InstallCategoryCollapseState -and $sync.InstallCategoryCollapseState.ContainsKey($category)) {
                 $collapsed = $sync.InstallCategoryCollapseState[$category]
                 $wrap.Visibility = if ($collapsed) { 'Collapsed' } else { 'Visible' }
-                $label.Content = (([string]$label.Content) -replace '^[+-] ', '')
-                $label.Content = if ($collapsed) { '+ ' + $label.Content } else { '- ' + $label.Content }
             }
         }
+        Update-WinUtilAppCategoryHeader -Category $category -VisibleCount $categoryMatches
     }
     if (-not $filterActive) { $sync.InstallCategoryCollapseState = $null }
     $sync.InstallAppliedFilter = @{ Search = $searchTerm; OnlySelected = $onlySelected; OnlyInstalled = $onlyInstalled; Manager = $manager }
     if ($filterChanged -and $sync.InstallAppAreaScrollViewer) { $sync.InstallAppAreaScrollViewer.ScrollToTop() }
     if ($sync.InstallFilterStatus) { $sync.InstallFilterStatus.Text = "显示 $matchCount / $totalCount 项" }
     if ($sync.InstallClearFilter) { $sync.InstallClearFilter.IsEnabled = $filterActive }
+    if ($sync.InstallEmptyClearFilter) { $sync.InstallEmptyClearFilter.Visibility = if ($filterActive) { 'Visible' } else { 'Collapsed' } }
     if ($sync.InstallFilterEmpty) {
         $sync.InstallFilterEmpty.Visibility = if ($matchCount -eq 0) { 'Visible' } else { 'Collapsed' }
         $sync.InstallFilterEmptyText.Text = if ($onlyInstalled) {

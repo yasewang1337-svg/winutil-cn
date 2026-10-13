@@ -27,6 +27,10 @@
 
 搜索快捷键集中在 `Invoke-WinUtilKeyboardShortcut.ps1`：`Ctrl + F` 进入当前可搜索页面的输入框并全选，其他页进入软件搜索；`Esc` 仅处理当前聚焦的搜索框。筛选条件改变时列表回到顶部，勾选刷新保留位置。`Set-WinUtilNavigationLayout.ps1` 按可用宽度与字号调整导航，`Set-WinUtilConfigLayout.ps1` 重排已有设置面板，不重建控件或改变选择。相关回归为 `keyboard-shortcuts.Tests.ps1`、`app-selection-ux.Tests.ps1`、`navigation.Tests.ps1` 和 `crown-ui.Tests.ps1`。
 
+软件行与设置行各自拥有唯一完整说明，初始只保存文字，首次悬停时再生成详细内容。设置行的稳定元数据用于搜索，不解析多行控件的 `Content` 字符串；`New-WinUtilSettingRow.ps1` 保留原生选择/开关/按钮和控件ID。设置项 F1 打开说明、Esc 收起。软件行末单项菜单按钮复用页面菜单，不参与默认Tab链，键盘保留Shift+F10；点击菜单入口不改变勾选。分类计数与搜索结果同步。
+
+首页不构建软件行；`Initialize-WinUtilSoftwarePage.ps1` 在首次进入软件页时初始化一次，恢复此前导入/组合选择，失败不锁死重试。后台任务池通过 `Initialize-WinUtilRunspacePool.ps1` 在首次派发时建立，并发上限4；不运行无人使用的 `Get-ComputerInfo`。关闭使用 `Close-WinUtilRunspacePool.ps1`：存在活动任务立即拒绝关闭，绝不强杀；自动模式可显式等待自然完成。不要在WPF Closing中同步等待活动任务或调用全量GC。生命周期验收使用Sleep/队列等无害worker与固定状态WPF夹具，不能把这些测量等同于用户机器的完整冷启动或整机停顿时间。
+
 软件命令栏按实际宽度把原“组合推荐”菜单移动至“更多操作”，宽度恢复时移回；保留控件对象、ID和事件，不重复创建或注册动作。布局只监听所属控件的尺寸变化，不使用跨窗口的 `LayoutUpdated`。来源行显示简短检测状态，完整来源、时间和错误保留在Tooltip与辅助功能名称中。设置页监听所属ScrollViewer最终viewport宽度，确保从窄窗回宽时能恢复双列；已有 `z__` 高级分类保持置后。相关行为见 `app-commandbar.Tests.ps1` 和 `crown-ui.Tests.ps1`。
 
 ## 镜像与界面预览维护
@@ -43,7 +47,7 @@ powershell -NoProfile -File tools/Export-InterfacePreviews.ps1 -IncludeCompact
 
 检查 `.artifacts/interface-previews/` 的 42 张预览：7 个页面状态（首页、软件、优化、配置、更新，以及 Windows 11 / 10 镜像）各覆盖深浅主题和三种尺寸／字号组合（1280 × 800 / 100%、800 × 600 / 150%、1280 × 800 / 150%）。预览只加载显示夹具，系统开关值固定，不执行设置或启动外部程序。
 
-验收后更新 `docs/assets/images/screenshots/` 下的 `home-cn.png`、`home-light-cn.png`、`software-cn.png`、`updates-cn.png`、`windows-iso-cn.png`，保留现有引用入口。README 使用 `releases/latest` 入口，预览图必须来自本次源码；不要沿用旧版布局或概念稿。页面修改还应检查隐藏步骤展开后的滚动与按钮可达性，相关回归见 `windows-update-layout.Tests.ps1` 和 `windows-iso-layout.Tests.ps1`。
+验收后更新 `docs/assets/images/screenshots/` 下的 `home-cn.png`、`home-light-cn.png`、`software-cn.png`、`tweaks-cn.png`、`config-cn.png`、`updates-cn.png`、`windows-iso-cn.png`，保留现有引用入口。README 使用 `releases/latest` 入口，预览图必须来自本次源码；不要沿用旧版布局或概念稿。页面修改还应检查隐藏步骤展开后的滚动与按钮可达性，相关回归见 `windows-update-layout.Tests.ps1` 和 `windows-iso-layout.Tests.ps1`。
 
 ## 2026-09 可靠性维护
 

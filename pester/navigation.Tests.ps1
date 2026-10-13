@@ -1,13 +1,14 @@
 ﻿BeforeAll {
     Add-Type -AssemblyName PresentationFramework
     $script:root = Split-Path $PSScriptRoot -Parent
-    foreach ($file in @('public/Invoke-WPFTab.ps1', 'public/Invoke-WPFHome.ps1', 'private/Set-WinUtilWindowBounds.ps1', 'private/Invoke-WinutilThemeChange.ps1', 'private/Invoke-WinUtilFontScaling.ps1', 'private/Initialize-WinUtilWindowChrome.ps1', 'private/Set-WinUtilNavigationLayout.ps1', 'private/Test-WinUtilTitleBarSource.ps1')) {
+    foreach ($file in @('public/Invoke-WPFTab.ps1', 'public/Invoke-WPFHome.ps1', 'private/Initialize-WinUtilSoftwarePage.ps1', 'private/Set-WinUtilWindowBounds.ps1', 'private/Invoke-WinutilThemeChange.ps1', 'private/Invoke-WinUtilFontScaling.ps1', 'private/Initialize-WinUtilWindowChrome.ps1', 'private/Set-WinUtilNavigationLayout.ps1', 'private/Test-WinUtilTitleBarSource.ps1')) {
         . ([scriptblock]::Create([IO.File]::ReadAllText((Join-Path $script:root "functions/$file"))))
     }
     function Set-Preferences { param([switch]$save) }
     function Find-AppsByNameOrDescription { param($SearchString) }
     function Find-TweaksByNameOrDescription { param($SearchString) }
     function Invoke-WPFPresets { param($preset, $checkboxfilterpattern) }
+    function Initialize-WPFUI { param($TargetGridName, [switch]$DeferCatalogue, [switch]$ReuseContainer) }
 }
 
 Describe 'Chinese navigation and first-use layout' {
@@ -61,6 +62,47 @@ Describe 'Chinese navigation and first-use layout' {
         $sync.WPFTab1BT.IsEnabled = $false
         Invoke-WPFTab 'WPFTab1BT'
         $sync.currentTab | Should -Be 'WPFTab6'
+    }
+
+    It 'builds the software page only on its first visit and leaves existing selections intact' {
+        $sync.SoftwarePageDeferred = $true
+        $sync.selectedApps = [Collections.Generic.List[string]]::new()
+        $sync.selectedApps.Add('WPFInstallFixture')
+        Mock Initialize-WPFUI { $sync.selectedApps[0] | Should -Be 'WPFInstallFixture' }
+        Invoke-WPFTab 'WPFTab6BT'
+        Invoke-WPFTab 'WPFTab2BT'
+        Should -Invoke Initialize-WPFUI -Times 0 -Exactly
+        Invoke-WPFTab 'WPFTab1BT'
+        Invoke-WPFTab 'WPFTab6BT'
+        Invoke-WPFTab 'WPFTab1BT'
+        Should -Invoke Initialize-WPFUI -Times 1 -Exactly -ParameterFilter { $TargetGridName -eq 'appspanel' }
+        $sync.SoftwarePageDeferred | Should -BeFalse
+        $sync.selectedApps[0] | Should -Be 'WPFInstallFixture'
+    }
+
+    It 'does not construct a disabled software page' {
+        $sync.SoftwarePageDeferred = $true
+        $sync.WPFTab1BT.IsEnabled = $false
+        Mock Initialize-WPFUI {}
+        Invoke-WPFTab 'WPFTab1BT'
+        Should -Invoke Initialize-WPFUI -Times 0 -Exactly
+        $sync.SoftwarePageDeferred | Should -BeTrue
+    }
+
+    It 'restores the cursor and permits retry after software construction fails' {
+        $sync.SoftwarePageDeferred = $true
+        $originalCursor = [Windows.Input.Mouse]::OverrideCursor
+        try {
+            [Windows.Input.Mouse]::OverrideCursor = [Windows.Input.Cursors]::Cross
+            Mock Initialize-WPFUI { throw 'fixture construction failure' }
+            { Initialize-WinUtilSoftwarePage } | Should -Throw '*fixture construction failure*'
+            $sync.SoftwarePageInitializing | Should -BeFalse
+            $sync.SoftwarePageDeferred | Should -BeTrue
+            [Windows.Input.Mouse]::OverrideCursor | Should -Be ([Windows.Input.Cursors]::Cross)
+            Mock Initialize-WPFUI {}
+            Initialize-WinUtilSoftwarePage
+            $sync.SoftwarePageDeferred | Should -BeFalse
+        } finally { [Windows.Input.Mouse]::OverrideCursor = $originalCursor }
     }
 
     It 'fits a laptop work area expressed in device-independent pixels' {

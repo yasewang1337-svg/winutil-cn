@@ -9,6 +9,9 @@ function Invoke-WPFTab {
     $target = $sync.Form.FindName($tabName)
     if (-not $target) { return }
     if ($sync[$ClickedTab] -and -not $sync[$ClickedTab].IsEnabled) { return }
+    if ($tabName -eq 'WPFTab1' -and $sync.SoftwarePageDeferred) {
+        Initialize-WinUtilSoftwarePage
+    }
 
     foreach ($number in 1..6) {
         $button = $sync["WPFTab${number}BT"]

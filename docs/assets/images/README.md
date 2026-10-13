@@ -22,4 +22,4 @@ Hugo 用户指南沿用 image shortcode，路径相对于 `docs/assets/`，不�
 
 更新截图时同步检查引用页面和说明。旧指南截图只用于界面定位；按钮和恢复行为以当前文字指南与版本为准。移动图片前还应考虑仓库外部可能存在的直接链接。
 
-当前主界面保留 `home-cn.png`、`home-light-cn.png`、`software-cn.png`、`updates-cn.png` 和 `windows-iso-cn.png` 五个公开入口，由 `tools/Export-InterfacePreviews.ps1` 的实际 WPF 显示夹具更新。发布前按[维护说明](../../MAINTENANCE.md)检查 7 个页面状态、双主题和三种尺寸／字号组合，共 42 张预览；夹具不执行系统设置。皇冠终端动图单独录制，不用界面截图或概念图替代。
+当前主界面保留 `home-cn.png`、`home-light-cn.png`、`software-cn.png`、`tweaks-cn.png`、`config-cn.png`、`updates-cn.png` 和 `windows-iso-cn.png` 七个公开入口，由 `tools/Export-InterfacePreviews.ps1` 的实际 WPF 显示夹具更新。发布前按[维护说明](../../MAINTENANCE.md)检查 7 个页面状态、双主题和三种尺寸／字号组合，共 42 张预览；夹具不执行系统设置。皇冠终端动图单独录制，不用界面截图或概念图替代。

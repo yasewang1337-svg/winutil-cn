@@ -153,6 +153,13 @@
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Background" Value="{DynamicResource AppInstallUnselectedColor}"/>
         <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource AppInstallHighlightedColor}"/>
+            </Trigger>
+            <DataTrigger Binding="{Binding Child.IsChecked, RelativeSource={RelativeSource Self}}" Value="True">
+                <Setter Property="Background" Value="{DynamicResource AppInstallSelectedColor}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BrandBorderColor}"/>
+            </DataTrigger>
             <Trigger Property="IsKeyboardFocusWithin" Value="True">
                 <Setter Property="BorderBrush" Value="{DynamicResource AccentColor}"/>
             </Trigger>
@@ -204,6 +211,51 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+    <Style x:Key="SettingRowBorderStyle" TargetType="Border">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="5"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0,2,0,2"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{DynamicResource AppInstallHighlightedColor}"/></Trigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Tag.Kind, RelativeSource={RelativeSource Self}}" Value="Selection"/>
+                    <Condition Binding="{Binding Tag.Control.IsChecked, RelativeSource={RelativeSource Self}}" Value="True"/>
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Background" Value="{DynamicResource AppInstallSelectedColor}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BrandBorderColor}"/>
+            </MultiDataTrigger>
+            <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource AccentColor}"/></Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="SettingEntryCheckboxStyle" TargetType="CheckBox">
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Foreground" Value="{DynamicResource MainForegroundColor}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Padding" Value="10,8"/>
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="CheckBox">
+            <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="26"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                    <Grid Width="16" Height="16" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0">
+                        <Border Name="SettingCheckBorder" Background="{DynamicResource ButtonBackgroundColor}" BorderBrush="{DynamicResource ControlBorderColor}" BorderThickness="1" CornerRadius="2"/>
+                        <Path Name="SettingCheckMark" Stroke="{DynamicResource PrimaryButtonForegroundColor}" StrokeThickness="2" Data="M 3 8 L 6 11 L 13 4" Visibility="Collapsed"/>
+                    </Grid>
+                    <ContentPresenter Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsChecked" Value="True"><Setter TargetName="SettingCheckBorder" Property="Background" Value="{DynamicResource AccentColor}"/><Setter TargetName="SettingCheckBorder" Property="BorderBrush" Value="{DynamicResource AccentColor}"/><Setter TargetName="SettingCheckMark" Property="Visibility" Value="Visible"/></Trigger>
+                <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.5"/></Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate></Setter.Value></Setter>
     </Style>
     <Style x:Key="AppEntryNameStyle" TargetType="TextBlock">
         <Setter Property="TextWrapping" Value="Wrap"/>
@@ -485,6 +537,7 @@
         </Style>
         <Style TargetType="Button">
             <Setter Property="Margin" Value="{DynamicResource ButtonMargin}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="Foreground" Value="{DynamicResource ButtonForegroundColor}"/>
             <Setter Property="Background" Value="{DynamicResource ButtonBackgroundColor}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderColor}"/>
@@ -499,7 +552,7 @@
                     <ControlTemplate TargetType="Button">
                         <Grid><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{DynamicResource ButtonCornerRadius}" Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center"/>
                         </Border>
                         <Border x:Name="FocusRing" IsHitTestVisible="False" BorderBrush="{DynamicResource AccentColor}" BorderThickness="1" CornerRadius="8" Margin="-3" Visibility="Collapsed"/></Grid>
                         <ControlTemplate.Triggers>
@@ -518,6 +571,9 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+        </Style>
+        <Style x:Key="SettingActionButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         </Style>
         <Style x:Key="PrimaryButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="Background" Value="{DynamicResource ButtonPrimaryColor}"/>
@@ -1108,7 +1164,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Grid.Row="0" Margin="{DynamicResource TabContentMargin}">
+                    <ScrollViewer Name="WPFTweaksScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Grid.Row="0" Margin="0,0,0,8">
                         <Grid Background="Transparent">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -1116,36 +1172,40 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <StackPanel Background="{DynamicResource MainBackgroundColor}" Orientation="Vertical" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="5">
-                                <Label Content="推荐方案:" FontSize="{DynamicResource FontSize}" VerticalAlignment="Center" Margin="2"/>
-                                <WrapPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,2,0,0">
-                                    <Button Name="WPFstandard" Content=" 标准 " Margin="2" Width="Auto" Height="Auto" MinHeight="36" Padding="12,8"/>
-                                    <Button Name="WPFminimal" Content=" 基础设置 " Margin="2" Width="Auto" Height="Auto" MinHeight="36" Padding="12,8"/>
-                                    <Button Name="WPFAdvanced" Content=" 高级 " Margin="2" Width="Auto" Height="Auto" MinHeight="36" Padding="12,8"/>
-                                    <Button Name="WPFClearTweaksSelection" Content=" 清除 " Margin="2" Width="Auto" Height="Auto" MinHeight="36" Padding="12,8"/>
-                                    <Button Name="WPFGetInstalledTweaks" Content=" 检查当前设置 " Margin="2" Width="Auto" Height="Auto" MinHeight="36" Padding="12,8"/>
-                                </WrapPanel>
-                            </StackPanel>
+                            <Border Grid.Row="0" Margin="0,0,10,10" Padding="12,8" Background="{DynamicResource PanelBackgroundColor}" BorderBrush="{DynamicResource BorderColor}" BorderThickness="1" CornerRadius="6">
+                                <StackPanel>
+                                    <WrapPanel Orientation="Horizontal">
+                                        <Button Name="WPFminimal" Content="基础设置" Margin="0,0,6,6" Width="Auto" Height="Auto" MinHeight="36" Padding="12,7" ToolTip="勾选基础方案，不立即修改设置；可继续增减项目，再查看并运行。"/>
+                                        <Button Name="WPFstandard" Content="标准方案" Margin="0,0,6,6" Width="Auto" Height="Auto" MinHeight="36" Padding="12,7" ToolTip="勾选标准方案，不立即执行；请核对所选项目与恢复范围。"/>
+                                        <Button Name="WPFAdvanced" Content="高级方案" Margin="0,0,6,6" Width="Auto" Height="Auto" MinHeight="36" Padding="12,7" ToolTip="勾选高级方案，其中部分项目会影响系统功能；逐项阅读说明后再执行。"/>
+                                        <Button Name="WPFClearTweaksSelection" Content="清除选择" Style="{StaticResource HoverButtonStyle}" Margin="0,0,6,6" Width="Auto" Height="Auto" MinHeight="36" Padding="12,7" ToolTip="只取消当前勾选，不恢复或修改系统。"/>
+                                        <Button Name="WPFGetInstalledTweaks" Content="检查当前设置" Margin="0,0,0,6" Width="Auto" Height="Auto" MinHeight="36" Padding="12,7" ToolTip="读取并勾选已符合条件的设置，供你核对；检查本身不应用设置。"/>
+                                    </WrapPanel>
+                                    <TextBlock Text="方案只勾选；开关会直接应用。悬停或按 F1 查看完整说明。" Foreground="{DynamicResource SecondaryForegroundColor}" FontSize="{DynamicResource AppEntryDescriptionFontSize}" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
 
                             <Grid Name="tweakspanel" Grid.Row="1">
                                 <!-- Your tweakspanel content goes here -->
                             </Grid>
-
-                            <Border Grid.ColumnSpan="2" Grid.Row="2" Grid.Column="0" Style="{StaticResource BorderStyle}">
-                                <StackPanel Background="{DynamicResource MainBackgroundColor}" Orientation="Vertical" HorizontalAlignment="Stretch">
-                                    <TextBlock Padding="10" TextWrapping="Wrap">
-                                        选择方案只会勾选项目。点击“查看并运行”后，会先列出改动和恢复范围。
-                                        <LineBreak/>系统设置可按记录恢复；卸载应用、清理文件等操作不能完整撤销，请逐项查看说明。
-                                    </TextBlock>
+                            <Border Name="WPFTweakFilterEmpty" Grid.Row="1" Visibility="Collapsed" Padding="24,30" Background="{DynamicResource PanelBackgroundColor}" CornerRadius="6" Margin="0,0,10,0">
+                                <StackPanel>
+                                    <TextBlock Text="没有匹配的设置" FontWeight="SemiBold" FontSize="{DynamicResource HeaderFontSize}" TextWrapping="Wrap"/>
+                                    <TextBlock Text="试试名称或用途关键词。当前勾选会保留。" Foreground="{DynamicResource SecondaryForegroundColor}" TextWrapping="Wrap" Margin="0,8,0,14"/>
+                                    <Button Name="WPFTweakSearchClear" Content="清除搜索" HorizontalAlignment="Left" Width="Auto" Height="Auto" Padding="12,8"/>
                                 </StackPanel>
                             </Border>
+
+                            <TextBlock Grid.Row="2" Margin="10,8,14,14" TextWrapping="Wrap" Foreground="{DynamicResource SecondaryForegroundColor}" FontSize="{DynamicResource AppEntryDescriptionFontSize}"
+                                Text="运行前会展示改动与恢复范围。卸载应用、清理文件等操作不能完整撤销。"/>
                         </Grid>
                     </ScrollViewer>
-                    <Border Grid.Row="1" Background="{DynamicResource MainBackgroundColor}" BorderBrush="{DynamicResource BorderColor}" BorderThickness="1" CornerRadius="5" HorizontalAlignment="Stretch" Padding="10">
-                        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0">
-                            <Button Name="WPFTweaksbutton" Style="{StaticResource PrimaryButtonStyle}" Content="查看并运行" Margin="5" Width="Auto" Height="Auto" MinHeight="36" Padding="12,8"/>
-                            <Button Name="WPFUndoall" Content="恢复所选设置" Margin="5" Width="Auto" Height="Auto" MinHeight="36" Padding="12,8"/>
-                            <Button Name="WPFTweakHistory" Content="操作历史" Margin="5" Width="Auto" Height="Auto" MinHeight="36" Padding="12,8"/>
+                    <Border Grid.Row="1" Background="{DynamicResource PanelBackgroundColor}" BorderBrush="{DynamicResource BorderColor}" BorderThickness="0,1,0,0" HorizontalAlignment="Stretch" Padding="10,8" Margin="0,0,0,8">
+                        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <TextBlock Name="WPFSelectedTweaksSummary" Text="已选 0 项" MinWidth="86" VerticalAlignment="Center" Margin="0,6,14,6" AutomationProperties.LiveSetting="Polite"/>
+                            <Button Name="WPFTweaksbutton" Style="{StaticResource PrimaryButtonStyle}" Content="查看并运行" Margin="0,3,8,3" Width="Auto" Height="Auto" MinHeight="36" Padding="12,8" ToolTipService.ShowOnDisabled="True" ToolTip="先勾选设置，再查看改动范围并确认执行。"/>
+                            <Button Name="WPFUndoall" Content="恢复所选设置" Margin="0,3,8,3" Width="Auto" Height="Auto" MinHeight="36" Padding="12,8" ToolTipService.ShowOnDisabled="True" ToolTip="按已有记录恢复勾选项目；也可从操作历史查看可恢复的记录。"/>
+                            <Button Name="WPFTweakHistory" Content="操作历史" Style="{StaticResource HoverButtonStyle}" Margin="0,3,0,3" Width="Auto" Height="Auto" MinHeight="36" Padding="12,8"/>
                         </WrapPanel>
                     </Border>
                 </Grid>

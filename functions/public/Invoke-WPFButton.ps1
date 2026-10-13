@@ -46,6 +46,11 @@ function Invoke-WPFButton {
         "WPFMinimal" {Invoke-WPFPresets "Minimal" -checkboxfilterpattern "WPFTweak*"}
         "WPFAdvanced" {Invoke-WPFPresets "Advanced" -checkboxfilterpattern "WPFTweak*"}
         "WPFClearTweaksSelection" {Invoke-WPFPresets -imported $true -checkboxfilterpattern "WPFTweak*"}
+        "WPFTweakSearchClear" {
+            $sync.SearchBar.Text = ''
+            Find-TweaksByNameOrDescription -SearchString ''
+            $null = $sync.SearchBar.Focus()
+        }
         "WPFClearInstallSelection" {Invoke-WPFPresets -imported $true -checkboxfilterpattern "WPFInstall*"}
         "WPFBundle*" {Invoke-WPFBundle ($Button -replace '^WPFBundle','')}
         "WPFtweaksbutton" {Invoke-WPFtweaksbutton}

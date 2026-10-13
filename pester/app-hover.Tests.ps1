@@ -17,6 +17,11 @@
             $Element = [Windows.LogicalTreeHelper]::GetParent($Element)
         }
     }
+    function Open-TestAppToolTip($Border) {
+        $constructor = [Windows.Controls.ToolTipEventArgs].GetConstructors([Reflection.BindingFlags]'Instance,NonPublic')[0]
+        $event = $constructor.Invoke(@($true))
+        $Border.RaiseEvent($event)
+    }
 }
 
 Describe 'Software row descriptions and input' {
@@ -39,6 +44,8 @@ Describe 'Software row descriptions and input' {
         $script:checkbox = Initialize-InstallAppEntry -TargetElement $panel -AppKey 'WPFInstallHover'
         $sync.WPFInstallHover = $checkbox
         $script:border = $checkbox.Parent
+        $script:initialTip = $border.ToolTip
+        Open-TestAppToolTip $border
         $script:tip = $border.ToolTip
         Mock Show-WinUtilAppActions {}
     }
@@ -58,22 +65,25 @@ Describe 'Software row descriptions and input' {
     It 'shows complete literal descriptions without interpreting markup or PowerShell' {
         $Apps.WPFInstallLiteral = @{ content = '<软件名称>'; description = '<b>说明</b> $(Get-Date) <script>alert(1)</script>' }
         $literal = Initialize-InstallAppEntry -TargetElement $panel -AppKey 'WPFInstallLiteral'
+        Open-TestAppToolTip $literal.Parent
         $literal.Parent.ToolTip.Content.Children[1].Text | Should -Be $Apps.WPFInstallLiteral.description
-        $literal.Parent.ToolTip.Content.Children.Count | Should -Be 2
+        $literal.Parent.ToolTip.Content.Children[2].Visibility | Should -Be 'Collapsed'
         [Windows.Automation.AutomationProperties]::GetHelpText($literal) | Should -Be $Apps.WPFInstallLiteral.description
     }
 
     It 'provides readable fallback text and omits unavailable package IDs' {
         $Apps.WPFInstallEmpty = @{ content = '示例软件'; description = '  '; winget = 'na'; choco = '' }
         $empty = Initialize-InstallAppEntry -TargetElement $panel -AppKey 'WPFInstallEmpty'
+        Open-TestAppToolTip $empty.Parent
         $empty.Parent.ToolTip.Content.Children[1].Text | Should -Match '^暂无详细介绍'
-        $empty.Parent.ToolTip.Content.Children.Count | Should -Be 2
+        $empty.Parent.ToolTip.Content.Children[2].Visibility | Should -Be 'Collapsed'
         [Windows.Automation.AutomationProperties]::GetHelpText($empty) | Should -Match '^暂无详细介绍'
     }
 
     It 'keeps a compact one-line summary while preserving full multiline help' {
         $Apps.WPFInstallMultiline = @{ content = '示例软件'; description = "第一段用途。`r`n第二段说明。`t补充信息。" }
         $multiline = Initialize-InstallAppEntry -TargetElement $panel -AppKey 'WPFInstallMultiline'
+        Open-TestAppToolTip $multiline.Parent
         $multiline.Content.Children[1].Text | Should -Be '第一段用途。 第二段说明。 补充信息。'
         $multiline.Content.Children[1].TextWrapping | Should -Be 'NoWrap'
         $multiline.Content.Children[1].TextTrimming | Should -Be 'CharacterEllipsis'
@@ -91,9 +101,54 @@ Describe 'Software row descriptions and input' {
     }
 
     It 'waits briefly and limits tooltip lifetime while allowing movement between rows' {
-        [Windows.Controls.ToolTipService]::GetInitialShowDelay($border) | Should -Be 550
-        [Windows.Controls.ToolTipService]::GetBetweenShowDelay($border) | Should -Be 150
-        [Windows.Controls.ToolTipService]::GetShowDuration($border) | Should -Be 18000
+        [Windows.Controls.ToolTipService]::GetInitialShowDelay($border) | Should -Be 450
+        [Windows.Controls.ToolTipService]::GetBetweenShowDelay($border) | Should -Be 120
+        [Windows.Controls.ToolTipService]::GetShowDuration($border) | Should -Be 24000
+    }
+
+    It 'builds rich help only when inspected and reuses it with the latest selection context' {
+        $initialTip | Should -BeOfType ([string])
+        $initialTip | Should -Be $Apps.WPFInstallHover.description
+        $tip.Content.Children[3].Text | Should -Match '右侧.*右键'
+        $checkbox.IsChecked = $true
+        $border.Resources['WinUtilAppDetected'] = $true
+        Open-TestAppToolTip $border
+        [object]::ReferenceEquals($tip, $border.ToolTip) | Should -BeTrue
+        $tip.Content.Children[3].Text | Should -Match '已加入清单.*已识别安装'
+    }
+
+    It 'opens the explicit row action once without checking the application' {
+        $actions = $checkbox.Content.Children[2]
+        $actions.IsTabStop | Should -BeFalse
+        [Windows.Automation.AutomationProperties]::GetName($actions) | Should -Match 'Everything.*操作'
+        $click = [Windows.RoutedEventArgs]::new([Windows.Controls.Primitives.ButtonBase]::ClickEvent)
+        $actions.RaiseEvent($click)
+        $click.Handled | Should -BeTrue
+        $checkbox.IsChecked | Should -BeFalse
+        $selectionEvents.Count | Should -Be 0
+        Should -Invoke Show-WinUtilAppActions -Times 1 -Exactly -ParameterFilter { $AppKey -eq 'WPFInstallHover' -and $PlacementTarget -eq $actions }
+        $release = [Windows.Input.MouseButtonEventArgs]::new([Windows.Input.Mouse]::PrimaryDevice, 0, [Windows.Input.MouseButton]::Left)
+        $release.RoutedEvent = [Windows.Input.Mouse]::MouseUpEvent
+        $actions.RaiseEvent($release)
+        $checkbox.IsChecked | Should -BeFalse
+    }
+
+    It 'restores a selection during lazy construction without firing a selection change' {
+        $sync.selectedApps = @('WPFInstallHover')
+        $restored = Initialize-InstallAppEntry -TargetElement $panel -AppKey WPFInstallHover
+        $restored.IsChecked | Should -BeTrue
+        $selectionEvents.Count | Should -Be 0
+        $restored.Parent.ToolTip | Should -BeOfType ([string])
+    }
+
+    It 'keeps native selection feedback live after theme changes without per-row mouse scripts' {
+        $checkbox.IsChecked = $true
+        $border.Background.ToString() | Should -Be $form.Resources.AppInstallSelectedColor.ToString()
+        $border.BorderBrush.ToString() | Should -Be $form.Resources.BrandBorderColor.ToString()
+        Invoke-WinutilThemeChange -theme Light
+        $border.Background.ToString() | Should -Be $form.Resources.AppInstallSelectedColor.ToString()
+        $checkbox.IsChecked = $false
+        $border.Background.ToString() | Should -Be $form.Resources.AppInstallUnselectedColor.ToString()
     }
 
     It 'toggles row padding once per mouse click' {

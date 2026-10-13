@@ -56,6 +56,7 @@
             else{
                 $sync.selectedTweaks.Remove($appKey)
             }
+            if (Get-Command Update-WinUtilTweakSelectionUi -ErrorAction SilentlyContinue) { Update-WinUtilTweakSelectionUi }
         }
         "Toggle" {
             if ($type -eq "Add") {

@@ -4,6 +4,8 @@ BeforeAll {
     foreach ($file in @(
         'private/Invoke-WinutilThemeChange.ps1', 'private/Invoke-WinUtilFontScaling.ps1',
         'private/Set-WinUtilConfigLayout.ps1', 'private/Set-WinUtilNavigationLayout.ps1',
+        'private/New-WinUtilSettingRow.ps1', 'private/Initialize-WinUtilSettingToolTip.ps1',
+        'private/Update-WinUtilTweakSelectionUi.ps1',
         'public/Invoke-WPFUIElements.ps1'
     )) { . ([scriptblock]::Create([IO.File]::ReadAllText((Join-Path $script:root "functions/$file")))) }
     function Set-Preferences { param([switch]$save) }

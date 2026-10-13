@@ -1,8 +1,8 @@
 ﻿    function Initialize-InstallAppArea {
         <#
             .SYNOPSIS
-                Creates a [Windows.Controls.ScrollViewer] containing a [Windows.Controls.ItemsControl] which is setup to use Virtualization to only load the visible elements for performance reasons.
-                This is used as the parent object for all category and app entries on the install tab
+            Creates the software list, filter bar and operation overlay. Rows are
+            ordinary WPF controls; the page is built on demand by the navigation layer.
                 Used to as part of the Install Tab UI generation
 
                 Also creates an overlay with a progress bar and text to indicate that an install or uninstall is in progress
@@ -69,7 +69,21 @@
         $emptyText.SetResourceReference([Windows.Controls.TextBlock]::ForegroundProperty, 'MainForegroundColor')
         $emptyText.SetResourceReference([Windows.Controls.TextBlock]::FontFamilyProperty, 'FontFamily')
         $emptyText.SetResourceReference([Windows.Controls.TextBlock]::FontSizeProperty, 'ButtonFontSize')
-        $empty.Child = $emptyText
+        $emptyLayout = [Windows.Controls.StackPanel]::new()
+        $emptyLayout.HorizontalAlignment = 'Left'
+        $null = $emptyLayout.Children.Add($emptyText)
+        $clear = [Windows.Controls.Button]::new()
+        $clear.Content = '清除筛选，查看全部'
+        $clear.Margin = '0,12,0,0'
+        $clear.Padding = '12,7'
+        $clear.HorizontalAlignment = 'Left'
+        $clear.SetResourceReference([Windows.Controls.Control]::StyleProperty, 'HoverButtonStyle')
+        $clear.SetResourceReference([Windows.Controls.Control]::FontSizeProperty, 'ButtonFontSize')
+        $clear.ToolTip = '清空搜索与筛选，保留已有勾选。'
+        $clear.Add_Click({ Reset-WinUtilAppFilter })
+        $null = $emptyLayout.Children.Add($clear)
+        $empty.Child = $emptyLayout
+        $sync.InstallEmptyClearFilter = $clear
         $sync.InstallFilterEmpty = $empty
         $sync.InstallFilterEmptyText = $emptyText
         $null = $appContentGrid.Children.Add($empty)

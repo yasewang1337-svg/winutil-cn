@@ -47,4 +47,5 @@ function Invoke-WPFPresets {
     }
 
     Reset-WPFCheckBoxes -doToggles $false -checkboxfilterpattern $checkboxfilterpattern
+    if (Get-Command Update-WinUtilTweakSelectionUi -ErrorAction SilentlyContinue) { Update-WinUtilTweakSelectionUi }
 }

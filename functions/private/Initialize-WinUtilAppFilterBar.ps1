@@ -1,10 +1,10 @@
 ﻿function Initialize-WinUtilAppFilterBar {
     <# .SYNOPSIS Creates the compact software filter controls using the current theme. #>
     $toolbar = [Windows.Controls.WrapPanel]::new()
-    $toolbar.Margin = '8,4,8,10'
+    $toolbar.Margin = '8,0,8,4'
     $toolbar.HorizontalAlignment = 'Stretch'
     $status = [Windows.Controls.TextBlock]::new()
-    $status.Margin = '0,4,18,4'
+    $status.Margin = '0,3,16,3'
     $status.VerticalAlignment = 'Center'
     $status.SetResourceReference([Windows.Controls.TextBlock]::ForegroundProperty, 'SecondaryForegroundColor')
     $status.SetResourceReference([Windows.Controls.TextBlock]::FontFamilyProperty, 'FontFamily')

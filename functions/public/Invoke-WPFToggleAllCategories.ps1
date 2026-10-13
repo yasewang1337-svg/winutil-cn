@@ -24,8 +24,6 @@ function Invoke-WPFToggleAllCategories {
         }
 
         $targetVisibility = if ($Action -eq "Expand") { [Windows.Visibility]::Visible } else { [Windows.Visibility]::Collapsed }
-        $targetPrefix = if ($Action -eq "Expand") { "-" } else { "+" }
-        $sourcePrefix = if ($Action -eq "Expand") { "+" } else { "-" }
 
         # Iterate through all items in the ItemsControl
         $sync.ItemsControl.Items | ForEach-Object {
@@ -37,12 +35,7 @@ function Invoke-WPFToggleAllCategories {
                 $wrapPanel = $categoryContainer.Children[1]
                 $wrapPanel.Visibility = $targetVisibility
 
-                # Update the label to show the correct state
-                $categoryLabel = $categoryContainer.Children[0]
-                if ($categoryLabel.Content -like "$sourcePrefix*") {
-                    $escapedSourcePrefix = [regex]::Escape($sourcePrefix)
-                    $categoryLabel.Content = $categoryLabel.Content -replace "^$escapedSourcePrefix ", "$targetPrefix "
-                }
+                Update-WinUtilAppCategoryHeader -Category $categoryContainer
             }
         }
     }

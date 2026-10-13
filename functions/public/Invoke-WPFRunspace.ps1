@@ -2,12 +2,16 @@ function Invoke-WPFRunspace {
     <# .SYNOPSIS Dispatches a task and retains its pipeline until completion without closing the shared pool. #>
     [CmdletBinding()]
     param([Parameter(Mandatory)][scriptblock]$ScriptBlock, $ArgumentList, $ParameterList)
-    if (-not $sync.RunspaceJobs) {
-        $sync.RunspaceJobs = [System.Collections.Concurrent.ConcurrentDictionary[string,object]]::new()
-    }
-    Complete-WinUtilRunspaceJobs
-    $pipeline = [powershell]::Create()
+    [Threading.Monitor]::Enter($sync.SyncRoot)
+    $pipeline = $null
     try {
+        if ($sync.RunspaceShuttingDown) { throw 'WinUtil is closing; no new background task can start.' }
+        if ($null -eq $sync.RunspaceJobs) {
+            $sync.RunspaceJobs = [System.Collections.Concurrent.ConcurrentDictionary[string,object]]::new()
+        }
+        Complete-WinUtilRunspaceJobs
+        if (-not $sync.runspace) { Initialize-WinUtilRunspacePool }
+        $pipeline = [powershell]::Create()
         $null = $pipeline.AddScript($ScriptBlock)
         if ($PSBoundParameters.ContainsKey('ArgumentList')) { $null = $pipeline.AddArgument($ArgumentList) }
         foreach ($parameter in $ParameterList) {
@@ -20,7 +24,7 @@ function Invoke-WPFRunspace {
         $sync.RunspaceJobs[$id] = [pscustomobject]@{ Id=$id; Pipeline=$pipeline; Handle=$handle }
         return $handle
     } catch {
-        $pipeline.Dispose()
+        if ($pipeline) { $pipeline.Dispose() }
         throw
-    }
+    } finally { [Threading.Monitor]::Exit($sync.SyncRoot) }
 }

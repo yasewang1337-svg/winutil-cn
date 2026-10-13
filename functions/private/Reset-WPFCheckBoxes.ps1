@@ -42,6 +42,7 @@
     }
 
     Update-WinUtilAppSelectionUi
+    if (Get-Command Update-WinUtilTweakSelectionUi -ErrorAction SilentlyContinue) { Update-WinUtilTweakSelectionUi }
 
     if($doToggles) {
         # Restore toggle switch states from imported config.
