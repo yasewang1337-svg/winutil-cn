@@ -14,7 +14,7 @@
 | [tools](../tools/) | 构建检查、预览、生成器和启动器 | 当前 EXE 工具在 [launcher](../tools/launcher/README.md)；旧上游工具文本在 [legacy](../tools/legacy/README.md) |
 | [lint](../lint/README.md) | 按需使用的 PSScriptAnalyzer 设置 | `settings.psd1` 是配置，不是执行脚本；不代表已接入全仓库 lint 门禁 |
 | [mcp](../mcp/README.md) | 独立的 Node.js MCP 包与数据生成 | 保留自己的 package.json 和 lockfile，不与 PowerShell 编译输出混放 |
-| [packaging/winget](../packaging/winget/README.md) | WinGet 分发清单历史 | 现有清单按版本归档；本地文件不代表外部仓库审核或上架状态 |
+| [packaging/winget](../packaging/winget/README.md) | WinGet 分发准备 | 旧候选留在 Git 历史；正式候选需单独验证和审核，不据本地文件推断上架状态 |
 | [.github](../.github/) | GitHub 工作流、Issue 模板和仓库协作规则 | 工作流保留 GitHub 要求的位置；以显示名称、触发条件与说明区分用途 |
 | [docs](README.md) | 用户指南、开发参考、图片和站点来源材料 | 当前中文说明入口为仓库 Markdown；站点配置身份与构建方式见该目录说明 |
 | [WORKSTATE.md](../WORKSTATE.md) | 当前任务状态、交付证据和后续事项 | 用于恢复工作，不替代用户指南或运行配置 |

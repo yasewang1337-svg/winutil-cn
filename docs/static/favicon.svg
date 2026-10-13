@@ -1,62 +1,17 @@
-<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <clipPath id="sq"><rect x="10" y="10" width="236" height="236" rx="52"/></clipPath>
-    <linearGradient id="bg" x1="40" y1="10" x2="220" y2="246" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#111a30"/><stop offset="0.5" stop-color="#0b1122"/><stop offset="1" stop-color="#0a0818"/>
-    </linearGradient>
-    <radialGradient id="innerglow" cx="0.5" cy="0.58" r="0.6">
-      <stop offset="0" stop-color="#2b6bff" stop-opacity="0.28"/>
-      <stop offset="0.55" stop-color="#3a2b8f" stop-opacity="0.12"/>
-      <stop offset="1" stop-color="#0a0818" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="topbevel" x1="0" y1="10" x2="0" y2="70" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#5cffe6" stop-opacity="0.35"/><stop offset="1" stop-color="#5cffe6" stop-opacity="0"/>
-    </linearGradient>
-    <linearGradient id="cyan" x1="42" y1="112" x2="104" y2="186" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#7dffee"/><stop offset="1" stop-color="#3aa9ff"/>
-    </linearGradient>
-    <linearGradient id="hg" x1="124" y1="104" x2="182" y2="192" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#7dffee"/><stop offset="0.55" stop-color="#4aa8ff"/><stop offset="1" stop-color="#c86bff"/>
-    </linearGradient>
-    <filter id="soft" x="-60%" y="-60%" width="220%" height="220%">
-      <feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-    <radialGradient id="vig" cx="0.5" cy="0.5" r="0.72">
-      <stop offset="0.6" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="0.35"/>
-    </radialGradient>
-  </defs>
-
-  <rect x="10" y="10" width="236" height="236" rx="52" fill="url(#bg)"/>
-
-  <g clip-path="url(#sq)">
-    <!-- 内发光晕:命令行处透出光 -->
-    <rect x="10" y="10" width="236" height="236" fill="url(#innerglow)"/>
-    <!-- 极淡扫描线 -->
-    <g stroke="#5cffe6" stroke-width="1.5" opacity="0.035"><path d="M10 100 H246 M10 124 H246 M10 148 H246 M10 172 H246 M10 196 H246"/></g>
-    <!-- 顶部高光斜面 -->
-    <rect x="10" y="10" width="236" height="60" fill="url(#topbevel)" opacity="0.5"/>
-
-    <!-- 终端窗口三点(带柔光) -->
-    <g filter="url(#soft)">
-      <circle cx="48" cy="46" r="6.5" fill="#38f9d7"/><circle cx="72" cy="46" r="6.5" fill="#43a6ff"/><circle cx="96" cy="46" r="6.5" fill="#c86bff"/>
-    </g>
-    <line x1="10" y1="72" x2="246" y2="72" stroke="#5cffe6" stroke-width="1" opacity="0.12"/>
-
-    <!-- 柔和外发光(命令行整体) -->
-    <g filter="url(#soft)" opacity="0.85">
-      <polyline points="52,116 100,152 52,188" fill="none" stroke="url(#cyan)" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M131,106 L142,106 L142,137 L170,137 L170,106 L181,106 L192,117 L192,179 L181,190 L170,190 L170,157 L142,157 L142,190 L131,190 L120,179 L120,117 Z" fill="url(#hg)"/>
-      <rect x="196" y="172" width="38" height="15" rx="4" fill="#4dffe0"/>
-    </g>
-    <!-- 清晰主体叠加(锐利) -->
-    <polyline points="52,116 100,152 52,188" fill="none" stroke="url(#cyan)" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M131,106 L142,106 L142,137 L170,137 L170,106 L181,106 L192,117 L192,179 L181,190 L170,190 L170,157 L142,157 L142,190 L131,190 L120,179 L120,117 Z" fill="url(#hg)"/>
-    <rect x="196" y="172" width="38" height="15" rx="4" fill="#4dffe0"/>
-
-    <!-- 暗角聚焦 -->
-    <rect x="10" y="10" width="236" height="236" fill="url(#vig)"/>
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">WinUtil CN · yesewang1337</title>
+  <desc id="desc">深蓝终端窗口中的金色皇冠</desc>
+  <rect x="10" y="10" width="236" height="236" rx="52" fill="#10243A"/>
+  <rect x="11" y="11" width="234" height="234" rx="51" stroke="#42617E" stroke-width="2"/>
+  <path d="M26 60H230" stroke="#42617E" stroke-width="2"/>
+  <g fill="#7891A9">
+    <circle cx="40" cy="37" r="4"/>
+    <circle cx="56" cy="37" r="4"/>
+    <circle cx="72" cy="37" r="4"/>
   </g>
-  <!-- 精致描边:外深内浅双层 -->
-  <rect x="10" y="10" width="236" height="236" rx="52" fill="none" stroke="#0a0f1c" stroke-width="3"/>
-  <rect x="11.5" y="11.5" width="233" height="233" rx="50.5" fill="none" stroke="#3a5680" stroke-width="1.5" opacity="0.7"/>
+  <path d="M52 96L88 126L128 76L168 126L204 96L186 174H70Z" fill="#EBC16B"/>
+  <path d="M52 96L88 126L128 76L168 126L204 96" stroke="#FFF0C4" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M76 188H180" stroke="#EBC16B" stroke-width="12" stroke-linecap="round"/>
+  <path d="M128 130L138 143L128 156L118 143Z" fill="#10243A"/>
+  <path d="M103 213H153" stroke="#7891A9" stroke-width="3" stroke-linecap="round"/>
 </svg>

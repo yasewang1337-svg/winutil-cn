@@ -1,0 +1,22 @@
+<svg width="940" height="300" viewBox="0 0 940 300" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">yesewang1337 · WinUtil CN 中文维护</title>
+  <desc id="desc">WinUtil CN 维护者 yesewang1337 与金色终端皇冠标识</desc>
+  <rect x="1" y="1" width="938" height="298" rx="24" fill="#10243A" stroke="#42617E" stroke-width="2"/>
+  <g font-family="'Segoe UI','Microsoft YaHei',sans-serif">
+    <text x="56" y="104" font-size="59" font-weight="650" fill="#F5F7FA">yesewang1337</text>
+    <text x="59" y="150" font-size="23" fill="#EBC16B">WinUtil CN 中文维护</text>
+    <path d="M58 183H605" stroke="#42617E"/>
+    <text x="59" y="223" font-size="19" fill="#B8C9D8">让中文用户更从容地管理自己的电脑。</text>
+  </g>
+  <g transform="translate(668 39) scale(.87)">
+    <rect x="10" y="10" width="236" height="236" rx="52" fill="#10243A"/>
+    <rect x="11" y="11" width="234" height="234" rx="51" stroke="#42617E" stroke-width="2"/>
+    <path d="M26 60H230" stroke="#42617E" stroke-width="2"/>
+    <g fill="#7891A9"><circle cx="40" cy="37" r="4"/><circle cx="56" cy="37" r="4"/><circle cx="72" cy="37" r="4"/></g>
+    <path d="M52 96L88 126L128 76L168 126L204 96L186 174H70Z" fill="#EBC16B"/>
+    <path d="M52 96L88 126L128 76L168 126L204 96" stroke="#FFF0C4" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M76 188H180" stroke="#EBC16B" stroke-width="12" stroke-linecap="round"/>
+    <path d="M128 130L138 143L128 156L118 143Z" fill="#10243A"/>
+    <path d="M103 213H153" stroke="#7891A9" stroke-width="3" stroke-linecap="round"/>
+  </g>
+</svg>

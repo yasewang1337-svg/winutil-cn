@@ -28,7 +28,7 @@
   <!-- 主文案 -->
   <text x="150" y="74" font-size="34" font-weight="700" fill="url(#neon)" filter="url(#glow)">推广位 · 虚位以待</text>
   <text x="152" y="110" font-size="17" fill="#9FB4D6">品牌合作 · 广告投放 · 工具联动 —— 触达每一位重装 Windows 的中国开发者</text>
-  <text x="152" y="138" font-size="15" fill="#5E7BA6">联系 Holha1337 · github.com/yasewang1337-svg/winutil-cn</text>
+  <text x="152" y="138" font-size="15" fill="#5E7BA6">联系 yesewang1337 · github.com/yasewang1337-svg/winutil-cn</text>
 
   <!-- 右上角 AD 角标 -->
   <g transform="translate(724,30)">

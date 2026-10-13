@@ -1542,7 +1542,7 @@
                         </WrapPanel>
                         <TextBlock Text="浏览和导入清单不会自动安装。清单不备份个人文件；操作历史只恢复已记录的设置。" Foreground="{DynamicResource SecondaryForegroundColor}" TextWrapping="Wrap" Margin="0,6,0,16"/>
                         <Button Name="WPFHomeHelp" Content="中文上手指南" Style="{StaticResource HomeLinkButtonStyle}" HorizontalAlignment="Left" Width="Auto" Height="Auto" Padding="10,7" Margin="0,0,0,8"/>
-                        <TextBlock Text="WinUtil CN 由 Holha1337 维护，基于 Chris Titus Tech WinUtil。" Foreground="{DynamicResource SecondaryForegroundColor}" TextWrapping="Wrap"/>
+                        <TextBlock Text="WinUtil CN 由 yesewang1337 维护，基于 Chris Titus Tech WinUtil。" Foreground="{DynamicResource SecondaryForegroundColor}" TextWrapping="Wrap"/>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>

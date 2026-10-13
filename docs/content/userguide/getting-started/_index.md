@@ -129,4 +129,4 @@ Get-FileHash .\winutil-cn.ps1 -Algorithm SHA256
 
 在[本项目 Issues](https://github.com/yasewang1337-svg/winutil-cn/issues)反馈时，提供版本、Windows 版本、启动方式、失败步骤与相关错误段落。发布日志前可删去个人路径等不需要公开的信息。
 
-本项目由 **Holha1337** 维护，基于 **Chris Titus Tech Windows Utility** 的中文本地化分支。
+本项目由 **yesewang1337** 维护，基于 **Chris Titus Tech Windows Utility** 的中文本地化分支。

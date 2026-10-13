@@ -2,11 +2,11 @@
 
 | 目录 | 用途 |
 | --- | --- |
-| [branding](branding/) | README 横幅与 Holha1337 标识，保留 SVG 源文件和 PNG 展示文件 |
+| [branding](branding/) | README 横幅与 yesewang1337 标识，保留 SVG 源文件和 PNG 展示文件 |
 | [screenshots](screenshots/) | 当前首页、组合预览，以及仍被用户指南引用的界面截图；`install-pics/` 保留原分组 |
-| [archive](archive/) | 暂无当前页面引用的旧推广图和旧中文预览，保留历史用途 |
+| [archive](archive/) | 暂无当前页面引用的推广素材，保留 SVG 与 PNG |
 
-`archive/ad-slot.svg`、`archive/ad-slot.png` 是旧推广素材的源文件与展示文件；`archive/preview-cn.png` 是旧版中文界面预览。它们不作为当前功能的验收证据，也不与新版截图混放。
+`archive/ad-slot.svg`、`archive/ad-slot.png` 是保留的推广素材源文件与展示文件。带旧署名且无引用的历史中文界面图已移出当前目录，可从 Git 历史查阅；它们不作为当前功能的验收证据。
 
 README 使用相对于仓库根目录的完整图片路径。例如：
 

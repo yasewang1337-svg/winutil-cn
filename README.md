@@ -2,7 +2,7 @@
 
 Windows 11 上的软件管理与系统维护工具，提供中文界面、软件操作清单、设置历史，以及 Windows 10 / 11 安装镜像制作。
 
-基于 [Chris Titus Tech Windows Utility](https://github.com/ChrisTitusTech/winutil)，由 [Holha1337](https://github.com/yasewang1337-svg) 汉化与维护。
+基于 [Chris Titus Tech Windows Utility](https://github.com/ChrisTitusTech/winutil)，由 [yesewang1337](https://github.com/yasewang1337-svg) 汉化与维护。
 
 <p align="center">
   <a href="https://github.com/yasewang1337-svg/winutil-cn/releases/latest"><img src="https://img.shields.io/github/v/release/yasewang1337-svg/winutil-cn?style=flat-square&amp;label=release&amp;color=16877c" alt="最新版本"></a>
@@ -154,7 +154,7 @@ powershell -NoProfile -File tools\Test-Build.ps1
 
 自动模式仅支持软件操作及可记录的基础注册表设置（含受支持的开关）；脚本、服务、预装应用移除（Appx）、DNS 和系统功能等复杂操作需要在图形界面核对。具体项目见 [config/preset.json](config/preset.json)。
 
-[MCP 服务器](https://yasewang1337-svg.github.io/winutil-cn/mcp/)供支持 MCP 的客户端查询软件、组合、系统设置和 DNS。默认只读；显式启用修改后，仍须先预览，再用同一参数与一次性计划确认。支持指定软件安装、开发工具换源、受支持的注册表/服务设置和选定网卡 DNS；复杂脚本优化会明确拒绝，并指引使用桌面版。数据来源、执行错误和恢复范围均可查看。使用 [MCP 指南](mcp/README.md)中的 `npx -y winutil-cn-mcp@0.4.2` 接入；对应 [npm 包](https://www.npmjs.com/package/winutil-cn-mcp/v/0.4.2)与 [GitHub 安装包](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/mcp-v0.4.2)保留版本和源码证据。MCP 与桌面版独立更新。
+[MCP 服务器](https://yasewang1337-svg.github.io/winutil-cn/mcp/)供支持 MCP 的客户端查询软件、组合、系统设置和 DNS。默认只读；显式启用修改后，仍须先预览，再用同一参数与一次性计划确认。支持指定软件安装、开发工具换源、受支持的注册表/服务设置和选定网卡 DNS；复杂脚本优化会明确拒绝，并指引使用桌面版。数据来源、执行错误和恢复范围均可查看。使用 [MCP 指南](mcp/README.md)中的 `npx -y winutil-cn-mcp@0.4.3` 接入；对应 [npm 包](https://www.npmjs.com/package/winutil-cn-mcp/v/0.4.3)与 [GitHub 安装包](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/mcp-v0.4.3)保留版本和源码证据。MCP 与桌面版独立更新。
 
 </details>
 

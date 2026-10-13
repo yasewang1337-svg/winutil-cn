@@ -1,4 +1,4 @@
-function Invoke-WinUtilAssets {
+﻿function Invoke-WinUtilAssets {
   param (
       $type,
       $Size,
@@ -24,61 +24,53 @@ function Invoke-WinUtilAssets {
 
   switch ($type) {
       'logo' {
-          # Holha1337 终端徽记:霓虹终端窗 + >H_ 提示符 + 闪烁光标
-          # 与 EXE 图标 >H_ 终端风格统一,暗黑霓虹 gamesense 质感
+          # yesewang1337 皇冠徽记，与 EXE / 文档站的矢量图标保持一致。
+          # 对话框采用静态标识，启动时的字符动画由启动界面负责。
+          $mark = New-Object Windows.Controls.Canvas
+          $mark.Width = 256; $mark.Height = 256
+          $mark.RenderTransform = New-Object Windows.Media.ScaleTransform(0.390625, 0.390625)
 
-          # 终端"屏幕"圆角矩形(深色底 + 霓虹渐变描边 + 辉光呼吸)
           $screen = New-Object Windows.Shapes.Rectangle
-          $screen.Width = 84; $screen.Height = 60
-          $screen.RadiusX = 13; $screen.RadiusY = 13
-          [Windows.Controls.Canvas]::SetLeft($screen, 8)
-          [Windows.Controls.Canvas]::SetTop($screen, 20)
-          $screen.Fill = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#0B1730")
-          $scStroke = New-Object Windows.Media.LinearGradientBrush
-          $scStroke.StartPoint = "0,0"; $scStroke.EndPoint = "1,1"
-          $scStroke.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#38F9D7"), 0)))
-          $scStroke.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#43A6FF"), 0.5)))
-          $scStroke.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#C86BFF"), 1)))
-          $screen.Stroke = $scStroke
-          $screen.StrokeThickness = 4
-          $scGlow = New-Object Windows.Media.Effects.DropShadowEffect
-          $scGlow.Color = [Windows.Media.ColorConverter]::ConvertFromString("#38F9D7")
-          $scGlow.BlurRadius = 16; $scGlow.ShadowDepth = 0; $scGlow.Opacity = 0.85
-          $screen.Effect = $scGlow
-          # 辉光呼吸脉冲(BlurRadius 9<->22 循环,营造霓虹脉动)
-          $scPulse = New-Object Windows.Media.Animation.DoubleAnimation
-          $scPulse.From = 9; $scPulse.To = 22
-          $scPulse.Duration = New-Object Windows.Duration([TimeSpan]::FromSeconds(1.4))
-          $scPulse.AutoReverse = $true
-          $scPulse.RepeatBehavior = [Windows.Media.Animation.RepeatBehavior]::Forever
-          $scGlow.BeginAnimation([Windows.Media.Effects.DropShadowEffect]::BlurRadiusProperty, $scPulse)
+          $screen.Width = 236; $screen.Height = 236
+          $screen.RadiusX = 52; $screen.RadiusY = 52
+          [Windows.Controls.Canvas]::SetLeft($screen, 10)
+          [Windows.Controls.Canvas]::SetTop($screen, 10)
+          $screen.Fill = [Windows.Media.BrushConverter]::new().ConvertFromString('#10243A')
+          $screen.Stroke = [Windows.Media.BrushConverter]::new().ConvertFromString('#42617E')
+          $screen.StrokeThickness = 2
+          [void]$mark.Children.Add($screen)
 
-          # >H 提示符(霓虹渐变等宽粗体)
-          $prompt = New-Object Windows.Controls.TextBlock
-          $prompt.Text = ">H"; $prompt.FontFamily = "Consolas"; $prompt.FontSize = 34; $prompt.FontWeight = "Bold"
-          $pGrad = New-Object Windows.Media.LinearGradientBrush
-          $pGrad.StartPoint = "0,0"; $pGrad.EndPoint = "1,1"
-          $pGrad.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#5CFFE6"), 0)))
-          $pGrad.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#43A6FF"), 0.6)))
-          $pGrad.GradientStops.Add((New-Object Windows.Media.GradientStop([Windows.Media.ColorConverter]::ConvertFromString("#C86BFF"), 1)))
-          $prompt.Foreground = $pGrad
-          [Windows.Controls.Canvas]::SetLeft($prompt, 21); [Windows.Controls.Canvas]::SetTop($prompt, 26)
-
-          # _ 光标(青色,闪烁 opacity 动画,终端质感)
-          $cursor = New-Object Windows.Controls.TextBlock
-          $cursor.Text = "_"; $cursor.FontFamily = "Consolas"; $cursor.FontSize = 34; $cursor.FontWeight = "Bold"
-          $cursor.Foreground = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#5CFFE6")
-          [Windows.Controls.Canvas]::SetLeft($cursor, 59); [Windows.Controls.Canvas]::SetTop($cursor, 26)
-          $blink = New-Object Windows.Media.Animation.DoubleAnimation
-          $blink.From = 1; $blink.To = 0
-          $blink.Duration = New-Object Windows.Duration([TimeSpan]::FromSeconds(0.6))
-          $blink.AutoReverse = $true
-          $blink.RepeatBehavior = [Windows.Media.Animation.RepeatBehavior]::Forever
-          $cursor.BeginAnimation([Windows.UIElement]::OpacityProperty, $blink)
-
-          $canvas.Children.Add($screen) | Out-Null
-          $canvas.Children.Add($prompt) | Out-Null
-          $canvas.Children.Add($cursor) | Out-Null
+          $paths = @(
+              @{ Data = 'M26 60H230'; Stroke = '#42617E'; Width = 2 },
+              @{ Data = 'M52 96L88 126L128 76L168 126L204 96L186 174H70Z'; Fill = '#EBC16B' },
+              @{ Data = 'M52 96L88 126L128 76L168 126L204 96'; Stroke = '#FFF0C4'; Width = 5 },
+              @{ Data = 'M76 188H180'; Stroke = '#EBC16B'; Width = 12 },
+              @{ Data = 'M128 130L138 143L128 156L118 143Z'; Fill = '#10243A' },
+              @{ Data = 'M103 213H153'; Stroke = '#7891A9'; Width = 3 }
+          )
+          foreach ($definition in $paths) {
+              $path = New-Object Windows.Shapes.Path
+              $path.Data = [Windows.Media.Geometry]::Parse($definition.Data)
+              if ($definition.Fill) {
+                  $path.Fill = [Windows.Media.BrushConverter]::new().ConvertFromString($definition.Fill)
+              }
+              if ($definition.Stroke) {
+                  $path.Stroke = [Windows.Media.BrushConverter]::new().ConvertFromString($definition.Stroke)
+                  $path.StrokeThickness = $definition.Width
+                  $path.StrokeStartLineCap = 'Round'; $path.StrokeEndLineCap = 'Round'
+                  $path.StrokeLineJoin = 'Round'
+              }
+              [void]$mark.Children.Add($path)
+          }
+          foreach ($center in @(40, 56, 72)) {
+              $dot = New-Object Windows.Shapes.Ellipse
+              $dot.Width = 8; $dot.Height = 8
+              $dot.Fill = [Windows.Media.BrushConverter]::new().ConvertFromString('#7891A9')
+              [Windows.Controls.Canvas]::SetLeft($dot, $center - 4)
+              [Windows.Controls.Canvas]::SetTop($dot, 33)
+              [void]$mark.Children.Add($dot)
+          }
+          [void]$canvas.Children.Add($mark)
       }
       'checkmark' {
           $canvas.Width = 512
