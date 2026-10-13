@@ -41,6 +41,11 @@ document.addEventListener('DOMContentLoaded', () => {
       composing = false;
       schedule();
     });
+    input.addEventListener('keydown', event => {
+      // Let the IME handle candidate navigation and confirmation. Hextra's
+      // normal Enter/Escape handling would otherwise clear and blur the input.
+      if (composing || event.isComposing) event.stopImmediatePropagation();
+    }, true);
     input.addEventListener('keyup', event => {
       if (composing || event.isComposing) {
         event.stopImmediatePropagation();
