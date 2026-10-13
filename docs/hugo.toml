@@ -1,9 +1,14 @@
-baseURL = "/"
+baseURL = "https://yasewang1337-svg.github.io/winutil-cn/"
 languageCode = "zh-cn"
 defaultContentLanguage = "zh-cn"
-title = "WinUtil CN 中文文档"
+title = "WinUtil CN"
 enableGitInfo = true
 canonifyURLs = false
+enableRobotsTXT = true
+
+[sitemap]
+  changefreq = ""
+  filename = "sitemap.xml"
 
 [[module.mounts]]
   source = "assets"
@@ -19,14 +24,20 @@ pageRef = "/userguide"
 weight = 1
 
 [[menu.main]]
+identifier = "mcp"
+name = "MCP 接入"
+pageRef = "/mcp/"
+weight = 2
+
+[[menu.main]]
 identifier = "documentation"
 name = "开发文档"
-weight = 2
+weight = 3
 
 [[menu.main]]
 identifier = "contribution-guides"
 name = "贡献指南"
-pageRef = "CONTRIBUTING.md"
+pageRef = "/contributing/"
 weight = 1
 parent = "documentation"
 
@@ -40,19 +51,19 @@ parent = "documentation"
 [[menu.main]]
 identifier = "help"
 name = "帮助"
-weight = 3
+weight = 4
 
 [[menu.main]]
 identifier = "faq"
 name = "常见问题"
-pageRef = "faq.md"
+pageRef = "/faq/"
 weight = 1
 parent = "help"
 
 [[menu.main]]
 identifier = "known-issues"
 name = "已知问题"
-pageRef = "KnownIssues.md"
+pageRef = "/knownissues/"
 weight = 2
 parent = "help"
 
@@ -84,20 +95,21 @@ url = "https://github.com/yasewang1337-svg/winutil-cn"
   icon = "github"
 
 [params]
-description = "WinUtil CN 中文装机与维护助手：软件选择、操作结果与设置历史"
+description = "WinUtil CN 是面向中文用户的 Windows 11 软件管理与系统维护工具。先核对操作清单，再查看逐项结果；另提供 Windows 10 / 11 x64 镜像制作与默认只读的 MCP 接口。"
+title = "WinUtil CN"
+images = ["images/screenshots/home-cn.png"]
 displayUpdatedDate = true
-dateFormat = "January 2, 2006"
+dateFormat = "2006 年 1 月 2 日"
 
   [params.navbar]
-  displayTitle = false
+  displayTitle = true
   displayLogo = true
 
     [params.navbar.logo]
-    path = "navlogo.png"
-    dark = "navlogo.png"
-    link = "/"
-    width = 150
-    height = 50
+    path = "favicon.svg"
+    dark = "favicon.svg"
+    width = 30
+    height = 30
 
   [params.theme]
   default = "system"

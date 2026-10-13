@@ -1,5 +1,12 @@
 # MCP 版本变更
 
+## 0.4.2
+
+- 更新随包分发的 README，移除已过时的 npm 认证与发布状态说明；所有接入示例固定到本版本，避免 npm 与 GitHub 文档给出相互矛盾的安装指引。
+- 补齐 npm 包的源码子目录、中文文档站和问题反馈入口。
+- Windows 备用接入与恢复说明改用持久本地 npm 安装目录，不再依赖维护者的 `W:` 源码目录；仍调用现有 worker，未新增修改或恢复命令。
+- 实际 tarball 验证同时检查接入版本、包元数据和恢复脚本完整性。运行代码、依赖版本和支持的操作范围不变。
+
 ## 0.4.1
 
 2026-10-11 已[发布 GitHub 安装包](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/mcp-v0.4.1)，附实际 Windows 验证摘要；2026-10-12 已通过可信发布补发至 [npm 0.4.1](https://www.npmjs.com/package/winutil-cn-mcp/v/0.4.1)，SHA512 与原 GitHub 安装包一致。

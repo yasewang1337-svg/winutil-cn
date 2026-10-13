@@ -1,25 +1,34 @@
-name: 上游保留 - Hugo Pages
+name: 中文文档网站
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - "docs/**"
-      - "config/tweaks.json"
-      - "config/feature.json"
-      - "functions/**"
+      - "tools/check_docs_site.py"
+      - "tools/test_docs_site.py"
+      - ".github/workflows/docs.yaml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "tools/check_docs_site.py"
+      - "tools/test_docs_site.py"
+      - ".github/workflows/docs.yaml"
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-  pull-requests: write
 
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: docs-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  HUGO_VERSION: 0.156.0
+  HUGO_ENVIRONMENT: production
+  SITE_URL: https://yasewang1337-svg.github.io/winutil-cn/
+  TZ: Asia/Taipei
 
 defaults:
   run:
@@ -27,94 +36,72 @@ defaults:
 
 jobs:
   build:
-    if: github.repository == 'ChrisTitusTech/winutil'
+    name: Build and check Chinese docs
     runs-on: ubuntu-latest
-    env:
-      HUGO_VERSION: 0.156.0
-      HUGO_ENVIRONMENT: production
-      TZ: America/Chicago
     steps:
-      - name: Install Hugo CLI
-        run: |
-          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
-          && sudo dpkg -i ${{ runner.temp }}/hugo.deb
       - name: Checkout
         uses: actions/checkout@v7
         with:
-          submodules: recursive
           fetch-depth: 0
           persist-credentials: false
-      - name: Setup Pages
-        id: pages
-        uses: actions/configure-pages@v6
-
-      - name: Generate Dev Docs from JSON
-        shell: pwsh
-        run: |
-          Set-Location tools
-          ./devdocs-generator.ps1
-
-      - name: Create Pull Request
-        id: cpr
-        uses: peter-evans/create-pull-request@v8
+      - name: Set up Go for the pinned Hugo module
+        uses: actions/setup-go@v7
         with:
-          token: ${{ secrets.AUTO_MERGE }}
-          commit-message: 'chore: Update generated dev docs'
-          title: 'chore: Update Generated Dev Docs'
-          body: 'Automated update of generated documentation from JSON sources'
-          branch: docs-update
-          delete-branch: true
-          add-paths: |
-            docs/content/dev/
-            config/tweaks.json
-            config/feature.json
-          labels: |
-            automated
-            documentation
-
-      - name: Check outputs
+          go-version-file: docs/go.mod
+          cache: true
+          cache-dependency-path: docs/go.sum
+      - name: Install pinned Hugo with release checksum verification
         run: |
-          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
-          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
-
-      - name: Install Node.js dependencies
-        run: "cd docs && [[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
-      - name: Cache Restore
-        id: cache-restore
-        uses: actions/cache/restore@v6
-        with:
-          path: |
-            ${{ runner.temp }}/hugo_cache
-          key: hugo-${{ github.run_id }}
-          restore-keys: hugo-
-      - name: Build with Hugo
+          archive="hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz"
+          release="https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}"
+          curl --fail --silent --show-error --location --retry 3 "$release/$archive" --output "$RUNNER_TEMP/$archive"
+          curl --fail --silent --show-error --location --retry 3 "$release/hugo_${HUGO_VERSION}_checksums.txt" --output "$RUNNER_TEMP/hugo-checksums.txt"
+          cd "$RUNNER_TEMP"
+          awk -v archive="$archive" '$2 == archive { print; found = 1 } END { if (!found) exit 1 }' hugo-checksums.txt > hugo-expected.sha256
+          sha256sum --check hugo-expected.sha256
+          mkdir -p "$RUNNER_TEMP/hugo-bin"
+          tar -xzf "$archive" -C "$RUNNER_TEMP/hugo-bin" hugo
+          echo "$RUNNER_TEMP/hugo-bin" >> "$GITHUB_PATH"
+      - name: Test the site validation gate
+        run: python3 -m unittest discover -s tools -p test_docs_site.py -v
+      - name: Build the project-path website
         run: |
-          hugo \
-            --gc \
-            --minify \
-            --cleanDestinationDir \
-            --source docs \
-            --cacheDir "${{ runner.temp }}/hugo_cache"
-      - name: Cache Save
-        id: cache-save
-        uses: actions/cache/save@v6
+          hugo --gc --minify --source docs \
+            --destination "$GITHUB_WORKSPACE/.artifacts/docs-site" \
+            --baseURL "$SITE_URL" --cacheDir "$RUNNER_TEMP/hugo-cache"
+      - name: Validate generated links, assets and search metadata
+        run: |
+          python3 tools/check_docs_site.py --site .artifacts/docs-site \
+            --base-url "$SITE_URL" --report .artifacts/docs-site-validation.json
+          git diff --exit-code -- docs
+      - name: Upload validation evidence
+        if: always()
+        uses: actions/upload-artifact@v7
         with:
-          path: |
-            ${{ runner.temp }}/hugo_cache
-          key: ${{ steps.cache-restore.outputs.cache-primary-key }}
-      - name: Upload artifact
+          name: chinese-docs-validation
+          path: .artifacts/docs-site-validation.json
+          include-hidden-files: true
+          if-no-files-found: warn
+      - name: Upload validated Pages artifact
+        if: github.repository == 'yasewang1337-svg/winutil-cn' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v5
         with:
-          path: ./docs/public
+          path: .artifacts/docs-site
 
   deploy:
-    if: github.repository == 'ChrisTitusTech/winutil'
+    name: Deploy Chinese docs
+    if: github.repository == 'yasewang1337-svg/winutil-cn' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
-      - name: Deploy to GitHub Pages
+      - name: Check Pages configuration
+        uses: actions/configure-pages@v6
+      - name: Deploy the validated artifact
         id: deployment
         uses: actions/deploy-pages@v5

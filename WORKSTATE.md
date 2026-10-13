@@ -1,8 +1,24 @@
 # WinUtil CN 维护状态
 
-更新：2026-10-12。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
+更新：2026-10-13。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
 
-## 当前任务：软件检测与库存可靠性升级（实施中）
+## 当前任务：本地36版同步、MCP说明补丁与中文文档上线（实施中）
+
+2026-10-13 用户批准按优先级执行：同步本地最新版、更新 npm 包说明、上线现有中文文档网站，测试通过后更新 GitHub，明确不得修改日用系统设置。分支 `codex/docs-npm-delivery-20261013`，基于 `ca5906d`，保留前次维护记录修改。主助手负责本地交付、README、合并发布与最终验收；`npm_docs_delivery` 负责 MCP 0.4.2 文档/元数据及实际打包验证；`chinese_docs_site` 负责现有 Hugo 内容/样式与子路径配置；`docs_site_ci` 负责部署工作流和静态站验收。
+
+本地 EXE 已由35版更新为36版，更新前备份、源文件及目标文件SHA256验证通过，未启动正式程序。证据 `.artifacts/docs-npm-delivery-20261013/local-exe-delivery.json`；旧版备份同目录 `WinUtil-CN-v35.exe`。独立PS1仍缺失，不恢复隔离、不改防护设置；本轮桌面交付入口是EXE。中文站计划地址 `https://yasewang1337-svg.github.io/winutil-cn/`；MCP只做说明与metadata补丁，不增加执行能力。
+
+MCP 0.4.2 源码与包内 README 版本、持久 npm 安装及包内恢复路径、homepage/bugs/repository.directory 已统一；本地100项测试、干净临时仓库打包和实际tgz离线接入均通过。正式包仍由已提交源码的CI唯一构建，不发布含未提交状态的本地样本。网站138个HTML、7,729个本地资源/链接/锚点及135个sitemap URL通过静态验证，8项验证器故障回归通过；独立无头浏览器7个桌面/手机/主题视图无资源失败或页面横向溢出，截图已视检。Pages已设置为workflow构建，尚待PR/正式CI、上线与npm实际发布。证据统一保存于 `.artifacts/docs-npm-delivery-20261013/`；真实修改与恢复仅由GitHub一次性Windows runner验证。
+
+## 上一阶段：曝光、AI 可发现性与产品改进调查（已完成本地复核）
+
+用户要求研究曝光、AI 推荐及项目增强方向，随后确认工作区恢复并要求复核本地。2026-10-13 已读取本地源码、分发文件和历史验收证据；检查开始时工作树干净，本地 HEAD、origin/main 缓存与实时远端 main 均为 `ca5906d557e11a2098a884a84c31863e6fe0f66f`。本轮只校正维护记录，没有发布新版本、推广投稿或执行主机系统修改。
+
+调查结论：现有 Hugo 中文文档可以复用，但中文版部署未启用，docs workflow 仍限上游、baseURL 为本地预览路径；npm 0.4.1 的安装说明已在源码修正，但已发布包及本地 npx 缓存仍保留旧认证状态，须随下一包版本交付。MCP 尚无跟踪的 server.json/mcpName；恢复引擎及隔离测试已有，缺 npm 用户不依赖源码路径的自检/恢复 CLI。软件已有安装/升级入口，但没有明确当前/目标版本及逐项 Upgrade 计划。Windows 更新禁用、延迟、恢复之间的完整往返和原配置保留仍待改进，不能以现有布局/静态测试代替真实 Windows 11 验收。WinGet 目录只有历史清单，不据此认定已上架。
+
+建议下一阶段先修分发说明与用户恢复入口、上线现有中文文档，再补 Windows 更新往返及可选择的软件更新。官网、目录提交、代码签名、社区推广均为建议，不能记为已完成。原有不改日用系统的约束继续适用。
+
+## 上一阶段：软件检测与库存可靠性升级（36版已发布，本地入口本轮已同步）
 
 2026-10-12 用户要求继续研究升级项目。核对 main `c96c148`、桌面35版及 MCP 0.4.1 的实际交付后，在 `codex/software-inventory-20261012` 开始新阶段。官方上游仍为26.10.07/`07ccd8e`；本轮不做整库覆盖，也不变更 MCP 已发布包。
 
@@ -18,7 +34,9 @@
 
 [PR #30](https://github.com/yasewang1337-svg/winutil-cn/pull/30) 已创建。首轮 [真实检测38173478485](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38173478485) 双PS全部通过：各识别49个WinGet/45个Choco包，现有组合/跨源拒绝及hexyl0.17.0安装后出现、卸载后消失正确；包与链接删除、Choco原清单不变、临时导出无遗留。完整JSON/日志在 `pr-integration/`、`pr-integration.log`。同源码 [编译38173478452](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38173478452) 双PS语法/BOM通过。测试机为Windows Server2025镜像20260925.250.1，不扩展为所有桌面版本已验收。Hugo161页、6518站点引用及150条修改文档相对链接通过，见 `docs-qa.json`。
 
-追加8种成功/失败WPF夹具预览发现长错误文本会挤压800px/150%软件列表，已缩短状态行，完整原因保留在对话框、Tooltip及日志；定向回归和最终CI待确认。当前仍待PR最终检查、发布与本地交付复核。
+追加8种成功/失败WPF夹具预览发现长错误文本会挤压800px/150%软件列表，已缩短状态行，完整原因保留在对话框、Tooltip及日志；最终定向回归107项通过。PR #30 已合并为 `ca5906d557e11a2098a884a84c31863e6fe0f66f`，[正式发布运行38173873671](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38173873671) 全部成功，[桌面36版](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/cn-2026.10.11-36) 已发布。2026-10-13 通过 GitHub API 再次核对该运行成功及对应源码；历史完整日志、真实检测报告和扫描报告已保存在 `release-ci.log`、`release-ci/`，不是本轮重新执行测试。
+
+2026-10-13 本地只读复核：根目录 `WinUtil-CN.exe` 仍为35版（文件版本 `2026.10.9.35`，SHA256 `B7455A3A549B020219B67144D73BB9B83EE915B4D763DFE37079AD66FD3F702B`）；`.artifacts/released/cn-2026.10.11-36/WinUtil-CN.exe` 为36版，实测SHA256 `AB67BBC4860AE941D308FA020160E078B94684A5C2E1C4F5D757FD003E833BF6` 与发布证据一致。根目录两份PS1及36版独立PS1当前均不存在，未在本轮确认删除原因。前次 `available-release-verification.json` 记录EXE/清单/扫描报告校验和内嵌脚本哈希通过，但独立PS1读取被拒绝、`AllAssetsLocallyVerified=false`；不得写成全部附件本地验证完成。尚无 `local-delivery.json`，本轮没有替换EXE、恢复或重下脚本。
 
 ## 上一阶段：恢复 npm 发布（已完成，0.4.1 已交付）
 

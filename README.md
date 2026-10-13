@@ -12,12 +12,12 @@ Windows 11 上的软件管理与系统维护工具，提供中文界面、软件
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-526c91?style=flat-square" alt="MIT 许可证"></a>
 </p>
 
-**[下载 WinUtil-CN.exe](https://github.com/yasewang1337-svg/winutil-cn/releases/latest/download/WinUtil-CN.exe)** · [发布说明与 SHA256 校验文件](https://github.com/yasewang1337-svg/winutil-cn/releases/latest)
+**[下载 WinUtil-CN.exe](https://github.com/yasewang1337-svg/winutil-cn/releases/latest/download/WinUtil-CN.exe)** · [中文文档网站](https://yasewang1337-svg.github.io/winutil-cn/) · [发布说明与 SHA256 校验文件](https://github.com/yasewang1337-svg/winutil-cn/releases/latest)
 
 <p align="center">
   <a href="#快速开始">快速开始</a> ·
   <a href="#界面预览">界面预览</a> ·
-  <a href="docs/content/userguide/getting-started/_index.md">使用指南</a> ·
+  <a href="https://yasewang1337-svg.github.io/winutil-cn/userguide/getting-started/">使用指南</a> ·
   <a href="https://github.com/yasewang1337-svg/winutil-cn/releases/latest">更新记录</a> ·
   <a href="https://github.com/yasewang1337-svg/winutil-cn/issues/new/choose">反馈问题</a>
 </p>
@@ -154,7 +154,7 @@ powershell -NoProfile -File tools\Test-Build.ps1
 
 自动模式仅支持软件操作及可记录的基础注册表设置（含受支持的开关）；脚本、服务、预装应用移除（Appx）、DNS 和系统功能等复杂操作需要在图形界面核对。具体项目见 [config/preset.json](config/preset.json)。
 
-[MCP 服务器](mcp/README.md)供支持 MCP 的客户端查询软件、组合、系统设置和 DNS。0.4.1 默认只读；显式启用修改后，仍须先预览，再用同一参数与一次性计划确认。支持指定软件安装、开发工具换源、受支持的注册表/服务设置和选定网卡 DNS；复杂脚本优化会明确拒绝，并指引使用桌面版。数据来源、执行错误和恢复范围均可查看。[npm 0.4.1](https://www.npmjs.com/package/winutil-cn-mcp/v/0.4.1) 与 [GitHub 安装包](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/mcp-v0.4.1)已同步，使用 [MCP 指南](mcp/README.md)中的 `npx -y winutil-cn-mcp@0.4.1` 接入。MCP 与桌面版独立更新。
+[MCP 服务器](https://yasewang1337-svg.github.io/winutil-cn/mcp/)供支持 MCP 的客户端查询软件、组合、系统设置和 DNS。默认只读；显式启用修改后，仍须先预览，再用同一参数与一次性计划确认。支持指定软件安装、开发工具换源、受支持的注册表/服务设置和选定网卡 DNS；复杂脚本优化会明确拒绝，并指引使用桌面版。数据来源、执行错误和恢复范围均可查看。使用 [MCP 指南](mcp/README.md)中的 `npx -y winutil-cn-mcp@0.4.2` 接入；对应 [npm 包](https://www.npmjs.com/package/winutil-cn-mcp/v/0.4.2)与 [GitHub 安装包](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/mcp-v0.4.2)保留版本和源码证据。MCP 与桌面版独立更新。
 
 </details>
 

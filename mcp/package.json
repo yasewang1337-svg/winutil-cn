@@ -1,6 +1,6 @@
 {
   "name": "winutil-cn-mcp",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "WinUtil 中文版 MCP：默认只读查询软件、组合、优化项与 DNS，可显式启用受约束的修改工具。",
   "type": "module",
   "bin": {
@@ -30,5 +30,13 @@
   },
   "license": "MIT",
   "author": "Holha1337",
-  "repository": "https://github.com/yasewang1337-svg/winutil-cn"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yasewang1337-svg/winutil-cn.git",
+    "directory": "mcp"
+  },
+  "homepage": "https://yasewang1337-svg.github.io/winutil-cn/mcp/",
+  "bugs": {
+    "url": "https://github.com/yasewang1337-svg/winutil-cn/issues"
+  }
 }
