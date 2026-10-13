@@ -25,6 +25,8 @@
 
 ## 镜像与界面预览维护
 
+控制台皇冠由 `functions/private/Show-WinUtilStartupBanner.ps1` 绘制。改动时用只加载该文件的显示夹具验证PS5.1/7实际终端、大/小窗口、输出重定向和颜色/光标恢复，不为预览启动WinUtil主程序。`docs/assets/images/screenshots/startup-crown.png` 与 `startup-crown.gif` 必须来自实际终端帧；它们与WPF页面截图分别生成，动图单次播放后停留在最终帧。
+
 Windows 镜像页保留 `WPFWin11ISO*` 控件 ID 以兼容事件，但实际目标由 DISM 元数据识别为 Windows 10 / 11 x64。Windows 10 使用独立的 `tools/autounattend-win10.xml`，编译器和汉化暂存构建必须同时包含此文件；不要把 Win11 的安装脚本直接用于 Win10。完整安装启动、驱动和 U 盘写入仍需在测试设备验收。
 
 每次界面发布前运行以下命令生成当前源码的真实 WPF 预览，不执行系统动作：

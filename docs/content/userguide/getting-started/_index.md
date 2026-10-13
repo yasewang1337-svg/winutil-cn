@@ -17,6 +17,10 @@ next: /userguide/application/
 
 EXE 内嵌本版本脚本，使用 Windows 自带的 PowerShell 5.1。首次准备包管理器、下载安装软件和更新仍需要联网；单文件启动不代表所有功能可以离线使用。
 
+打开时会先显示一段金色字符皇冠动画，完成后进入原有启动流程。皇冠按控制台窗口大小调整，小窗口使用紧凑版；日志重定向或非交互启动直接显示静态内容。
+
+{{< image src="images/screenshots/startup-crown" alt="真实 PowerShell 终端中的大幅皇冠启动展示" >}}
+
 ## 使用环境
 
 - Windows 11。
