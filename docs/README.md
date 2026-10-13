@@ -23,6 +23,7 @@
 | `content/dev/architecture.md` | 架构参考 |
 | `content/dev/tweaks`、`content/dev/features` | 配置与函数生成的项目参考；`_index.md` 为手写导航 |
 | `assets/css/custom.css` | 首页响应式样式与中文阅读字体 |
+| `assets/js/core/search-input.js` | 补齐搜索框粘贴、触屏及中文输入提交；复用固定主题的搜索索引与键盘导航 |
 | `assets/images/screenshots` | 实际软件截图；改名时同步 README、首页及 image shortcode |
 | `assets/images/branding`、`assets/images/archive` | 项目素材与仍需保留的历史图片；不把历史图作为当前界面证据 |
 | `hugo.toml`、`layouts`、`static`、`go.mod` / `go.sum` | Hugo 配置、模板、站点资源与固定主题依赖 |
