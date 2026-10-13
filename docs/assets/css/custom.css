@@ -1,0 +1,68 @@
+:root {
+  --winutil-blue: #005fb8;
+  --winutil-ink: #202832;
+  --winutil-muted: #536174;
+  --winutil-rule: #dce3eb;
+  --winutil-panel: #f3f6fa;
+}
+.dark {
+  --winutil-blue: #91caff;
+  --winutil-ink: #edf1f5;
+  --winutil-muted: #b2bdca;
+  --winutil-rule: #394554;
+  --winutil-panel: #202a37;
+}
+body { font-family: "Segoe UI Variable Text", "Segoe UI", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, sans-serif; }
+.winutil-home { max-width: 1220px; margin: 0 auto; padding: 48px 32px 64px; color: var(--winutil-ink); }
+.winutil-home h1, .winutil-home h2 { font-weight: 650; letter-spacing: -.025em; text-wrap: balance; }
+.winutil-home h1 { font-size: clamp(2rem, 3.25vw, 3rem); line-height: 1.3; margin: 0 0 24px; }
+.winutil-home h2 { font-size: clamp(1.45rem, 2.3vw, 1.85rem); line-height: 1.4; margin: 0 0 18px; }
+.winutil-home p { line-height: 1.9; margin: 0 0 16px; max-width: 44em; }
+.winutil-home a { color: var(--winutil-blue); text-underline-offset: 4px; }
+.winutil-home a:hover { text-decoration: underline; }
+.winutil-home a:focus-visible { outline: 3px solid var(--winutil-blue); outline-offset: 5px; border-radius: 3px; }
+.winutil-home figure { margin: 0; min-width: 0; }
+.winutil-home img { display: block; width: 100%; height: auto; border: 1px solid var(--winutil-rule); border-radius: 7px; }
+.winutil-intro { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); align-items: center; gap: 42px; padding: 32px 0 70px; }
+.winutil-lead { color: var(--winutil-muted); font-size: 1.05rem; }
+.winutil-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; margin: 28px 0 18px; }
+.winutil-actions .winutil-download { display: inline-flex; justify-content: center; padding: 12px 24px; border-radius: 5px; background: #005fb8; color: #fff; font-weight: 600; text-decoration: none; min-height: 48px; }
+.winutil-actions .winutil-download:hover { background: #004c95; }
+.winutil-guide { padding: 10px 0; font-weight: 600; }
+.winutil-home .winutil-requirements { color: var(--winutil-muted); font-size: .85rem; line-height: 1.75; margin-bottom: 12px; }
+.winutil-release-link { font-size: .85rem; }
+.winutil-main-preview figcaption { color: var(--winutil-muted); font-size: .8rem; line-height: 1.6; margin-top: 12px; text-align: right; }
+.winutil-home .winutil-preview-dark { display: none; }
+.dark .winutil-home .winutil-preview-dark { display: block; }
+.dark .winutil-home .winutil-preview-light { display: none; }
+.winutil-software { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 42px; padding: 42px 0 60px; border-top: 1px solid var(--winutil-rule); align-items: center; }
+.winutil-section-copy p { color: var(--winutil-muted); }
+.winutil-guide-section { padding: 24px 0 48px; }
+.winutil-guide-list { margin: 8px 0 0; }
+.winutil-guide-list > div { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 24px; padding: 21px 0; border-bottom: 1px solid var(--winutil-rule); }
+.winutil-guide-list dt { font-weight: 600; line-height: 1.75; }
+.winutil-guide-list dd { color: var(--winutil-muted); line-height: 1.8; margin: 0; }
+.winutil-mcp-section { display: grid; grid-template-columns: 1.2fr .8fr; gap: 48px; padding: 34px 36px; background: var(--winutil-panel); border-radius: 8px; align-items: center; }
+.winutil-mcp-section p { color: var(--winutil-muted); }
+.winutil-mcp-section blockquote { border-left: 3px solid var(--winutil-blue); padding-left: 24px; font-size: 1.15rem; line-height: 1.85; margin: 0; }
+.winutil-source { padding-top: 58px; }
+.winutil-source p { color: var(--winutil-muted); font-size: .94rem; max-width: 68em; }
+.winutil-source-links { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 20px; }
+.content { line-height: 1.85; }
+@media (max-width: 1000px) {
+  .winutil-intro, .winutil-software { gap: 28px; }
+  .winutil-intro { grid-template-columns: 1fr; padding-top: 8px; }
+  .winutil-intro-copy { max-width: 650px; }
+  .winutil-home { max-width: 900px; }
+  .winutil-main-preview { max-width: 780px; }
+}
+@media (max-width: 640px) {
+  .winutil-home { padding: 24px 22px 42px; }
+  .winutil-home h1 { font-size: 1.9rem; }
+  .winutil-intro { padding-bottom: 40px; }
+  .winutil-software { grid-template-columns: 1fr; padding: 32px 0; }
+  .winutil-guide-list > div { grid-template-columns: 1fr; gap: 6px; padding: 18px 0; }
+  .winutil-mcp-section { grid-template-columns: 1fr; gap: 20px; padding: 26px 22px; }
+  .winutil-mcp-section blockquote { font-size: 1rem; }
+  .winutil-source { padding-top: 40px; }
+}

@@ -1,0 +1,6 @@
+{{- /* Publish the existing product screenshot used by the theme's social metadata. */ -}}
+{{- with resources.Get "images/screenshots/home-cn.png" -}}
+  {{- $publishedPreview := .Permalink -}}
+  <meta property="og:image:alt" content="WinUtil CN 中文界面：装机软件、系统设置与操作历史">
+{{- end -}}
+<meta property="og:locale" content="zh_CN">

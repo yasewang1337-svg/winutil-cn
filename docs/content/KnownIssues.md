@@ -1,32 +1,40 @@
 ---
-title: 已知问题
+title: 已知问题与使用边界
+description: 当前版本的软件检测、整批升级、设置恢复、Windows 更新、镜像制作及启动限制。
 toc: true
 ---
 
-### 下载不成功
+本页记录当前已知边界，不代表每台电脑都会遇到。使用范围以相应版本的[发布说明](https://github.com/yasewang1337-svg/winutil-cn/releases)和功能指南为准。
 
-如果你运行 WinUtil 时遇到类似这样的报错：
+## 软件检测与更新
 
-`< : The term '<' is not recognized as the name of a cmdlet, function, script file, or operable program.`
+- **检测不到不等于未安装。** 只显示当前来源与本工具目录能够匹配的项目；组合中的复合项目需要相应软件包都被识别。
+- **已安装不等于有更新。** 当前检测返回安装信息，未提供逐软件“当前版本 / 可更新版本”的更新中心。
+- **整批升级超出当前选择。** “查看全部升级操作”可能处理本工具目录以外的软件；当前结果按整批退出状态与日志呈现，不提供整批失败自动重试。
+- **安装器存在差异。** 退出码用于表示结果，但第三方安装器行为、网络和来源可用性仍可能影响实际效果。
 
-请尝试使用 **VPN**；如果还是不行，就把问题反馈到 https://github.com/ChrisTitusTech/winutil/issues
+详见[应用管理](/userguide/application/)。
 
-### 脚本无法运行
+## 设置恢复与更新配置
 
-如果你运行 WinUtil 时遇到这个报错：
+- 设置历史只恢复已记录且受支持的注册表值和服务启动配置，不完整撤销脚本、应用删除、文件清理或旧版本未记录的变更。
+- Windows 更新页的三种配置不是逐项保存原值的事务。恢复更新配置不等于回到修改前所有个人或组织策略。
+- 从禁用更新切换到延迟更新，不能保证恢复此前停用的服务与计划任务。先恢复更新配置，再检查 Windows 设置中的实际状态。
 
-`"WinUtil is unable to run on your system. PowerShell execution is restricted by security policies"`
+详见[设置与恢复](/userguide/tweaks/)和[Windows 更新](/userguide/updates/)。
 
-这说明你的 PowerShell 会话处于**受限语言模式（Constrained Language Mode）**，它会阻止 WinUtil 运行。
+## 镜像制作
 
-### 卓越性能电源计划不生效
+工具在 Windows 11 上处理 Windows 10 / 11 x64 客户端镜像，不接受 x86、ARM64、Windows Server 或混合系统镜像。输出安装介质仍应在目标测试设备验证启动、驱动与完整安装；仅生成文件成功不能证明所有目标设备可用。写入 U 盘会擦除所选磁盘。详见[Windows 镜像](/userguide/win11creator/)。
 
-「卓越性能（Ultimate Performance）」电源计划在某些不完全支持它的笔记本上可能无法生效。
+## 启动、策略和安全告警
 
-这种情况下电源计划会套用失败，这是不受支持硬件上的正常表现。
+下载失败时确认访问的是本项目发布页，保留网络错误与所用版本。脚本执行策略、受限语言模式、应用控制和安全软件均可能阻止运行；请依据具体错误处理，不尝试绕过组织策略或关闭防护。来源和哈希核对方式见[安全告警说明](https://github.com/yasewang1337-svg/winutil-cn/blob/main/docs/SECURITY.md)。
 
-### 恢复旧版开始菜单的优化项失效
+## MCP
 
-从 **Windows 11 更新 KB5089573**（2026 年 5 月发布）开始，恢复旧版开始菜单的优化项不再起作用。
+默认只读；明确开启写模式后也仅执行支持的操作。执行被取消不代表已完成项目自动回滚，第三方安装效果也不在受控备份内。恢复需要可用的备份编号和对应权限。详见[MCP 接入](/mcp/)。
 
-在这次更新中，微软已经把旧版开始菜单的代码从 Windows 里彻底移除，所以我们没办法再把它找回来。
+## 提交可复现的问题
+
+请在[中文仓库 Issues](https://github.com/yasewang1337-svg/winutil-cn/issues)提供版本、Windows 构建号、启动方式、失败步骤、退出码和相关日志。只附与问题有关的片段，先删去个人路径等无关信息；不要公开密码、令牌或完整私人配置。

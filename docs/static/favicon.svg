@@ -1,3 +1,62 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-  <image href="data:image/png;base64,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" width="32" height="32"/>
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="sq"><rect x="10" y="10" width="236" height="236" rx="52"/></clipPath>
+    <linearGradient id="bg" x1="40" y1="10" x2="220" y2="246" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#111a30"/><stop offset="0.5" stop-color="#0b1122"/><stop offset="1" stop-color="#0a0818"/>
+    </linearGradient>
+    <radialGradient id="innerglow" cx="0.5" cy="0.58" r="0.6">
+      <stop offset="0" stop-color="#2b6bff" stop-opacity="0.28"/>
+      <stop offset="0.55" stop-color="#3a2b8f" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#0a0818" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="topbevel" x1="0" y1="10" x2="0" y2="70" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5cffe6" stop-opacity="0.35"/><stop offset="1" stop-color="#5cffe6" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="42" y1="112" x2="104" y2="186" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7dffee"/><stop offset="1" stop-color="#3aa9ff"/>
+    </linearGradient>
+    <linearGradient id="hg" x1="124" y1="104" x2="182" y2="192" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7dffee"/><stop offset="0.55" stop-color="#4aa8ff"/><stop offset="1" stop-color="#c86bff"/>
+    </linearGradient>
+    <filter id="soft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <radialGradient id="vig" cx="0.5" cy="0.5" r="0.72">
+      <stop offset="0.6" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="0.35"/>
+    </radialGradient>
+  </defs>
+
+  <rect x="10" y="10" width="236" height="236" rx="52" fill="url(#bg)"/>
+
+  <g clip-path="url(#sq)">
+    <!-- 内发光晕:命令行处透出光 -->
+    <rect x="10" y="10" width="236" height="236" fill="url(#innerglow)"/>
+    <!-- 极淡扫描线 -->
+    <g stroke="#5cffe6" stroke-width="1.5" opacity="0.035"><path d="M10 100 H246 M10 124 H246 M10 148 H246 M10 172 H246 M10 196 H246"/></g>
+    <!-- 顶部高光斜面 -->
+    <rect x="10" y="10" width="236" height="60" fill="url(#topbevel)" opacity="0.5"/>
+
+    <!-- 终端窗口三点(带柔光) -->
+    <g filter="url(#soft)">
+      <circle cx="48" cy="46" r="6.5" fill="#38f9d7"/><circle cx="72" cy="46" r="6.5" fill="#43a6ff"/><circle cx="96" cy="46" r="6.5" fill="#c86bff"/>
+    </g>
+    <line x1="10" y1="72" x2="246" y2="72" stroke="#5cffe6" stroke-width="1" opacity="0.12"/>
+
+    <!-- 柔和外发光(命令行整体) -->
+    <g filter="url(#soft)" opacity="0.85">
+      <polyline points="52,116 100,152 52,188" fill="none" stroke="url(#cyan)" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M131,106 L142,106 L142,137 L170,137 L170,106 L181,106 L192,117 L192,179 L181,190 L170,190 L170,157 L142,157 L142,190 L131,190 L120,179 L120,117 Z" fill="url(#hg)"/>
+      <rect x="196" y="172" width="38" height="15" rx="4" fill="#4dffe0"/>
+    </g>
+    <!-- 清晰主体叠加(锐利) -->
+    <polyline points="52,116 100,152 52,188" fill="none" stroke="url(#cyan)" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M131,106 L142,106 L142,137 L170,137 L170,106 L181,106 L192,117 L192,179 L181,190 L170,190 L170,157 L142,157 L142,190 L131,190 L120,179 L120,117 Z" fill="url(#hg)"/>
+    <rect x="196" y="172" width="38" height="15" rx="4" fill="#4dffe0"/>
+
+    <!-- 暗角聚焦 -->
+    <rect x="10" y="10" width="236" height="236" fill="url(#vig)"/>
+  </g>
+  <!-- 精致描边:外深内浅双层 -->
+  <rect x="10" y="10" width="236" height="236" rx="52" fill="none" stroke="#0a0f1c" stroke-width="3"/>
+  <rect x="11.5" y="11.5" width="233" height="233" rx="50.5" fill="none" stroke="#3a5680" stroke-width="1.5" opacity="0.7"/>
 </svg>

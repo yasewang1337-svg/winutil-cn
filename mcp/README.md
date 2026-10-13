@@ -1,8 +1,8 @@
 # WinUtil CN MCP
 
-让支持 MCP 的客户端查询软件、组合、系统设置与 DNS，并按明确选择执行受支持的操作。**0.4.1 默认只读**，不会注册安装、换源或系统修改工具。它是独立的 Node.js 包，不会控制已打开的 WinUtil 窗口，桌面版更新也不会自动更新 npm 包。
+让支持 MCP 的客户端查询软件、组合、系统设置与 DNS，并按明确选择执行受支持的操作。**默认只读**，不会注册安装、换源或系统修改工具。它是独立的 Node.js 包，不会控制已打开的 WinUtil 窗口，桌面版更新也不会自动更新 npm 包。
 
-**分发方式：** [npm 0.4.1](https://www.npmjs.com/package/winutil-cn-mcp/v/0.4.1) 与 [GitHub 安装包](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/mcp-v0.4.1)提供同一份已测试的安装包。2026-10-12 已恢复 npm 发布，使用仅授权本仓库工作流的可信发布；GitHub 附件保留 SHA256 和源码证据。0.4.1 原包内 README 保留构建时的分发状态，最新安装说明以本页为准。
+**安装入口：** [npm 包](https://www.npmjs.com/package/winutil-cn-mcp) · [中文指南](https://yasewang1337-svg.github.io/winutil-cn/mcp/) · [GitHub 发布记录](https://github.com/yasewang1337-svg/winutil-cn/releases)。下面的配置固定使用本说明对应的 **0.4.2**，便于核对实际运行版本。GitHub 发布附件提供安装包、SHA256 和源码证据；npm 使用限定本仓库工作流的可信发布。
 
 需要 Node.js 22 或 24 LTS。查询可跨平台使用；修改功能仅支持 Windows，并遵循当前用户权限和 PowerShell 执行策略，不自动提权或绕过策略。
 
@@ -15,7 +15,7 @@
   "mcpServers": {
     "winutil-cn": {
       "command": "npx",
-      "args": ["-y", "winutil-cn-mcp@0.4.1"]
+      "args": ["-y", "winutil-cn-mcp@0.4.2"]
     }
   }
 }
@@ -24,17 +24,16 @@
 Claude Code 也可注册：
 
 ```bash
-claude mcp add winutil-cn -- npx -y winutil-cn-mcp@0.4.1
+claude mcp add winutil-cn -- npx -y winutil-cn-mcp@0.4.2
 ```
 
-已有 GitHub 包地址配置仍可使用；需要该入口时，把 `winutil-cn-mcp@0.4.1` 换成 `https://github.com/yasewang1337-svg/winutil-cn/releases/download/mcp-v0.4.1/winutil-cn-mcp-0.4.1.tgz`。
+已有 GitHub 包地址配置仍可使用；需要该入口时，把 `winutil-cn-mcp@0.4.2` 换成 `https://github.com/yasewang1337-svg/winutil-cn/releases/download/mcp-v0.4.2/winutil-cn-mcp-0.4.2.tgz`。切换入口时同时核对版本，不要把桌面版的发行标签用作 MCP 版本。
 
-如果客户端在 Windows 无法启动 `npx`，使用 Node 的绝对路径运行本地源码入口：
+如果客户端在 Windows 无法启动 `npx`，或需要便于定位的恢复入口，可把包安装到自己选定的持久目录，再使用 Node 的绝对路径启动。下面的命令只在当前目录创建本地安装，不要求克隆源码，也不全局安装：
 
 ```powershell
-git clone https://github.com/yasewang1337-svg/winutil-cn.git
-cd winutil-cn/mcp
-npm ci --ignore-scripts
+npm install --prefix .\winutil-cn-mcp-local --save-exact --ignore-scripts winutil-cn-mcp@0.4.2
+(Resolve-Path .\winutil-cn-mcp-local\node_modules\winutil-cn-mcp\index.js).Path.Replace('\', '/')
 ```
 
 ```json
@@ -42,13 +41,13 @@ npm ci --ignore-scripts
   "mcpServers": {
     "winutil-cn": {
       "command": "C:\\Program Files\\nodejs\\node.exe",
-      "args": ["W:\\winutil-cn\\mcp\\index.js"]
+      "args": ["C:/替换为实际目录/winutil-cn-mcp-local/node_modules/winutil-cn-mcp/index.js"]
     }
   }
 }
 ```
 
-路径按实际安装位置填写。重启/重新连接服务器后调用 `get_status`，确认版本、模式、数据来源和源码提交。首次使用 `npx` 需联网取得包与依赖；包安装完成后的目录查询无需联网，软件安装和工具访问仍可能联网。
+把 `args` 中的示例路径替换成上一步显示的完整路径，`command` 按 Node 的实际安装位置填写。重启/重新连接服务器后调用 `get_status`，确认版本、模式、数据来源和源码提交。首次使用 `npx` 需联网取得包与依赖；包安装完成后的目录查询无需联网，软件安装和工具访问仍可能联网。
 
 ## 查询工具
 
@@ -71,7 +70,7 @@ npm ci --ignore-scripts
 ```json
 {
   "command": "npx",
-  "args": ["-y", "winutil-cn-mcp@0.4.1", "--allow-write"]
+  "args": ["-y", "winutil-cn-mcp@0.4.2", "--allow-write"]
 }
 ```
 
@@ -103,13 +102,15 @@ npm ci --ignore-scripts
 ## 结果、错误与恢复
 
 - 执行结果区分 `completed`、`partial`、`failed` 和取消，保留逐项结果、退出码及错误输出。失败、部分完成和不支持计划会设置 MCP `isError`。
-- 注册表/服务/DNS 修改前会保存受控备份，并在结果中给出 `backupId`。需要恢复时，在具备相应权限的本地终端运行包内静态 worker：
+- 注册表/服务/DNS 修改前会保存受控备份，并在结果中给出 `backupId`。需要恢复时，在具备相应权限的本地终端运行包内静态 worker。使用上面的持久安装方式后，回到包含 `winutil-cn-mcp-local` 的目录执行下列命令；仅通过 `npx` 使用的用户可先按上面的方法安装到持久目录，无须查找临时缓存：
 
 ```powershell
-powershell.exe -NoProfile -File "W:\winutil-cn\mcp\powershell\worker.ps1" -RestoreBackupId "结果中的备份GUID"
+$packageDirectory = (Resolve-Path .\winutil-cn-mcp-local\node_modules\winutil-cn-mcp).Path
+$worker = Join-Path $packageDirectory 'powershell\worker.ps1'
+powershell.exe -NoProfile -File $worker -RestoreBackupId "结果中的备份GUID"
 ```
 
-- 恢复入口只接受备份 ID，不接受任意备份文件路径；只恢复本次受支持的值、服务启动类型和 DNS。系统后续已被其他程序修改时，请先核对是否仍要恢复旧状态。备份不包含第三方安装、删除文件或任意优化脚本的效果。
+- 前两行只定位包内脚本；最后一行才执行恢复。恢复入口只接受备份 ID，不接受任意备份文件路径；只恢复本次受支持的值、服务启动类型和 DNS。系统后续已被其他程序修改时，请先核对是否仍要恢复旧状态。备份不包含第三方安装、删除文件或任意优化脚本的效果。
 - 中断结果的 `results` 只列出已确认项目；`pending` 和 `outcomeKnown:false` 表示尚无法确定最终状态。`backupStatus:unconfirmed` 表示尚未确认备份创建成功，不能把编号存在当成备份可用，也不要自动重试修改。
 - 换源结果保留修改前的值，可用相应工具自身的配置命令恢复。不要把返回的值直接拼成 shell 命令。
 - 权限不足、策略阻止、缺少工具或网卡身份变化会明确失败。不要把失败当成已完成，也不要关闭防护来消除错误。
@@ -133,6 +134,6 @@ npm pack
 
 `prepack` 自动生成数据；离线包测试把实际 tarball 放入无源码目录，禁止运行时网络及系统子进程，再验证协议查询。发布工作流先运行 Windows Node 22/24 与 Linux Node 24 专项测试及一次性 Windows 实际修改测试，再构建、验证同一份包，附 SHA256 和源码版本证据。版本来自 package.json，标签和 lock 必须一致。默认只生成安装包，npm 上传需维护者手动明确启用。
 
-普通测试覆盖真实 MCP 握手、查询、预览、一次性确认、拒绝错误输入、失败与并发路径，以及执行器/PowerShell 无害夹具。另有[实际修改与恢复测试](test/integration/README.md)：在 GitHub 托管的一次性 Windows 测试机上执行注册表/服务、独立环回网卡 DNS、包源及软件安装卸载，并核对恢复结果；禁止在日常电脑运行。这些结果不代表所有桌面 Windows 版本、全部优化项或任意第三方安装程序都已验收。
+普通测试覆盖真实 MCP 握手、查询、预览、一次性确认、拒绝错误输入、失败与并发路径，以及执行器/PowerShell 无害夹具。另有[实际修改与恢复测试](https://github.com/yasewang1337-svg/winutil-cn/blob/main/mcp/test/integration/README.md)：在 GitHub 托管的一次性 Windows 测试机上执行注册表/服务、独立环回网卡 DNS、包源及软件安装卸载，并核对恢复结果；禁止在日常电脑运行。这些结果不代表所有桌面 Windows 版本、全部优化项或任意第三方安装程序都已验收。
 
-[版本变更](https://github.com/yasewang1337-svg/winutil-cn/blob/main/mcp/CHANGELOG.md) · [项目主页](https://github.com/yasewang1337-svg/winutil-cn) · MIT
+[中文指南](https://yasewang1337-svg.github.io/winutil-cn/mcp/) · [版本变更](https://github.com/yasewang1337-svg/winutil-cn/blob/main/mcp/CHANGELOG.md) · [报告问题](https://github.com/yasewang1337-svg/winutil-cn/issues) · [项目主页](https://github.com/yasewang1337-svg/winutil-cn) · MIT

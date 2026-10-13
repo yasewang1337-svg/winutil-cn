@@ -16,14 +16,20 @@
 | Issue 管理 | [issue-slash-commands.yaml](workflows/issue-slash-commands.yaml) | 仅仓库所有者评论中的管理命令生效 |
 | Issue 活跃状态 | [close-old-issues.yaml](workflows/close-old-issues.yaml) | 每日或手动；90 天无活动标记，标记后 365 天无活动关闭；Keep Issue Open 豁免，PR 不处理 |
 | 上游保留 | [pre-release.yaml](workflows/pre-release.yaml) | 旧预发布、签名相关配置及草稿说明链；仅 ChrisTitusTech/winutil 可运行，中文分支不使用 |
-| 上游保留 | [docs.yaml](workflows/docs.yaml) | 上游 Hugo Pages；中文分支不部署网站 |
+| 中文文档 | [docs.yaml](workflows/docs.yaml) | 相关 PR 构建与站点验收；本仓库 main 改动或在 main 手动运行时，将通过检查的同一份静态产物部署到 GitHub Pages |
 | 上游保留 | [sponsors.yaml](workflows/sponsors.yaml) | 上游赞助名单更新；定时及手动均限制为上游仓库 |
 | 上游保留 | [auto-merge-docs.yaml](workflows/auto-merge-docs.yaml) | 上游 docs-update 自动合并；中文文档按普通 PR 检查合并 |
 | 上游保留 | [close-discussion-on-pr.yaml](workflows/close-discussion-on-pr.yaml) | 上游 Discussions 关闭流程；中文仓库不运行 |
 
 [release-drafter.yml](release-drafter.yml) 只服务旧上游预发布入口。保留这些文件便于比较上游历史，不表示已完成上游迁移；不要绕过中文版发布的测试门禁启用旧发布入口。
 
-令牌值保存在 GitHub Secrets 或本机凭据存储中，文档只记录用途，不保存凭据。未来需要中文网站时，应单独配置实际站点地址和部署流程。
+令牌值保存在 GitHub Secrets 或本机凭据存储中，文档只记录用途，不保存凭据。
+
+中文网站地址为 <https://yasewang1337-svg.github.io/winutil-cn/>，仓库 Settings → Pages 的发布源应设为 GitHub Actions。网站保留 Hugo 0.156.0 与 `docs/go.sum` 锁定的主题，Hugo 下载须通过发行版 SHA256 校验；构建不调用开发文档生成器、不修改源码，也不使用 `AUTO_MERGE` 等 Secrets。PR（包括 fork PR）只有只读构建与验收权限；Pages 写权限和 OIDC 仅授予本仓库 main 的部署 job，使用 `github-pages` 环境。
+
+网站验收通过 Python 标准库脚本 `tools/check_docs_site.py` 完成：检查项目子路径、HTML 内链与锚点、图片及 CSS 资源、中文语言标记、canonical、sitemap、robots 和首页/用户指南/MCP 入口。上游文档域名不得替代本站导航；上游 GitHub 署名链接保留。失效链接或搜索入口配置错误会阻止部署，报告保存在 `chinese-docs-validation` 附件。外部网站可用性与浏览器交互仍需单独验收，静态检查不会访问外部链接。
+
+GitHub Pages 项目站生成的 `/winutil-cn/robots.txt` 可说明 sitemap 地址，但不能作为域名根 robots 规则；爬虫是否允许抓取取决于 `https://yasewang1337-svg.github.io/robots.txt`。当前页面使用可索引元数据和真实 sitemap URL，不承诺搜索引擎收录或 AI 推荐。
 
 MCP 与桌面版独立发版。先在 `mcp/package.json` 与 `mcp/package-lock.json` 提交相同版本并合入 main，再推送对应 `mcp-v<版本>` 标签；手动发布只接受 main 或匹配版本的标签，版本输入仅用于校验，不会修改文件。工作流产物 `mcp-npm-release` 保存可用于 GitHub Release 的实际安装包、SHA256、SHA512 integrity、源码提交及版本证据。标签默认只构建，不尝试 npm 上传；npm 授权完成后由维护者手动勾选 `publish_npm`，启用时另有 `mcp-npm-registry-verification` 保存 registry 对照结果。
 

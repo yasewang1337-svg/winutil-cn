@@ -1,0 +1,60 @@
+{{- $home := resources.Get "images/screenshots/home-light-cn.png" -}}
+{{- $homeDark := resources.Get "images/screenshots/home-cn.png" -}}
+{{- $software := resources.Get "images/screenshots/software-cn.png" -}}
+<section class="winutil-intro" aria-labelledby="product-title">
+  <div class="winutil-intro-copy">
+    <h1 id="product-title">软件与系统维护，<br>用中文看清每一步。</h1>
+    <p class="winutil-lead">WinUtil CN 把常用软件、Windows 设置与维护工具放在一个界面里。先选需要的项目，核对操作清单，再查看每一项的执行结果。</p>
+    <div class="winutil-actions">
+      <a class="winutil-download" href="https://github.com/yasewang1337-svg/winutil-cn/releases/latest/download/WinUtil-CN.exe">下载 Windows 版</a>
+      <a class="winutil-guide" href="{{ "userguide/getting-started/" | relURL }}">第一次使用</a>
+    </div>
+    <p class="winutil-requirements">适用于 Windows 11；打开时需要管理员权限。<br>软件下载、安装与更新需要联网。</p>
+    <a class="winutil-release-link" href="https://github.com/yasewang1337-svg/winutil-cn/releases/latest">查看发布说明与 SHA256 校验和</a>
+  </div>
+  <figure class="winutil-main-preview">
+    <a href="{{ "userguide/getting-started/" | relURL }}" aria-label="查看快速上手指南">
+      <img class="winutil-preview-light" src="{{ $home.RelPermalink }}" width="{{ $home.Width }}" height="{{ $home.Height }}" alt="WinUtil CN 首页：选择装机软件、管理已装软件、查看基础设置及操作历史" fetchpriority="high">
+      <img class="winutil-preview-dark" src="{{ $homeDark.RelPermalink }}" width="{{ $homeDark.Width }}" height="{{ $homeDark.Height }}" alt="WinUtil CN 深色首页：装机、软件管理、设置与操作历史入口" fetchpriority="high">
+    </a>
+    <figcaption>实际软件界面，支持深色与浅色主题。</figcaption>
+  </figure>
+</section>
+
+<section class="winutil-software" aria-labelledby="software-title">
+  <div class="winutil-section-copy">
+    <h2 id="software-title">从装好常用软件开始。</h2>
+    <p>按名称、中文介绍或软件包 ID 搜索，也可以从办公、开发等用途的组合里挑选。组合只加入候选清单，确认后才开始安装。</p>
+    <p>已有电脑也能先<strong>检测已安装</strong>，集中查看目录内识别到的软件。操作完成后，查看失败原因、日志，并只重试失败项。</p>
+    <a href="{{ "userguide/application/" | relURL }}">了解软件管理</a>
+  </div>
+  <figure>
+    <img src="{{ $software.RelPermalink }}" width="{{ $software.Width }}" height="{{ $software.Height }}" alt="软件管理页：中文软件说明、搜索、已安装检测、筛选与操作按钮" loading="lazy">
+  </figure>
+</section>
+
+<section class="winutil-guide-section" aria-labelledby="guides-title">
+  <h2 id="guides-title">按你要做的事，找到下一步。</h2>
+  <dl class="winutil-guide-list">
+    <div><dt><a href="{{ "userguide/recommendations/" | relURL }}">给新电脑选软件</a></dt><dd>组合提供推荐用途与可选项，按自己的习惯调整，保存清单方便下次复用。</dd></div>
+    <div><dt><a href="{{ "userguide/tweaks/" | relURL }}">核对设置与恢复范围</a></dt><dd>执行前看清影响；有记录的注册表值和服务启动配置可恢复，文件清理和应用删除不能完整撤销。</dd></div>
+    <div><dt><a href="{{ "userguide/win11creator/" | relURL }}">制作 Windows 安装镜像</a></dt><dd>在 Windows 11 上制作 Windows 10 / 11 x64 安装介质。写入 U 盘前核对目标磁盘，输出后在测试设备验证。</dd></div>
+    <div><dt><a href="{{ "faq/" | relURL }}">解决使用中的疑问</a></dt><dd>了解版本更新、权限、软件来源、日志位置和当前功能边界。</dd></div>
+  </dl>
+</section>
+
+<section class="winutil-mcp-section" aria-labelledby="mcp-title">
+  <div>
+    <h2 id="mcp-title">也可以让 AI 先帮你查清楚。</h2>
+    <p>独立的 WinUtil CN MCP 包让支持 MCP 的客户端查询软件、装机组合、设置与 DNS。默认只读；需要修改时，必须另行启用并核对执行计划。</p>
+    <a href="{{ "mcp/" | relURL }}">查看 MCP 接入指南</a>
+  </div>
+  <blockquote>“查询日常办公软件，说明推荐用途和可选项，只查询不安装。”</blockquote>
+</section>
+
+<section class="winutil-source" aria-labelledby="source-title">
+  <h2 id="source-title">来源清楚，限制也写清楚。</h2>
+  <p>WinUtil CN 是 <a href="https://github.com/ChrisTitusTech/winutil">Chris Titus Tech Windows Utility</a> 的中文分支，由 <a href="https://github.com/yasewang1337-svg">Holha1337</a> 维护，以 MIT 许可证开放源码。中文功能、发布与问题反馈由本仓库维护；未宣称与上游每项改动完全同步。</p>
+  <p>桌面版 EXE 内嵌固定版本脚本。第三方软件的安装结果、系统设置效果及镜像兼容性取决于实际环境。下载后核对版本与校验和，使用前阅读相应指南。</p>
+  <div class="winutil-source-links"><a href="https://github.com/yasewang1337-svg/winutil-cn">查看源码</a><a href="{{ "knownissues/" | relURL }}">当前限制</a><a href="https://github.com/yasewang1337-svg/winutil-cn/issues">反馈问题</a></div>
+</section>

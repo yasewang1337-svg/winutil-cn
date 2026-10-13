@@ -97,6 +97,22 @@ try {
   const installedInfo = JSON.parse(await readFile(join(installedDir, 'package.json'), 'utf8'));
   assert.equal(installedInfo.name, packageInfo.name);
   assert.equal(installedInfo.version, packageInfo.version);
+  // Validate what npm users actually read, not only the checkout README. A
+  // successful protocol handshake must not mask stale installation examples.
+  const installedReadme = await readFile(join(installedDir, 'README.md'), 'utf8');
+  const installVersions = [...installedReadme.matchAll(/winutil-cn-mcp@(\d+\.\d+\.\d+(?:-[\w.-]+)?)/g)].map(match => match[1]);
+  assert.ok(installVersions.length > 0, '包内 README 应提供固定版本的 npm 接入示例');
+  for (const version of installVersions) assert.equal(version, installedInfo.version, '包内 npm 接入版本必须与实际包一致');
+  const archiveVersions = [...installedReadme.matchAll(/releases\/download\/mcp-v([^/]+)\/winutil-cn-mcp-([^/\s`]+)\.tgz/g)];
+  assert.ok(archiveVersions.length > 0, '包内 README 应提供对应的 GitHub 安装包入口');
+  for (const [, tagVersion, fileVersion] of archiveVersions) {
+    assert.equal(tagVersion, installedInfo.version, 'GitHub 安装包标签必须与实际包一致');
+    assert.equal(fileVersion, installedInfo.version, 'GitHub 安装包文件名必须与实际包一致');
+  }
+  assert.equal(installedInfo.repository?.directory, 'mcp', 'npm 源码入口应定位 MCP 子目录');
+  assert.ok(URL.canParse(installedInfo.homepage) && installedInfo.homepage.startsWith('https://'), 'npm 主页应为完整 HTTPS 文档入口');
+  assert.ok(URL.canParse(installedInfo.bugs?.url) && installedInfo.bugs.url.startsWith('https://'), 'npm 应提供完整 HTTPS 问题反馈入口');
+  assert.ok(installedReadme.includes(installedInfo.homepage), '包内 README 与 npm 主页应使用同一文档入口');
   const snapshot = JSON.parse(await readFile(join(installedDir, 'data.json'), 'utf8'));
   assert.equal(snapshot.metadata.packageVersion, installedInfo.version);
   for (const file of SOURCE_FILES) {
@@ -163,7 +179,9 @@ syncBuiltinESMExports();
   assert.equal(await exists(guardLog), false, '损坏包不应回退到网络或源仓库');
   console.log(JSON.stringify({ status: 'passed', input: options.length ? tarball : 'clean-checkout fixture', packageVersion: installedInfo.version,
     integrity: `sha512-${createHash('sha512').update(archiveBytes).digest('base64')}`, sourceCommit: snapshot.metadata.sourceCommit,
-    requiredRuntimeFiles: requiredFiles.length, readOnlyTools: toolCount, forbiddenOperations: 0, invalidSnapshotsRejected: 2 }, null, 2));
+    requiredRuntimeFiles: requiredFiles.length, readOnlyTools: toolCount, readmeInstallExamples: installVersions.length,
+    readmeGitHubArchives: archiveVersions.length, documentationMetadataVerified: true,
+    forbiddenOperations: 0, invalidSnapshotsRejected: 2 }, null, 2));
 } finally {
   const scoped = resolve(temporary);
   assert.ok(scoped.startsWith(resolve(tmpdir()) + sep) && scoped.includes('winutil-mcp-pack-'), '清理目标必须是本次隔离目录');
