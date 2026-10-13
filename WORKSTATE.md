@@ -2,11 +2,17 @@
 
 更新：2026-10-13。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
 
-## 当前任务：大幅字符皇冠与分层启动动画（实施中）
+## 当前任务：大幅字符皇冠与分层启动动画（38版已交付）
 
 2026-10-13 用户要求现有皇冠更精致、更动态、更大。基于已交付37版与main `130f0b0`，分支 `codex/crown-refinement-20261013`。本轮聚焦控制台启动展示：扩大皇冠，增加冠带、宝石和金色明暗层次，以约一秒的有限分层动画呈现；保留原生PS5.1控制台、紧凑/静态降级和状态恢复。三个智能体分别实现动画、审查并录制实际终端、补充回归；主助手负责整合、文档、CI与桌面新版交付。图标、MCP工具和系统操作能力不变，不重新发布npm。日用主机只运行显示夹具，不执行WinUtil系统设置。证据 `.artifacts/crown-refinement-20261013/`。
 
-已实现60列×18行大皇冠，约1.3秒完成暗金显形、斜向流光、冠尖与宝石闪光后定格。窄/矮/极窄窗口有紧凑或文字布局；Static/NO_COLOR/重定向即时静态。实际缩窗才用纯换行把旧大图滚入历史，不清屏或改缓冲；普通IO异常不刷新整屏。PS5.1/7各651项完整回归及28项定向回归通过，最终脚本双PS语法/BOM与Actionlint通过。真实ConPTY录制正常大/小窗口约1.3秒，颜色、背景和光标恢复；靠近底部显示仍保留20行既有日志。README加入实际录制单次播放GIF，指南加入实际最终帧；Hugo138 HTML、7732引用、135 sitemap通过，指南桌面/深色/手机浏览器检查通过。最终缩窗视觉证据、云端CI与正式发布正在收尾。
+已实现60列×18行大皇冠，约1.3秒完成暗金显形、斜向流光、冠尖与宝石闪光后定格。窄/矮/极窄窗口有紧凑或文字布局；Static/NO_COLOR/重定向即时静态。实际缩窗才用纯换行把旧大图滚入历史，不清屏或改缓冲；普通IO异常不刷新整屏。PS5.1/7各651项完整回归及28项定向回归通过，最终脚本双PS语法/BOM与Actionlint通过。真实ConPTY共15种窗口/静态/缩窗场景通过：正常大/小窗口约1.3秒，颜色、背景和光标恢复；靠近底部显示仍保留20行既有日志。README加入实际录制单次播放GIF，指南加入实际最终帧；Hugo138 HTML、7732引用、135 sitemap通过，指南桌面/深色/手机浏览器检查通过。
+
+[PR #35](https://github.com/yasewang1337-svg/winutil-cn/pull/35) 全部检查通过并合并，正式源码 `245a8601a6c78710066e63f41d69057466a49121`。[发布运行38344790004](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38344790004) 成功：双PS各651项通过，一次性Windows runner真实软件检测/安装/卸载各4场景通过且清理正常；PS1与EXE逐文件Defender扫描未检出威胁。[38版](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/cn-2026.10.13-38) 已发布，4附件GitHub digest、SHA256清单、扫描来源提交、脚本语法/BOM及EXE内嵌脚本哈希全部复核通过。
+
+本地 `W:\winutil-cn\WinUtil-CN.exe` 已替换为38版，SHA256 `29B81948BAB733547099C2DB13DF5CA7D21D2FF1BC898F213AC67CD97FA70360`，旧37版保留在 `.artifacts/crown-refinement-20261013/WinUtil-CN-v37.exe`。已核对文件版本、yesewang1337维护署名、正式脚本大皇冠实现和旧署名零命中；没有启动实际WinUtil或修改日用系统设置。证据 `release-verification.json`、`desktop-asset-digests.json`、`desktop-integration-verification.json`、`local-exe-delivery.json`。
+
+Pages部署 `38344789735` 成功，[线上上手指南](https://yasewang1337-svg.github.io/winutil-cn/userguide/getting-started/) 桌面1440与手机390视图均通过，无裁剪、横向溢出、失败资源或浏览器错误；实际加载的两种响应式WebP与同源码本地Hugo产物逐字节一致。证据 `online/guide-verification.json` 与 `final-visual-verification.json`。本轮已全部交付，MCP保持0.4.3，没有重新发布npm。
 
 ## 上一阶段：yesewang1337 署名与皇冠启动视觉（已交付）
 
