@@ -22,7 +22,9 @@ foreach ($file in @(
     'private/Test-WinUtilInventoryCurrent.ps1', 'private/Update-WinUtilInventoryUi.ps1', 'private/Invalidate-WinUtilInventory.ps1', 'private/Initialize-WinUtilAppCommandBar.ps1', 'private/Show-WinUtilAppActions.ps1',
     'private/Initialize-WinUtilWindowChrome.ps1', 'private/Set-WinUtilNavigationLayout.ps1',
     'private/Test-WinUtilTitleBarSource.ps1', 'private/Initialize-WinUtilISOControls.ps1',
-    'private/Set-WinUtilConfigLayout.ps1'
+    'private/Set-WinUtilConfigLayout.ps1', 'private/New-WinUtilSettingRow.ps1',
+    'private/Initialize-WinUtilSettingToolTip.ps1', 'private/Update-WinUtilTweakSelectionUi.ps1',
+    'private/Initialize-WinUtilSoftwarePage.ps1'
 )) { . ([scriptblock]::Create([IO.File]::ReadAllText((Join-Path $root "functions/$file")))) }
 
 function Set-Preferences { param([switch]$save) }

@@ -86,10 +86,11 @@ Describe 'Readable themes and predictable interface state' {
         $button.IsTabStop | Should -BeTrue
         $button.RaiseEvent([Windows.RoutedEventArgs]::new([Windows.Controls.Primitives.ButtonBase]::ClickEvent))
         $category.Children[1].Visibility | Should -Be 'Collapsed'
-        $button.Content | Should -Be '+ Tools'
+        $button.Resources['AppCategoryChevron'].Text | Should -Be ([string][char]0xE76C)
+        $button.Resources['AppCategoryCount'].Text | Should -Be '1'
         Invoke-WPFToggleAllCategories -Action Expand
         $category.Children[1].Visibility | Should -Be 'Visible'
-        $button.Content | Should -Be '- Tools'
+        $button.Resources['AppCategoryChevron'].Text | Should -Be ([string][char]0xE70D)
         Invoke-WPFToggleAllCategories -Action Collapse
         $button.RaiseEvent([Windows.RoutedEventArgs]::new([Windows.Controls.Primitives.ButtonBase]::ClickEvent))
         $category.Children[1].Visibility | Should -Be 'Visible'

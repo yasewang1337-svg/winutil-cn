@@ -6,6 +6,9 @@ function Initialize-WinUtilTweakUiCallbacks {
             $sync.progressBarTextBlock.ToolTip = $sync.TweakProgressLabel
         }
         if ($sync.ProgressBar) { $sync.ProgressBar.Value = [Math]::Max(5, $sync.TweakProgressPercent) }
+        if (-not $sync.ProcessRunning -and (Get-Command Update-WinUtilTweakSelectionUi -ErrorAction SilentlyContinue)) {
+            Update-WinUtilTweakSelectionUi
+        }
     }
     $sync.TweakResultsAction = [action[object]] {
         param($ResultSnapshot)

@@ -41,7 +41,38 @@ function Initialize-InstallCategoryAppList {
 
             # Add category label to container
             $toggleButton = New-Object Windows.Controls.Button
-            $toggleButton.Content = "- $Category"
+            $header = [Windows.Controls.Grid]::new()
+            foreach ($width in @('Auto', '*', 'Auto')) {
+                $column = [Windows.Controls.ColumnDefinition]::new()
+                $column.Width = $width
+                $null = $header.ColumnDefinitions.Add($column)
+            }
+            $chevron = [Windows.Controls.TextBlock]::new()
+            $chevron.Text = [char]0xE70D
+            $chevron.FontFamily = 'Segoe MDL2 Assets'
+            $chevron.FontSize = 10
+            $chevron.VerticalAlignment = 'Center'
+            $chevron.Margin = '0,0,10,0'
+            $null = $header.Children.Add($chevron)
+            $title = [Windows.Controls.TextBlock]::new()
+            $title.Text = $Category
+            $title.TextWrapping = 'Wrap'
+            [Windows.Controls.Grid]::SetColumn($title, 1)
+            $null = $header.Children.Add($title)
+            $count = [Windows.Controls.TextBlock]::new()
+            $count.Text = [string]$appsByCategory[$category].Count
+            $count.FontWeight = 'Normal'
+            $count.VerticalAlignment = 'Center'
+            $count.Margin = '16,0,0,0'
+            $count.SetResourceReference([Windows.Controls.TextBlock]::ForegroundProperty, 'SecondaryForegroundColor')
+            $count.SetResourceReference([Windows.Controls.TextBlock]::FontSizeProperty, 'ButtonFontSize')
+            [Windows.Controls.Grid]::SetColumn($count, 2)
+            $null = $header.Children.Add($count)
+            $toggleButton.Content = $header
+            $toggleButton.Resources['AppCategoryChevron'] = $chevron
+            $toggleButton.Resources['AppCategoryCount'] = $count
+            $toggleButton.Resources['AppCategoryName'] = [string]$Category
+            $toggleButton.HorizontalContentAlignment = 'Stretch'
             $toggleButton.Tag = "CategoryToggleButton"
             $toggleButton.SetResourceReference([Windows.Controls.Control]::StyleProperty, "CategoryHeaderStyle")
             $toggleButton.SetResourceReference([Windows.Controls.Control]::FontSizeProperty, "HeaderFontSize")
@@ -66,13 +97,10 @@ function Initialize-InstallCategoryAppList {
                     # Toggle visibility
                     if ($wrapPanel.Visibility -eq [Windows.Visibility]::Visible) {
                         $wrapPanel.Visibility = [Windows.Visibility]::Collapsed
-                        # Change - to +
-                        $sender.Content = $sender.Content -replace "^- ", "+ "
                     } else {
                         $wrapPanel.Visibility = [Windows.Visibility]::Visible
-                        # Change + to -
-                        $sender.Content = $sender.Content -replace "^\+ ", "- "
                     }
+                    Update-WinUtilAppCategoryHeader -Category $categoryContainer
                 }
             })
 
@@ -99,8 +127,19 @@ function Initialize-InstallCategoryAppList {
             $null = $TargetElement.Items.Add($categoryContainer)
 
             # Add apps to the wrap panel
-            $appsByCategory[$category] | Sort-Object | ForEach-Object {
+            $appsByCategory[$category] | Sort-Object @{ Expression = { [string]$Apps.$_.Content } }, @{ Expression = { $_ } } | ForEach-Object {
                 $sync.$_ = $(Initialize-InstallAppEntry -TargetElement $wrapPanel -AppKey $_)
             }
         }
     }
+
+function Update-WinUtilAppCategoryHeader {
+    param([Parameter(Mandatory)]$Category, [int]$VisibleCount = -1)
+    $button = $Category.Children[0]
+    $wrap = $Category.Children[1]
+    $chevron = $button.Resources['AppCategoryChevron']
+    if ($chevron) { $chevron.Text = [char]$(if ($wrap.Visibility -eq 'Collapsed') { 0xE76C } else { 0xE70D }) }
+    if ($VisibleCount -ge 0 -and $button.Resources['AppCategoryCount']) {
+        $button.Resources['AppCategoryCount'].Text = [string]$VisibleCount
+    }
+}

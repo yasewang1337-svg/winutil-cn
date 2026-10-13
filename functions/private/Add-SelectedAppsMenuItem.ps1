@@ -13,7 +13,7 @@
     $label.ToolTip = $name
     $label.Margin = '4,4,8,4'
     $label.VerticalAlignment = 'Center'
-    $label.TextTrimming = 'CharacterEllipsis'
+    $label.TextWrapping = 'Wrap'
     $label.SetResourceReference([Windows.Controls.TextBlock]::ForegroundProperty, 'MainForegroundColor')
     $label.SetResourceReference([Windows.Controls.TextBlock]::FontFamilyProperty, 'FontFamily')
     $null = $row.Children.Add($label)

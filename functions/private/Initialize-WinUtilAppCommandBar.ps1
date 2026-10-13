@@ -6,13 +6,13 @@ function Initialize-WinUtilAppCommandBar {
     $hostGrid.Children.Clear()
     $hostGrid.ColumnDefinitions.Clear()
     $layout = [Windows.Controls.StackPanel]::new()
-    $layout.Margin = '0,0,0,8'
+    $layout.Margin = '0,0,0,4'
     $null = $hostGrid.Children.Add($layout)
 
     $commands = [Windows.Controls.WrapPanel]::new()
     $null = $layout.Children.Add($commands)
     $options = [Windows.Controls.WrapPanel]::new()
-    $options.Margin = '0,6,0,0'
+    $options.Margin = '0,2,0,0'
     $null = $layout.Children.Add($options)
     $sync.InstallCommandBar = $commands
     $sync.InstallSourceBar = $options

@@ -35,38 +35,7 @@ public enum PackageManagers
 }
 "@
 
-# SPDX-License-Identifier: MIT
-# Set the maximum number of threads for the RunspacePool to the number of threads on the machine
-$maxthreads = [int]$env:NUMBER_OF_PROCESSORS
-
-# Create a new session state for parsing variables into our runspace
-$hashVars = New-object System.Management.Automation.Runspaces.SessionStateVariableEntry -ArgumentList 'sync',$sync,$Null
-$offlineVar = New-object System.Management.Automation.Runspaces.SessionStateVariableEntry -ArgumentList 'PARAM_OFFLINE',$PARAM_OFFLINE,$Null
-$InitialSessionState = [System.Management.Automation.Runspaces.InitialSessionState]::CreateDefault()
-
-# Add the variable to the session state
-$InitialSessionState.Variables.Add($hashVars)
-$InitialSessionState.Variables.Add($offlineVar)
-
-# Get every private function and add them to the session state
-$functions = Get-ChildItem function:\ | Where-Object { $_.Name -imatch 'winutil|WPF' }
-foreach ($function in $functions) {
-    $functionDefinition = Get-Content function:\$($function.name)
-    $functionEntry = New-Object System.Management.Automation.Runspaces.SessionStateFunctionEntry -ArgumentList $($function.name), $functionDefinition
-
-    $initialSessionState.Commands.Add($functionEntry)
-}
-
-# Create the runspace pool
-$sync.runspace = [runspacefactory]::CreateRunspacePool(
-    1,                      # Minimum thread count
-    $maxthreads,            # Maximum thread count
-    $InitialSessionState,   # Initial session state
-    $Host                   # Machine to create runspaces on
-)
-
-# Open the RunspacePool instance
-$sync.runspace.Open()
+# Background workers are created only when the user starts a task.
 
 # Create classes for different exceptions
 
@@ -102,9 +71,7 @@ if ($Preset) {
     Invoke-WinUtilAutoRun
 
     # Cleanup and exit
-    $sync.runspace.Close()
-    $sync.runspace.Dispose()
-    [System.GC]::Collect()
+    Close-WinUtilRunspacePool -Wait | Out-Null
     Stop-Transcript
     return
 }
@@ -115,9 +82,7 @@ if ($Config) {
     Invoke-WinUtilAutoRun
 
     # Cleanup and exit
-    $sync.runspace.Close()
-    $sync.runspace.Dispose()
-    [System.GC]::Collect()
+    Close-WinUtilRunspacePool -Wait | Out-Null
     Stop-Transcript
     return
 }
@@ -147,9 +112,7 @@ try {
 if (-NOT ($readerOperationSuccessful)) {
     Write-Host "Failed to parse xaml content using Windows.Markup.XamlReader's Load Method." -ForegroundColor Red
     Write-Host "Quitting WinUtil..." -ForegroundColor Red
-    $sync.runspace.Close()
-    $sync.runspace.Dispose()
-    [System.GC]::Collect()
+    Close-WinUtilRunspacePool | Out-Null
     exit 1
 }
 
@@ -188,7 +151,10 @@ Invoke-WinutilThemeChange -theme $sync.preferences.theme
 Invoke-WPFUIElements -configVariable $sync.configs.appnavigation -targetGridName "appscategory" -columncount 1
 Initialize-WPFUI -targetGridName "appscategory"
 
-Initialize-WPFUI -targetGridName "appspanel"
+# The home page does not need hundreds of software rows. Preserve imported
+# selections and build this page once, when it is first opened.
+$sync.SoftwarePageDeferred = $true
+Initialize-WPFUI -TargetGridName 'appspanel' -DeferCatalogue
 
 Invoke-WPFUIElements -configVariable $sync.configs.tweaks -targetGridName "tweakspanel" -columncount 2
 
@@ -249,24 +215,6 @@ $sync.keys | ForEach-Object {
 }
 
 #===========================================================================
-# Setup background config
-#===========================================================================
-
-# Load computer information in the background
-Invoke-WPFRunspace -ScriptBlock {
-    try {
-        $ProgressPreference = "SilentlyContinue"
-        $sync.ConfigLoaded = $False
-        $sync.ComputerInfo = Get-ComputerInfo
-        $sync.ConfigLoaded = $True
-    }
-    finally{
-        $ProgressPreference = $oldProgressPreference
-    }
-
-} | Out-Null
-
-#===========================================================================
 # Setup and Show the Form
 #===========================================================================
 
@@ -290,11 +238,13 @@ $sync["Form"].Add_Closing({
         [void][Windows.MessageBox]::Show('当前任务仍在执行，请等待结果后关闭窗口。', 'WinUtil CN')
         return
     }
+    if (-not (Close-WinUtilRunspacePool)) {
+        $eventArgs.Cancel = $true
+        [void][Windows.MessageBox]::Show('后台任务尚未结束，请稍后再关闭窗口。', 'WinUtil CN')
+        return
+    }
     $runspaceCleanupTimer.Stop()
-    Complete-WinUtilRunspaceJobs
-    $sync.runspace.Close()
-    $sync.runspace.Dispose()
-    [System.GC]::Collect()
+    $searchBarTimer.Stop()
 })
 
 # Attach the event handler to the Click event

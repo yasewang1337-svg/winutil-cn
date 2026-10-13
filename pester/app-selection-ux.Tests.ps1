@@ -10,7 +10,8 @@
         'private/Find-AppsByNameOrDescription.ps1', 'private/Reset-WinUtilAppFilter.ps1',
         'private/Update-WinUtilAppSelectionUi.ps1', 'private/Reset-WPFCheckBoxes.ps1',
         'private/Update-WinUtilSelections.ps1', 'public/Invoke-WPFSelectedCheckboxesUpdate.ps1',
-        'public/Initialize-WPFUI.ps1', 'public/Invoke-WPFPresets.ps1',
+        'public/Initialize-WPFUI.ps1', 'public/Invoke-WPFPresets.ps1', 'public/Invoke-WPFTab.ps1',
+        'private/Initialize-WinUtilSoftwarePage.ps1', 'private/Set-WinUtilProgressbar.ps1',
         'private/Invoke-WinutilThemeChange.ps1', 'private/Invoke-WinUtilFontScaling.ps1',
         'private/Initialize-WinUtilWindowChrome.ps1', 'private/Set-WinUtilNavigationLayout.ps1'
     )) {
@@ -85,6 +86,62 @@ Describe 'Software search and selected-list experience' {
         $sync.InstallFilterStatus.Text | Should -Be '显示 3 / 3 项'
         $sync.InstallFilterEmpty.Visibility | Should -Be 'Collapsed'
         $sync.InstallClearFilter.IsEnabled | Should -BeFalse
+    }
+    It 'keeps shared progress usable before the real catalogue loads and restores imported selection on first navigation' {
+        # Restart only the harmless UI state, following main's deferred bootstrap.
+        $themes = $sync.configs.themes
+        $catalogue = @{}
+        foreach ($relativePath in @('config/applications.json', '汉化/extra-apps.json')) {
+            $definitions = [IO.File]::ReadAllText((Join-Path $script:root $relativePath)) | ConvertFrom-Json
+            foreach ($definition in $definitions.PSObject.Properties) {
+                if ($definition.Value.Category) { $catalogue["WPFInstall$($definition.Name)"] = $definition.Value }
+            }
+        }
+        $script:sync = @{
+            Form=$form; preferences=@{}; configs=@{ themes=$themes; applicationsHashtable=$catalogue }
+            selectedApps=[Collections.Generic.List[string]]::new()
+            selectedTweaks=[Collections.Generic.List[string]]::new()
+            selectedFeatures=[Collections.Generic.List[string]]::new()
+            selectedToggles=[Collections.Generic.List[string]]::new()
+            SoftwarePageDeferred=$true
+        }
+        foreach ($node in $xml.SelectNodes('//*[@Name]')) { $sync[$node.Name] = $form.FindName($node.Name) }
+        $sync.WPFselectedAppsButton = [Windows.Controls.Button]::new()
+        Initialize-WPFUI -TargetGridName appscategory
+        Initialize-WPFUI -TargetGridName appspanel -DeferCatalogue
+        $sync.ItemsControl.Items.Count | Should -Be 0
+        @($catalogue.Keys | Where-Object { $sync[$_] -is [Windows.Controls.CheckBox] }).Count | Should -Be 0
+        $sync.SoftwarePageDeferred | Should -BeTrue
+        $progress = $sync.ProgressBar
+        $scroll = $sync.InstallAppAreaScrollViewer
+        $overlay = $sync.InstallAppAreaOverlay
+        $container = $sync.ItemsControl
+        Set-WinUtilProgressbar -Label 'Isolated maintenance progress' -Percent 37
+        $progress.Value | Should -Be 37
+        $sync.progressBarTextBlock.Text | Should -Be 'Isolated maintenance progress'
+        $importedKey = @($catalogue.Keys | Sort-Object)[0]
+        $sync.selectedApps.Add($importedKey)
+
+        Invoke-WPFTab WPFTab1BT
+        $sync.SoftwarePageDeferred | Should -BeFalse
+        @($sync.ItemsControl.Items | ForEach-Object { $_.Children[1].Children }).Count | Should -Be $catalogue.Count
+        $sync[$importedKey].IsChecked | Should -BeTrue
+        $sync.selectedApps.Count | Should -Be 1
+        $sync.selectedAppsstackPanel.Children.Count | Should -Be 1
+        $sync.SelectedAppsTitle.Text | Should -Be '已选清单 · 1'
+        [object]::ReferenceEquals($sync.ProgressBar, $progress) | Should -BeTrue
+        [object]::ReferenceEquals($sync.InstallAppAreaScrollViewer, $scroll) | Should -BeTrue
+        [object]::ReferenceEquals($sync.InstallAppAreaOverlay, $overlay) | Should -BeTrue
+        [object]::ReferenceEquals($sync.ItemsControl, $container) | Should -BeTrue
+        $progress.Value | Should -Be 37
+        $sync.progressBarTextBlock.Text | Should -Be 'Isolated maintenance progress'
+        $firstCheckbox = $sync[$importedKey]
+        Invoke-WPFTab WPFTab6BT
+        Invoke-WPFTab WPFTab1BT
+        [object]::ReferenceEquals($sync[$importedKey], $firstCheckbox) | Should -BeTrue
+        [object]::ReferenceEquals($sync.ProgressBar, $progress) | Should -BeTrue
+        $progress.Value | Should -Be 37
+        $sync.selectedApps.Count | Should -Be 1
     }
     It 'matches <Query> literally across labels, descriptions and package IDs' -ForEach @(
         @{ Query=' alpha '; Expected='WPFInstallAlpha' },
@@ -166,6 +223,50 @@ Describe 'Software search and selected-list experience' {
         [Windows.Controls.ToolTipService]::GetShowOnDisabled($sync.InstallInstalledOnly) | Should -BeTrue
     }
 
+    It 'places current detected state beside the description and removes it when the inventory expires' {
+        $sync.SoftwareInventory = [pscustomobject]@{ Manager='Winget'; CompletedAt=[datetime]::Now; MatchedKeys=@('WPFInstallAlpha') }
+        Update-WinUtilInventoryUi
+        $sync.WPFInstallAlpha.Content.Children[1].Text | Should -Be '已识别安装 · 日常网页浏览'
+        $sync.WPFInstallBeta.Content.Children[1].Text | Should -Be '文本编辑'
+        $sync.preferences.packagemanager = 'Choco'
+        Update-WinUtilInventoryUi
+        $sync.WPFInstallAlpha.Content.Children[1].Text | Should -Be '日常网页浏览'
+        $sync.WPFInstallAlpha.Parent.Resources['WinUtilAppDetected'] | Should -BeFalse
+    }
+
+    It 'offers a direct recovery action beside an empty result and retains existing checks' {
+        $sync.WPFInstallBeta.IsChecked = $true
+        $sync.SearchBar.Text = 'nothing-matches'
+        Find-AppsByNameOrDescription -SearchString $sync.SearchBar.Text
+        $sync.InstallFilterEmpty.Visibility | Should -Be 'Visible'
+        $sync.InstallEmptyClearFilter.Visibility | Should -Be 'Visible'
+        Invoke-TestClick $sync.InstallEmptyClearFilter
+        $sync.SearchBar.Text | Should -Be ''
+        $sync.WPFInstallBeta.IsChecked | Should -BeTrue
+        $sync.InstallFilterEmpty.Visibility | Should -Be 'Collapsed'
+    }
+
+    It 'updates category result counts while preserving the category caption and collapse controls' {
+        $category = $sync.WPFInstallBeta.Parent.Parent.Parent
+        $category.Children[0].Resources['AppCategoryCount'].Text | Should -Be '2'
+        Find-AppsByNameOrDescription -SearchString 'beta'
+        $category.Children[0].Resources['AppCategoryCount'].Text | Should -Be '1'
+        $category.Children[0].Resources['AppCategoryName'] | Should -Be '编辑器'
+        Reset-WinUtilAppFilter
+        $category.Children[0].Resources['AppCategoryCount'].Text | Should -Be '2'
+    }
+
+    It 'sorts entries by their displayed names instead of internal package keys' {
+        $sync.configs.applicationsHashtable.WPFInstallAlpha.Content = 'Zulu browser'
+        $sync.configs.applicationsHashtable.WPFInstallAlpha.Category = 'One group'
+        $sync.configs.applicationsHashtable.WPFInstallBeta.Content = 'Alpha editor'
+        $sync.configs.applicationsHashtable.WPFInstallBeta.Category = 'One group'
+        Initialize-WPFUI -TargetGridName appspanel
+        $rows = $sync.WPFInstallBeta.Parent.Parent.Children
+        $rows[0].Tag | Should -Be 'WPFInstallBeta'
+        $rows[1].Tag | Should -Be 'WPFInstallAlpha'
+    }
+
     It 'combines detected-installed, selected and text filters without changing selections' {
         $sync.SoftwareInventory = [pscustomobject]@{ Manager='Winget'; CompletedAt=[datetime]::Now; MatchedKeys=@('WPFInstallAlpha') }
         Update-WinUtilInventoryUi
@@ -239,15 +340,15 @@ Describe 'Software search and selected-list experience' {
     }
     It 'restores pre-search collapsed categories after multiple searches and selection refreshes' {
         $category = $sync.WPFInstallAlpha.Parent.Parent.Parent
-        $category.Children[0].Content = '+ 浏览器'
         $category.Children[1].Visibility = 'Collapsed'
+        Update-WinUtilAppCategoryHeader -Category $category
         $sync.SearchBar.Text = 'Alpha'
         Find-AppsByNameOrDescription -SearchString 'Alpha'
         $category.Children[1].Visibility | Should -Be 'Visible'
         $sync.WPFInstallAlpha.IsChecked = $true
         Find-AppsByNameOrDescription -SearchString 'Beta'
         Reset-WinUtilAppFilter
-        $category.Children[0].Content | Should -Be '+ 浏览器'
+        $category.Children[0].Resources['AppCategoryChevron'].Text | Should -Be ([string][char]0xE76C)
         $category.Children[1].Visibility | Should -Be 'Collapsed'
         $sync.WPFInstallAlpha.IsChecked | Should -BeTrue
     }
@@ -288,7 +389,7 @@ Describe 'Software search and selected-list experience' {
         $sync.SelectedAppsPopupScroll.HorizontalScrollBarVisibility | Should -Be 'Disabled'
         $row = $sync.selectedAppsstackPanel.Children[0]
         [Windows.Automation.AutomationProperties]::GetName($row.Children[1]) | Should -Match '从已选清单移除'
-        $row.Children[0].TextTrimming | Should -Be 'CharacterEllipsis'
+        $row.Children[0].TextWrapping | Should -Be 'Wrap'
     }
     It 'wraps the toolbar within a narrow software panel at <Scale> scaling' -ForEach @(@{Scale=1.0}, @{Scale=1.5}) {
         Invoke-WinUtilFontScaling -ScaleFactor $Scale
@@ -332,6 +433,7 @@ Describe 'Software search and selected-list experience' {
         $nextPoint.Y | Should -BeGreaterOrEqual ($border.ActualHeight - 0.01)
         $label.ToolTip | Should -BeNullOrEmpty
         $checkbox.ToolTip | Should -BeNullOrEmpty
+        Update-WinUtilAppToolTip -Border $border
         $border.ToolTip.Content.Children[0].Text | Should -Be $name
         $border.ToolTip.Content.Children[1].Text | Should -Be '文本编辑'
         [Windows.Automation.AutomationProperties]::GetName($checkbox) | Should -Be $name
@@ -388,6 +490,7 @@ Describe 'Software search and selected-list experience' {
             ($point.X + $textBlock.ActualWidth) | Should -BeLessOrEqual ($row.ActualWidth + 1)
             ($point.Y + $textBlock.ActualHeight) | Should -BeLessOrEqual ($row.ActualHeight + 1)
         }
+        Update-WinUtilAppToolTip -Border $row
         $row.ToolTip.Content.Children[1].Text | Should -Be $summary.Text
     }
 }
