@@ -2,13 +2,21 @@
 
 更新：2026-10-13。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
 
-## 当前任务：本地36版同步、MCP说明补丁与中文文档上线（实施中）
+## 当前任务：本地36版同步、MCP说明补丁与中文文档上线（已完成）
 
 2026-10-13 用户批准按优先级执行：同步本地最新版、更新 npm 包说明、上线现有中文文档网站，测试通过后更新 GitHub，明确不得修改日用系统设置。分支 `codex/docs-npm-delivery-20261013`，基于 `ca5906d`，保留前次维护记录修改。主助手负责本地交付、README、合并发布与最终验收；`npm_docs_delivery` 负责 MCP 0.4.2 文档/元数据及实际打包验证；`chinese_docs_site` 负责现有 Hugo 内容/样式与子路径配置；`docs_site_ci` 负责部署工作流和静态站验收。
 
-本地 EXE 已由35版更新为36版，更新前备份、源文件及目标文件SHA256验证通过，未启动正式程序。证据 `.artifacts/docs-npm-delivery-20261013/local-exe-delivery.json`；旧版备份同目录 `WinUtil-CN-v35.exe`。独立PS1仍缺失，不恢复隔离、不改防护设置；本轮桌面交付入口是EXE。中文站计划地址 `https://yasewang1337-svg.github.io/winutil-cn/`；MCP只做说明与metadata补丁，不增加执行能力。
+本地 EXE 已由35版更新为36版，更新前备份、源文件及目标文件SHA256验证通过，未启动正式程序。证据 `.artifacts/docs-npm-delivery-20261013/local-exe-delivery.json`；旧版备份同目录 `WinUtil-CN-v35.exe`。独立PS1仍缺失，不恢复隔离、不改防护设置；本轮桌面交付入口是EXE。中文站正式地址 `https://yasewang1337-svg.github.io/winutil-cn/`；MCP只做说明与metadata补丁，不增加执行能力。
 
-MCP 0.4.2 源码与包内 README 版本、持久 npm 安装及包内恢复路径、homepage/bugs/repository.directory 已统一；本地100项测试、干净临时仓库打包和实际tgz离线接入均通过。正式包仍由已提交源码的CI唯一构建，不发布含未提交状态的本地样本。网站138个HTML、7,729个本地资源/链接/锚点及135个sitemap URL通过静态验证，8项验证器故障回归通过；独立无头浏览器7个桌面/手机/主题视图无资源失败或页面横向溢出，截图已视检。Pages已设置为workflow构建，尚待PR/正式CI、上线与npm实际发布。证据统一保存于 `.artifacts/docs-npm-delivery-20261013/`；真实修改与恢复仅由GitHub一次性Windows runner验证。
+MCP 0.4.2 源码与包内 README 版本、持久 npm 安装及包内恢复路径、homepage/bugs/repository.directory 已统一；本地100项测试、干净临时仓库打包和实际tgz离线接入均通过。正式包由已提交源码的CI唯一构建，没有发布含未提交状态的本地样本。网站138个HTML、7,729个本地资源/链接/锚点及135个sitemap URL通过静态验证，8项验证器故障回归通过；独立无头浏览器7个桌面/手机/主题视图无资源失败或页面横向溢出，截图已视检。浏览器检查发现并修复主题对粘贴与中文组合输入的处理问题；输入法确认Enter、方向键和Escape保留原生默认行为，普通搜索跳转仍有效，采用浏览器事件模拟验证而非操作主机输入法。
+
+[PR #31](https://github.com/yasewang1337-svg/winutil-cn/pull/31) 最终提交的文档、三平台MCP、编译及PS5.1/7各622项回归通过，合并源码 `748342abe6c815a4d991448e4d0f1aa2608d039e`。正式 [Pages部署38336715225](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38336715225) 成功；线上首页与MCP的桌面/手机4页HTTP200、图片及canonical正确、8组交互全部通过、浏览器错误0。线上主脚本与已验收本地产物逐字节相同。GitHub仓库主页已指向中文站，说明补充MCP，原topics保留并加入mcp、mcp-server、model-context-protocol；不据此宣称搜索引擎或AI已收录推荐。
+
+[MCP 0.4.2 GitHub Release](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/mcp-v0.4.2) 与 [npm 0.4.2](https://www.npmjs.com/package/winutil-cn-mcp/v/0.4.2) 均已发布。标签构建 [38336736096](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38336736096) 三平台回归、唯一tarball打包及隔离实测全通过：Windows Node22/24各100项、Linux95项及5项平台不适用；一次性GitHub-hosted Windows Server2025的5份报告、31组实际修改/恢复/清理场景全部通过。没有在日用主机执行真实注册表、服务、DNS、安装卸载或防护调整，不扩展为全部桌面版本和任意优化脚本的验证。
+
+可信发布 [38336920242](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38336920242) 复用原标签包上传，整个运行成功。npm线上README已为0.4.2，源码子目录、官网与问题入口正确，来源证明存在；实际下载字节与GitHub包一致，SHA256为 `4fbdaf50567aa8710eb465962fe60ee9f31ec1f14767692954169e667b21ae8e`。四份GitHub附件digest均通过；实际 `npx -y winutil-cn-mcp@0.4.2` 接入确认五只读工具、bundled干净源码SHA及微信查询正确，修改调用0次。GitHub latest仍为桌面 `cn-2026.10.11-36`，没有额外发布桌面版本。
+
+证据统一保存于 `.artifacts/docs-npm-delivery-20261013/`，包括 `release-ci/`、`integration-verification.json`、`npm-registry/`、`published-entry-verification.json`、`online/`、`repository-after.json`；正式附件在 `.artifacts/released/mcp-v0.4.2/`。本轮授权范围全部交付；MCP官方目录登记、代码签名和新的系统操作能力仍属后续工作。
 
 ## 上一阶段：曝光、AI 可发现性与产品改进调查（已完成本地复核）
 
