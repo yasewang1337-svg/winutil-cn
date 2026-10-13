@@ -2,7 +2,7 @@
 
 更新：2026-10-13。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
 
-## 当前任务：内页交互打磨与启动/关闭卡顿（本地验收完成，待发布）
+## 当前任务：内页交互打磨与启动/关闭卡顿（40版已交付）
 
 2026-10-13 用户要求继续细化软件管理、系统优化等页面的布局、悬停介绍和操作交互，并排查启动/关闭导致电脑短暂卡顿。基于已交付39版main `96b7ca4`，分支 `codex/crown-pages-performance-20261013`。沿用皇冠主题；三个智能体分别负责软件列表、设置行和生命周期，主助手整合页面结构、入口、实际预览与发布。证据 `.artifacts/crown-pages-20261013/`，39版源码已归档用于无害对照。用户系统设置保持不动，仅运行模拟/显示夹具与隔离CI。
 
@@ -10,7 +10,13 @@
 
 移除启动时无消费者的 Get-ComputerInfo 全量扫描；213项软件目录首次进入才构建，但共享进度容器在启动保留，避免破坏维护/镜像任务。后台池按首次操作创建、最多4线程；关闭先检查包括未登记管线的活动任务，提示稍后关闭并保留任务自然完成，不在UI线程等待或强制GC。自动模式仍等待自然完成再退出。未复现或确诊用户整台电脑卡顿的全部原因，不归因于防护或硬件。
 
-最终本地PS5.1/7完整回归各752/752通过，构建产物双PS语法/BOM与Actionlint通过。42张实际WPF深浅/窄屏/150%预览已生成，软件状态/弹窗及设置说明/空态另有定向视检；7张公开截图已与最终产物核对。可控同XAML启动界面构建夹具PS5.1中位数1268.02→330.33ms、当前线程托管分配127.87→56.45MiB；此范围不含进程启动、脚本解析、皇冠动画及实际系统扫描。旧同步Close在1200ms模拟任务上等待约1210ms，新忙碌保护5–8ms返回且任务正常完成。证据 `full-ps51.json`、`full-ps7.json`、`lifecycle/home-ui-summary.json`、`settings/independent-review.json`、`software/qa-summary.json`、`screenshot-delivery.json`。中文站验收与GitHub正式交付进行中；根目录EXE仍为39版，MCP保持0.4.3。
+最终本地PS5.1/7完整回归各752/752通过，构建产物双PS语法/BOM与Actionlint通过。42张实际WPF深浅/窄屏/150%预览已生成，软件状态/弹窗及设置说明/空态另有定向视检；7张公开截图已与最终产物核对。39版与本轮实现的同条件启动界面构建夹具PS5.1中位数1268.02→330.33ms、当前线程托管分配127.87→56.45MiB；此范围不含进程启动、脚本解析、皇冠动画及实际系统扫描。旧同步Close在1200ms模拟任务上等待约1210ms，新忙碌保护5–8ms返回且任务正常完成。证据 `full-ps51.json`、`full-ps7.json`、`lifecycle/home-ui-summary.json`、`settings/independent-review.json`、`software/qa-summary.json`、`screenshot-delivery.json`。
+
+[PR #40](https://github.com/yasewang1337-svg/winutil-cn/pull/40) 全检查通过并合并，正式源码 `7eba5fccdd889b16a3a9a4d72b3e1b908e88ac70`。[发布运行38350968390](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38350968390) 成功：双PS各752项再次通过，一次性Windows runner实际软件检测、安装后识别、卸载后消失各4场景通过，包/链接/导出文件清理及原Chocolatey清单保持均确认。PS1、EXE逐文件Defender扫描未检出威胁；[40版](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/cn-2026.10.13-40) 已发布，全部4附件GitHub digest、SHA256清单、扫描来源、语法/BOM和内嵌脚本哈希复核通过。
+
+本地 `W:\winutil-cn\WinUtil-CN.exe` 已替换为40版，文件版本 `2026.10.13.40`，SHA256 `24C1E957F439B147E665530330E1CA96FA3B23ADAE94A9620560352F758AAD5E`；旧39版备份 `.artifacts/crown-pages-20261013/WinUtil-CN-v39.exe`。下载脚本包含本轮延迟初始化、设置行、空状态与关闭保护，旧署名零命中，无Get-ComputerInfo及强制GC。未启动实际WinUtil或修改日用系统设置。交付证据 `local-exe-delivery.json`、`release-verification.json`、`desktop-integration-verification.json` 及 `desktop-release-ci/`。
+
+[Pages部署38350968177](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38350968177) 成功。Hugo138 HTML、7740引用、135 sitemap通过；[线上中文指南](https://yasewang1337-svg.github.io/winutil-cn/userguide/getting-started/) 桌面深浅1280px与手机390px无坏图、横向溢出或浏览器错误，9个实际图片响应与最终本地站点逐字节一致。证据 `docs-qa-final.json`、`online/verification.json`。README、维护说明、预览和发布正文同步完成。本轮全部交付，MCP保持0.4.3，没有重新发布npm；用户整机卡顿是否完全消失尚需实际使用反馈，不能由夹具验证替代。
 
 ## 上一阶段：皇冠主界面与交互打磨（39版已交付）
 
