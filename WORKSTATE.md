@@ -2,13 +2,19 @@
 
 更新：2026-10-13。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
 
-## 当前任务：皇冠主界面与交互打磨（实施中）
+## 当前任务：皇冠主界面与交互打磨（39版已交付）
 
 2026-10-13 用户要求将主界面与皇冠风格统一，精致、顺手，避免模板式AI视觉。基于38版交付后main `e0fe5f1`，分支 `codex/crown-desktop-ui-20261013`。采用石墨灰、香槟金重点与独立浅色深金配色；保留熟悉的侧栏与软件行，改进品牌、首页层次、控件悬停/键盘焦点，修正搜索全选及筛选滚动。并行分工：主题资源/对比度、搜索交互、真实WPF预览与独立验收；主助手整合XAML、布局、文档和发布。证据 `.artifacts/crown-desktop-ui-20261013/`；本机仅显示夹具与无害回归，不运行实际系统动作，MCP不变。
 
 实现已完成并冻结：深浅主题、同源皇冠矢量、首页工作区、按钮/勾选/开关/焦点及正文对比；软件菜单根据宽度在“更多操作”内外移动原对象，来源行使用短检测状态且完整信息保留在Tooltip/UIA。Ctrl+F全选与跨页搜索、局部Esc、筛选回顶与选择保留均已实现。设置页按最终viewport宽度重排现有控件，真实1280→800→1280与重复初始化保持状态，高级分类按z__标识置后。已修复首轮全回归发现的全局LayoutUpdated跨窗回调，不再注册该事件。
 
-最终本地PS5.1/7完整回归各701/701通过，定向交互各61项、皇冠/重排/导航各19项通过；编译产物双PS语法/BOM与Actionlint通过。42张实际WPF预览（7页×双主题×3场景）已生成并独立视检，5个公开截图入口已更新；800×600@150%软件列表可完整显示2个条目及介绍。独立验收 `.artifacts/crown-ui-20261013/independent-ui-review.json`、主题对比与文档验收 `.artifacts/crown-ui-theme-20261013/`。仓库说明和发布正文同步，正式CI、发布和本地EXE更新待收尾。
+最终本地PS5.1/7完整回归各701/701通过，定向交互各61项、皇冠/重排/导航各19项通过；编译产物双PS语法/BOM与Actionlint通过。42张实际WPF预览（7页×双主题×3场景）及6张菜单弹窗预览已生成并视检，5个公开截图入口已更新；800×600@150%软件列表可完整显示2个条目及介绍。独立验收 `.artifacts/crown-ui-20261013/independent-ui-review.json`、主题对比 `.artifacts/crown-ui-theme-20261013/contrast-summary.json`。Hugo138 HTML、7736引用、135 sitemap通过，最终指南桌面深浅色与手机浏览器验收通过。
+
+[PR #37](https://github.com/yasewang1337-svg/winutil-cn/pull/37) 全部检查通过并合并，正式源码 `14ce7c4485836289d01a1b984de0ad6d6bd6008b`。[发布运行38347624225](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38347624225) 成功：双PS各701项再次通过，一次性Windows runner真实软件检测/安装/卸载各4场景通过且清理正常；PS1与EXE逐文件Defender扫描未检出威胁。[39版](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/cn-2026.10.13-39) 已发布，4附件GitHub digest、SHA256清单、扫描来源提交、脚本语法/BOM及EXE内嵌脚本哈希全部复核通过。
+
+本地 `W:\winutil-cn\WinUtil-CN.exe` 已更新为39版，文件版本 `2026.10.13.39`，SHA256 `83591725E7F5BF331305013B723E949572E23BD052EC256578CCA2B4C986CA25`；旧38版保留在 `.artifacts/crown-desktop-ui-20261013/WinUtil-CN-v38.exe`。正式脚本包含皇冠主界面、响应式设置布局和键盘搜索处理，旧署名零命中。没有启动实际WinUtil或修改日用系统设置。证据 `release-verification.json`、`desktop-asset-digests.json`、`desktop-integration-verification.json`、`local-exe-delivery.json`。
+
+[Pages部署38347624018](https://github.com/yasewang1337-svg/winutil-cn/actions/runs/38347624018) 成功，[线上上手指南](https://yasewang1337-svg.github.io/winutil-cn/userguide/getting-started/) 桌面深浅色1280px与手机390px均无坏图、横向溢出或浏览器错误。实际加载的4张响应式WebP和3张公开PNG与最终本地站点逐字节一致，证据 `online/verification.json`。仓库说明、维护说明和当前发布正文已同步，本轮全部交付；MCP保持0.4.3，没有重新发布npm。
 
 ## 上一阶段：大幅字符皇冠与分层启动动画（38版已交付）
 
