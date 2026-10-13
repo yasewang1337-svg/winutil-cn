@@ -23,6 +23,12 @@
 
 界面采用侧栏导航、命令栏与全宽软件行，设计参考 [Files](https://files.community/)、[UniGetUI](https://github.com/Devolutions/UniGetUI) 和 [Windows 导航规范](https://learn.microsoft.com/en-us/windows/apps/develop/ui/controls/navigationview)。软件命令栏由 `Initialize-WinUtilAppCommandBar.ps1` 读取原 `appnavigation.json` 生成，保留稳定控件ID；Button由main统一注册Click，MenuItem由命令栏注册，避免重复派发。条目的完整介绍只设置在最外层Border，子名称和说明不设Tooltip，防止遮蔽。改布局时同时检查整窗深浅色、800px及150%字号，不只检查单独组件。
 
+皇冠主界面的主题资源集中在 `config/themes.json`：深色为石墨与香槟金，浅色为冷灰白与古铜金。主操作、选中和焦点共用强调色，FOSS 与危险操作保持绿色、红色语义。`ControlBorderColor` 用于需要识别的控件边缘，`BorderColor` 与 `BrandBorderColor` 用于细分隔和品牌装饰，不互相替代。调整颜色时用 `crown-theme.Tests.ps1` 验证正文至少 4.5:1、重要控件边缘至少 3:1，并检查悬停、按下与深浅主题切换。
+
+搜索快捷键集中在 `Invoke-WinUtilKeyboardShortcut.ps1`：`Ctrl + F` 进入当前可搜索页面的输入框并全选，其他页进入软件搜索；`Esc` 仅处理当前聚焦的搜索框。筛选条件改变时列表回到顶部，勾选刷新保留位置。`Set-WinUtilNavigationLayout.ps1` 按可用宽度与字号调整导航，`Set-WinUtilConfigLayout.ps1` 重排已有设置面板，不重建控件或改变选择。相关回归为 `keyboard-shortcuts.Tests.ps1`、`app-selection-ux.Tests.ps1`、`navigation.Tests.ps1` 和 `crown-ui.Tests.ps1`。
+
+软件命令栏按实际宽度把原“组合推荐”菜单移动至“更多操作”，宽度恢复时移回；保留控件对象、ID和事件，不重复创建或注册动作。布局只监听所属控件的尺寸变化，不使用跨窗口的 `LayoutUpdated`。来源行显示简短检测状态，完整来源、时间和错误保留在Tooltip与辅助功能名称中。设置页监听所属ScrollViewer最终viewport宽度，确保从窄窗回宽时能恢复双列；已有 `z__` 高级分类保持置后。相关行为见 `app-commandbar.Tests.ps1` 和 `crown-ui.Tests.ps1`。
+
 ## 镜像与界面预览维护
 
 控制台皇冠由 `functions/private/Show-WinUtilStartupBanner.ps1` 绘制。改动时用只加载该文件的显示夹具验证PS5.1/7实际终端、大/小窗口、输出重定向和颜色/光标恢复，不为预览启动WinUtil主程序。`docs/assets/images/screenshots/startup-crown.png` 与 `startup-crown.gif` 必须来自实际终端帧；它们与WPF页面截图分别生成，动图单次播放后停留在最终帧。
@@ -35,7 +41,9 @@ Windows 镜像页保留 `WPFWin11ISO*` 控件 ID 以兼容事件，但实际目�
 powershell -NoProfile -File tools/Export-InterfacePreviews.ps1 -IncludeCompact
 ```
 
-检查 `.artifacts/interface-previews/` 的深浅主题、800px / 150% 字号和各页截图，再更新 `docs/assets/images/screenshots/` 下的 `home-cn.png`、`home-light-cn.png`、`software-cn.png`、`updates-cn.png`、`windows-iso-cn.png`。README 使用 `releases/latest` 入口，预览图必须来自本次源码；不要沿用旧版布局或概念稿。页面修改还应检查隐藏步骤展开后的滚动与按钮可达性，相关回归见 `windows-update-layout.Tests.ps1` 和 `windows-iso-layout.Tests.ps1`。
+检查 `.artifacts/interface-previews/` 的 42 张预览：7 个页面状态（首页、软件、优化、配置、更新，以及 Windows 11 / 10 镜像）各覆盖深浅主题和三种尺寸／字号组合（1280 × 800 / 100%、800 × 600 / 150%、1280 × 800 / 150%）。预览只加载显示夹具，系统开关值固定，不执行设置或启动外部程序。
+
+验收后更新 `docs/assets/images/screenshots/` 下的 `home-cn.png`、`home-light-cn.png`、`software-cn.png`、`updates-cn.png`、`windows-iso-cn.png`，保留现有引用入口。README 使用 `releases/latest` 入口，预览图必须来自本次源码；不要沿用旧版布局或概念稿。页面修改还应检查隐藏步骤展开后的滚动与按钮可达性，相关回归见 `windows-update-layout.Tests.ps1` 和 `windows-iso-layout.Tests.ps1`。
 
 ## 2026-09 可靠性维护
 

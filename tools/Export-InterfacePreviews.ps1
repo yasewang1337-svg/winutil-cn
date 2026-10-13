@@ -21,13 +21,18 @@ foreach ($file in @(
     'private/Initialize-WinUtilAppActions.ps1',
     'private/Test-WinUtilInventoryCurrent.ps1', 'private/Update-WinUtilInventoryUi.ps1', 'private/Invalidate-WinUtilInventory.ps1', 'private/Initialize-WinUtilAppCommandBar.ps1', 'private/Show-WinUtilAppActions.ps1',
     'private/Initialize-WinUtilWindowChrome.ps1', 'private/Set-WinUtilNavigationLayout.ps1',
-    'private/Test-WinUtilTitleBarSource.ps1', 'private/Initialize-WinUtilISOControls.ps1'
+    'private/Test-WinUtilTitleBarSource.ps1', 'private/Initialize-WinUtilISOControls.ps1',
+    'private/Set-WinUtilConfigLayout.ps1'
 )) { . ([scriptblock]::Create([IO.File]::ReadAllText((Join-Path $root "functions/$file")))) }
 
 function Set-Preferences { param([switch]$save) }
 function Invoke-WPFButton { param($Button) throw 'Preview cannot execute application actions.' }
 function Find-TweaksByNameOrDescription { param($SearchString) }
 function Start-Process { throw 'Preview cannot start external programs.' }
+# Toggle controls need an initial value during construction. Use a deterministic
+# display fixture, never query or apply the current machine's registry settings.
+function Get-WinUtilToggleStatus { param($Toggle) return $false }
+function Invoke-WinUtilTweakToggle { param($Sender, $Enabled) throw 'Preview cannot change system settings.' }
 
 $catalog = @{}
 foreach ($file in @('config/applications.json', '汉化/extra-apps.json')) {
@@ -36,9 +41,17 @@ foreach ($file in @('config/applications.json', '汉化/extra-apps.json')) {
         if ($app.Value.Category) { $catalog["WPFInstall$($app.Name)"] = $app.Value }
     }
 }
+$tweaks = [IO.File]::ReadAllText((Join-Path $root 'config/tweaks.json')) | ConvertFrom-Json
+$features = [IO.File]::ReadAllText((Join-Path $root 'config/feature.json')) | ConvertFrom-Json
 $scenarios = @(@{ Width = 1280; Height = 800; Scale = 1.0; Name = 'desktop' })
-if ($IncludeCompact) { $scenarios += @{ Width = 800; Height = 600; Scale = 1.5; Name = 'compact-150' } }
-$pages = [ordered]@{ home = 'WPFTab6BT'; software = 'WPFTab1BT'; updates = 'WPFTab4BT'; 'windows-iso' = 'WPFTab5BT'; 'windows10-iso' = 'WPFTab5BT' }
+if ($IncludeCompact) {
+    $scenarios += @{ Width = 800; Height = 600; Scale = 1.5; Name = 'compact-150' }
+    $scenarios += @{ Width = 1280; Height = 800; Scale = 1.5; Name = 'desktop-150' }
+}
+$pages = [ordered]@{
+    home = 'WPFTab6BT'; software = 'WPFTab1BT'; tweaks = 'WPFTab2BT'; config = 'WPFTab3BT'
+    updates = 'WPFTab4BT'; 'windows-iso' = 'WPFTab5BT'; 'windows10-iso' = 'WPFTab5BT'
+}
 $reports = @()
 foreach ($mode in @('Dark', 'Light')) {
     foreach ($scenario in $scenarios) {
@@ -49,7 +62,13 @@ foreach ($mode in @('Dark', 'Light')) {
             try { $form = [Windows.Markup.XamlReader]::Load($reader) } finally { $reader.Close() }
             $script:sync = @{
                 Form = $form; preferences = @{}; selectedApps = [Collections.Generic.List[string]]::new()
-                configs = @{ themes = [IO.File]::ReadAllText((Join-Path $root 'config/themes.json')) | ConvertFrom-Json; applicationsHashtable = $catalog }
+                selectedTweaks = [Collections.Generic.List[string]]::new()
+                selectedToggles = [Collections.Generic.List[string]]::new()
+                selectedFeatures = [Collections.Generic.List[string]]::new()
+                configs = @{
+                    themes = [IO.File]::ReadAllText((Join-Path $root 'config/themes.json')) | ConvertFrom-Json
+                    applicationsHashtable = $catalog; tweaks = $tweaks; feature = $features
+                }
             }
             foreach ($node in $xml.SelectNodes('//*[@Name]')) { $sync[$node.Name] = $form.FindName($node.Name) }
             try {
@@ -58,6 +77,10 @@ foreach ($mode in @('Dark', 'Light')) {
                 Invoke-WPFUIElements -configVariable ([IO.File]::ReadAllText((Join-Path $root 'config/appnavigation.json')) | ConvertFrom-Json) -targetGridName appscategory -columncount 1
                 Initialize-WPFUI -TargetGridName appscategory
                 Initialize-WPFUI -TargetGridName appspanel
+                # Use the same data-driven builders as scripts/main.ps1. Their
+                # click handlers remain unregistered and system toggles are stubbed.
+                Invoke-WPFUIElements -configVariable $tweaks -targetGridName tweakspanel -columncount 2
+                Invoke-WPFUIElements -configVariable $features -targetGridName featurespanel -columncount 2
                 Initialize-WinUtilISOControls
                 Invoke-WinUtilFontScaling -ScaleFactor $scenario.Scale
                 Invoke-WPFTab $pages[$page]
@@ -68,6 +91,8 @@ foreach ($mode in @('Dark', 'Light')) {
                 $surface.Measure($size)
                 $surface.Arrange([Windows.Rect]::new($size))
                 $surface.UpdateLayout()
+                Set-WinUtilConfigLayout
+                $surface.UpdateLayout()
                 $bitmap = [Windows.Media.Imaging.RenderTargetBitmap]::new($scenario.Width, $scenario.Height, 96, 96, [Windows.Media.PixelFormats]::Pbgra32)
                 $bitmap.Render($surface)
                 $encoder = [Windows.Media.Imaging.PngBitmapEncoder]::new()
@@ -75,11 +100,18 @@ foreach ($mode in @('Dark', 'Light')) {
                 $name = "$page-$($mode.ToLowerInvariant())-$($scenario.Name).png"
                 $stream = [IO.File]::Create((Join-Path $output $name))
                 try { $encoder.Save($stream) } finally { $stream.Dispose() }
-                $reports += [ordered]@{ File = $name; Theme = $mode; Width = $scenario.Width; Height = $scenario.Height; Scale = $scenario.Scale; Page = $page; CatalogCount = $catalog.Count }
+                $reports += [ordered]@{
+                    File = $name; Theme = $mode; Width = $scenario.Width; Height = $scenario.Height
+                    Scale = $scenario.Scale; Page = $page; CatalogCount = $catalog.Count
+                    TweakCount = @($tweaks.PSObject.Properties).Count; FeatureCount = @($features.PSObject.Properties).Count
+                }
             } finally { $form.Close() }
         }
     }
 }
-[ordered]@{ RenderedUtc = [DateTime]::UtcNow.ToString('o'); SystemActionsExecuted = $false; Previews = $reports } |
+[ordered]@{
+    RenderedUtc = [DateTime]::UtcNow.ToString('o'); SystemActionsExecuted = $false
+    SystemSettingsRead = $false; ToggleStates = 'Display fixture: all off'; Previews = $reports
+} |
     ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $output 'preview-manifest.json') -Encoding UTF8
 Write-Output "Rendered $($reports.Count) WPF previews to $output. No system actions were executed."

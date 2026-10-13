@@ -3,6 +3,19 @@ function Initialize-WinUtilWindowChrome {
     $panel = $sync.Form.FindName('NavLogoPanel')
     if ($panel) {
         $panel.Children.Clear()
+        $crown = [Windows.Shapes.Path]::new()
+        $crown.Name = 'WinUtilTitleCrown'
+        $crown.Data = $sync.Form.Resources['CrownMarkGeometry']
+        $crown.Width = 25
+        $crown.Height = 25
+        $crown.Stretch = 'Uniform'
+        $crown.StrokeThickness = 1.6
+        $crown.StrokeLineJoin = 'Round'
+        $crown.Margin = '0,0,10,0'
+        $crown.IsHitTestVisible = $false
+        $crown.Focusable = $false
+        $crown.SetResourceReference([Windows.Shapes.Shape]::StrokeProperty, 'AccentColor')
+        $null = $panel.Children.Add($crown)
         $title = [Windows.Controls.TextBlock]::new()
         $title.Text = 'WinUtil CN'
         $title.FontWeight = 'SemiBold'

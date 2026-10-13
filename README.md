@@ -35,9 +35,13 @@ Windows 11 上的软件管理与系统维护工具，提供中文界面、软件
 
 ## 界面预览
 
+主界面沿用启动皇冠的金色：深色主题使用石墨底色与香槟金，浅色主题使用冷灰白与古铜金。选中项、主操作和键盘焦点使用一致的提示，开源软件与危险操作仍保留各自的颜色。
+
 ![软件管理：左侧导航、用途摘要、筛选和操作清单](docs/assets/images/screenshots/software-cn.png)
 
 名称下直接显示用途摘要；悬停在名称、勾选框或行内留白，都能读到完整介绍。右键或 `Shift + F10` 打开单项操作，安装和卸载前仍会核对范围。
+
+`Ctrl + F` 聚焦当前页面的搜索框并选中已有文字；在没有搜索框的页面会进入软件搜索。在搜索框内按 `Esc` 清空当前搜索，不取消勾选。更换搜索或筛选条件后从结果顶部查看，勾选软件时保留当前阅读位置。
 
 点击 **检测已安装** 不会改变勾选，可用 **仅看已装** 查看当前来源识别到的目录软件。状态行显示来源和检测时间；未识别不代表未安装。切换来源、开始软件操作或检测失败后，需要重新检测才能继续使用已装筛选。
 
@@ -54,9 +58,9 @@ Windows 11 上的软件管理与系统维护工具，提供中文界面、软件
 
 ### 首页与浅色主题
 
-![WinUtil CN 深色首页](docs/assets/images/screenshots/home-cn.png)
+![WinUtil CN 石墨与香槟金深色首页](docs/assets/images/screenshots/home-cn.png)
 
-![WinUtil CN 浅色首页](docs/assets/images/screenshots/home-light-cn.png)
+![WinUtil CN 冷灰白与古铜金浅色首页](docs/assets/images/screenshots/home-light-cn.png)
 
 ### 皇冠启动动画
 

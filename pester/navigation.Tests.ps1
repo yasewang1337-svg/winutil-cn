@@ -101,12 +101,22 @@ Describe 'Chinese navigation and first-use layout' {
     }
     It 'initializes the actual production title bar once and keeps its theme resources live' {
         Initialize-WinUtilWindowChrome
-        $sync.NavLogoPanel.Children.Count | Should -Be 1
-        $title = $sync.NavLogoPanel.Children[0]
+        $titles = @($sync.NavLogoPanel.Children | Where-Object { $_ -is [Windows.Controls.TextBlock] })
+        $titles.Count | Should -Be 1
+        $title = $titles[0]
         $title.Text | Should -Be 'WinUtil CN'
         $title.Effect | Should -BeNullOrEmpty
+        $marks = @($sync.NavLogoPanel.Children | Where-Object { $_ -is [Windows.Shapes.Path] })
+        $marks.Count | Should -Be 1
+        $marks[0].Data | Should -Be $form.Resources.CrownMarkGeometry
+        $marks[0].Focusable | Should -BeFalse
+        $marks[0].IsHitTestVisible | Should -BeFalse
+        $marks[0].Effect | Should -BeNullOrEmpty
         Invoke-WinutilThemeChange -theme Light
         $title.Foreground.Color | Should -Be $form.Resources.MainForegroundColor.Color
+        $marks[0].Stroke.Color | Should -Be $form.Resources.AccentColor.Color
+        Invoke-WinutilThemeChange -theme Dark
+        $marks[0].Stroke.Color | Should -Be $form.Resources.AccentColor.Color
     }
     It 'accepts title and empty title-bar hits for window gestures while excluding controls and page content' {
         Invoke-WPFTab 'WPFTab6BT'
