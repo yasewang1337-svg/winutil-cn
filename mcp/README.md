@@ -1,8 +1,10 @@
 # WinUtil CN MCP
 
+由 [yesewang1337](https://github.com/yasewang1337-svg) 维护。
+
 让支持 MCP 的客户端查询软件、组合、系统设置与 DNS，并按明确选择执行受支持的操作。**默认只读**，不会注册安装、换源或系统修改工具。它是独立的 Node.js 包，不会控制已打开的 WinUtil 窗口，桌面版更新也不会自动更新 npm 包。
 
-**安装入口：** [npm 包](https://www.npmjs.com/package/winutil-cn-mcp) · [中文指南](https://yasewang1337-svg.github.io/winutil-cn/mcp/) · [GitHub 发布记录](https://github.com/yasewang1337-svg/winutil-cn/releases)。下面的配置固定使用本说明对应的 **0.4.2**，便于核对实际运行版本。GitHub 发布附件提供安装包、SHA256 和源码证据；npm 使用限定本仓库工作流的可信发布。
+**安装入口：** [npm 包](https://www.npmjs.com/package/winutil-cn-mcp) · [中文指南](https://yasewang1337-svg.github.io/winutil-cn/mcp/) · [GitHub 发布记录](https://github.com/yasewang1337-svg/winutil-cn/releases)。下面的配置固定使用本说明对应的 **0.4.3**，便于核对实际运行版本。GitHub 发布附件提供安装包、SHA256 和源码证据；npm 使用限定本仓库工作流的可信发布。
 
 需要 Node.js 22 或 24 LTS。查询可跨平台使用；修改功能仅支持 Windows，并遵循当前用户权限和 PowerShell 执行策略，不自动提权或绕过策略。
 
@@ -15,7 +17,7 @@
   "mcpServers": {
     "winutil-cn": {
       "command": "npx",
-      "args": ["-y", "winutil-cn-mcp@0.4.2"]
+      "args": ["-y", "winutil-cn-mcp@0.4.3"]
     }
   }
 }
@@ -24,15 +26,15 @@
 Claude Code 也可注册：
 
 ```bash
-claude mcp add winutil-cn -- npx -y winutil-cn-mcp@0.4.2
+claude mcp add winutil-cn -- npx -y winutil-cn-mcp@0.4.3
 ```
 
-已有 GitHub 包地址配置仍可使用；需要该入口时，把 `winutil-cn-mcp@0.4.2` 换成 `https://github.com/yasewang1337-svg/winutil-cn/releases/download/mcp-v0.4.2/winutil-cn-mcp-0.4.2.tgz`。切换入口时同时核对版本，不要把桌面版的发行标签用作 MCP 版本。
+已有 GitHub 包地址配置仍可使用；需要该入口时，把 `winutil-cn-mcp@0.4.3` 换成 `https://github.com/yasewang1337-svg/winutil-cn/releases/download/mcp-v0.4.3/winutil-cn-mcp-0.4.3.tgz`。切换入口时同时核对版本，不要把桌面版的发行标签用作 MCP 版本。
 
 如果客户端在 Windows 无法启动 `npx`，或需要便于定位的恢复入口，可把包安装到自己选定的持久目录，再使用 Node 的绝对路径启动。下面的命令只在当前目录创建本地安装，不要求克隆源码，也不全局安装：
 
 ```powershell
-npm install --prefix .\winutil-cn-mcp-local --save-exact --ignore-scripts winutil-cn-mcp@0.4.2
+npm install --prefix .\winutil-cn-mcp-local --save-exact --ignore-scripts winutil-cn-mcp@0.4.3
 (Resolve-Path .\winutil-cn-mcp-local\node_modules\winutil-cn-mcp\index.js).Path.Replace('\', '/')
 ```
 
@@ -70,7 +72,7 @@ npm install --prefix .\winutil-cn-mcp-local --save-exact --ignore-scripts winuti
 ```json
 {
   "command": "npx",
-  "args": ["-y", "winutil-cn-mcp@0.4.2", "--allow-write"]
+  "args": ["-y", "winutil-cn-mcp@0.4.3", "--allow-write"]
 }
 ```
 

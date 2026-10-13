@@ -1,37 +1,14 @@
-# WinGet 分发清单归档
+# WinGet 分发准备
 
-这里保存本仓库曾准备的 WinGet 清单。**现有文件属于 2026.7.7 历史版本，不代表当前最新版，也不表示已在 Microsoft 社区仓库上架。**
+本项目当前的正式下载入口是 [GitHub 最新发布页](https://github.com/yasewang1337-svg/winutil-cn/releases/latest)。**尚未确认本项目在 Microsoft WinGet 社区仓库上架；本目录没有可用于安装当前版本的清单。**
 
-## 现有归档
+2026.7.7 的旧候选清单已从当前源码树移除，原始版本、下载地址和哈希保留在 Git 历史中。旧文件不再作为分发入口，也不会通过改写旧版本的发布者或包标识来冒充新版清单。
 
-| 字段 | 归档内容 |
-| --- | --- |
-| 目录 | [history/2026.7.7](history/2026.7.7/) |
-| 包标识 | `Holha1337.WinUtilCN` |
-| 清单版本 | `2026.7.7` |
-| 原目标资产 | Release `cn-2026.07.07-5` 的 `WinUtil-CN.exe` |
-| 类型与命令 | `portable`，命令名 `winutil-cn` |
-| 提交、审核、上架状态 | 本次未核实，不据本地清单推断 |
+## 准备正式候选
 
-本轮只移动原文件，保留其版本、URL、SHA256 和其他内容；没有生成新版候选，也没有向 Microsoft 提交。
+1. 核实 WinGet 社区仓库中的实际收录状态，决定申请新标识还是更新已有包；维护署名使用 `yesewang1337`。仓库账号和支持地址仍以本项目真实 GitHub 地址为准。
+2. 为通过测试的正式版本建立独立候选目录，依据实际发布标签、EXE 版本信息、下载地址和 SHA256 填写清单；不得沿用旧版本哈希。
+3. 在测试环境执行 `winget validate --manifest <候选目录>`，再验证下载、安装、启动和卸载。格式校验不能替代这些实测。
+4. 验证后单独向 Microsoft 社区仓库提交，按实际审核结果更新这里的状态和安装说明。当前没有自动提交工作流。
 
-| 文件 | 类型 |
-| --- | --- |
-| [Holha1337.WinUtilCN.yaml](history/2026.7.7/Holha1337.WinUtilCN.yaml) | 版本与默认语言索引 |
-| [Holha1337.WinUtilCN.installer.yaml](history/2026.7.7/Holha1337.WinUtilCN.installer.yaml) | 旧资产 URL 与 SHA256 |
-| [Holha1337.WinUtilCN.locale.en-US.yaml](history/2026.7.7/Holha1337.WinUtilCN.locale.en-US.yaml) | 默认语言元数据 |
-| [Holha1337.WinUtilCN.locale.zh-CN.yaml](history/2026.7.7/Holha1337.WinUtilCN.locale.zh-CN.yaml) | 中文语言元数据 |
-
-## 查阅或准备新版本
-
-普通用户请从[本项目最新发布页](https://github.com/yasewang1337-svg/winutil-cn/releases/latest)下载中文版。
-
-如果需要检查归档清单的格式，可在已安装 WinGet 的开发环境执行：
-
-```powershell
-winget validate --manifest packaging\winget\history\2026.7.7
-```
-
-这只是格式校验，不代表当前资产可下载、功能已验证或包已上架。
-
-准备新版时，应新建独立的版本候选目录，依据实际发布标签、EXE 版本信息与下载文件的 SHA256 填写清单；不要覆盖历史版本后继续沿用旧哈希。完成本地校验和安装验证后，再单独处理外部提交。当前目录没有自动提交工作流。
+仅修改本地清单、维护署名或仓库文档不会自动创建或迁移 WinGet 包；在外部审核完成前，不提供未经核实的 `winget install` 命令。

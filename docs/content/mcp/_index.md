@@ -15,7 +15,7 @@ WinUtil CN MCP 是独立的 Node.js 包，让支持 MCP 的 AI 客户端查询�
 - 首次通过 `npx` 安装需要联网；安装完成后，包内目录查询无需联网。
 - 查询可跨平台使用，修改只支持 Windows，并遵循当前用户权限与 PowerShell 执行策略。
 
-本页配置固定使用 **0.4.2**，便于确认实际版本。桌面版和 MCP 分别发布，更新其中一个不会自动更新另一个。
+本页配置固定使用 **0.4.3**，便于确认实际版本。桌面版和 MCP 分别发布，更新其中一个不会自动更新另一个。
 
 ## 接入并确认状态
 
@@ -26,7 +26,7 @@ WinUtil CN MCP 是独立的 Node.js 包，让支持 MCP 的 AI 客户端查询�
   "mcpServers": {
     "winutil-cn": {
       "command": "npx",
-      "args": ["-y", "winutil-cn-mcp@0.4.2"]
+      "args": ["-y", "winutil-cn-mcp@0.4.3"]
     }
   }
 }
@@ -35,7 +35,7 @@ WinUtil CN MCP 是独立的 Node.js 包，让支持 MCP 的 AI 客户端查询�
 不同客户端的配置文件位置和外层字段可能不同，按客户端提供的 MCP 配置入口填写。Claude Code 可通过以下命令注册：
 
 ```bash
-claude mcp add winutil-cn -- npx -y winutil-cn-mcp@0.4.2
+claude mcp add winutil-cn -- npx -y winutil-cn-mcp@0.4.3
 ```
 
 重新连接后，先让客户端调用 `get_status`，核对版本、只读模式、数据来源和源码提交，再尝试：
@@ -57,7 +57,7 @@ claude mcp add winutil-cn -- npx -y winutil-cn-mcp@0.4.2
 可把包安装到自己选定的持久目录，用 Node 的绝对路径启动。以下命令只在当前目录安装包，不需要克隆源码，也不做全局安装：
 
 ```powershell
-npm install --prefix .\winutil-cn-mcp-local --save-exact --ignore-scripts winutil-cn-mcp@0.4.2
+npm install --prefix .\winutil-cn-mcp-local --save-exact --ignore-scripts winutil-cn-mcp@0.4.3
 (Resolve-Path .\winutil-cn-mcp-local\node_modules\winutil-cn-mcp\index.js).Path.Replace('\', '/')
 ```
 
@@ -83,7 +83,7 @@ npm install --prefix .\winutil-cn-mcp-local --save-exact --ignore-scripts winuti
 ```json
 {
   "command": "npx",
-  "args": ["-y", "winutil-cn-mcp@0.4.2", "--allow-write"]
+  "args": ["-y", "winutil-cn-mcp@0.4.3", "--allow-write"]
 }
 ```
 

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="464" viewBox="0 0 1280 464" role="img" aria-labelledby="title desc">
   <title id="title">WinUtil CN · 中文装机与维护助手</title>
-  <desc id="desc">把电脑准备成你需要的样子。中文界面、按需装机、清晰反馈。由 Holha1337 维护，基于 Chris Titus Tech Windows Utility。</desc>
+  <desc id="desc">把电脑准备成你需要的样子。中文界面、按需装机、清晰反馈。由 yesewang1337 维护，基于 Chris Titus Tech Windows Utility。</desc>
   <defs>
     <linearGradient id="background" x1="0" y1="0" x2="1280" y2="464" gradientUnits="userSpaceOnUse"><stop stop-color="#0B1424"/><stop offset="1" stop-color="#10243A"/></linearGradient>
     <linearGradient id="accent" x1="-90" y1="-90" x2="90" y2="90" gradientUnits="userSpaceOnUse"><stop stop-color="#52F0D2"/><stop offset="1" stop-color="#429EFF"/></linearGradient>
@@ -21,7 +21,7 @@
     </g>
     <path d="M70 382H1210" stroke="#2B4055"/>
     <text x="70" y="423" font-size="15" fill="#A8BCD0" letter-spacing="1">WINDOWS 11 <tspan fill="#45617C"> / </tspan> POWERSHELL 5.1 &amp; 7</text>
-    <text x="1210" y="423" text-anchor="end" font-size="15" fill="#A8BCD0">中文汉化与维护 · <tspan fill="#E5EDF7" font-weight="600">Holha1337</tspan></text>
+    <text x="1210" y="423" text-anchor="end" font-size="15" fill="#A8BCD0">中文汉化与维护 · <tspan fill="#E5EDF7" font-weight="600">yesewang1337</tspan></text>
   </g>
   <!-- Decorative toolkit emblem, not an application screenshot. -->
   <g transform="translate(952 213)">

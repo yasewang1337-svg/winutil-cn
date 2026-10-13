@@ -38,7 +38,7 @@ $outDir = Join-Path $PSScriptRoot 'bin\Release'
 
 $verArgs = @()
 if ($Version) {
-    $verArgs = @("-p:Version=$Version", "-p:InformationalVersion=$Version · Holha1337 中文汉化版")
+    $verArgs = @("-p:Version=$Version", "-p:InformationalVersion=$Version · yesewang1337 中文汉化版")
     Write-Host "版本: $Version"
 }
 Write-Host ("编译器: dotnet {0} (Roslyn / 最新 C#)" -f (dotnet --version))
