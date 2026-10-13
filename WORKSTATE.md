@@ -2,13 +2,19 @@
 
 更新：2026-10-13。项目：`https://github.com/yasewang1337-svg/winutil-cn`；工作区 `W:\winutil-cn`。
 
-## 当前任务：yesewang1337 署名与皇冠启动视觉（实施中）
+## 当前任务：yesewang1337 署名与皇冠启动视觉（已交付）
 
 2026-10-13 用户要求将项目旧维护署名统一为精确小写 `yesewang1337`，启动横幅改为精致的字符皇冠动画。基于 `4a81f3b` 建立分支 `codex/yesewang-crown-20261013`；三个智能体并行负责启动动画、品牌图标/素材、文档/npm信息，主助手负责界面署名、EXE元数据、截图、集成验证与交付。真实GitHub账号链接与npm登录账号保持实际身份，旧版本附件不重写；废弃WinGet草案从当前树移除，历史仍可由Git追溯，不能借改名声称已上架。
 
-范围包含源码、首页/关于/控制台、EXE属性、图标/矢量和派生图片、官网、README、发布说明与npm新补丁0.4.3。皇冠动画使用控制台原生颜色/游标能力，面向实际系统PS5.1启动入口；窄窗口或非交互输出降级。测试和预览不执行日用系统设置操作。实现与本地验收已完成，待CI及正式版本交付。
+范围包含源码、首页/关于/控制台、EXE属性、图标/矢量和派生图片、官网、README、发布说明与npm新补丁0.4.3。皇冠动画使用控制台原生颜色/游标能力，面向实际系统PS5.1启动入口；窄窗口或非交互输出降级。测试和预览不执行日用系统设置操作。实现、本地与CI验收及正式版本交付均已完成。
 
 本地PS5.1/7完整回归各629项通过，启动器无害夹具构建与运行通过，MCP100项及实际tarball只读验收通过，Actionlint通过。字符皇冠在真实PS5.1/7 TTY中约339/298ms完成，颜色与光标恢复正常；实际帧预览在 `.artifacts/branding-20261013/crown/`。20份真实WPF预览已生成，首页明暗截图同步更新；官网138个HTML、7729个本地引用、135个sitemap URL及7种视图、8项交互通过。主要证据 `.artifacts/rebrand-20261013/`；当前源码及生成站点已无旧署名文本。
+
+[PR #33](https://github.com/yasewang1337-svg/winutil-cn/pull/33) 已通过全部检查并合并，发布源码为 `602a06923ad96ce42e7aca5273ebe391d5baaac9`。正式桌面流水线 `38340036545` 成功，双PS各629项及一次性Windows runner真实软件检测/安装/卸载各4场景全部通过，清理确认正常。PS1与EXE分别完成Defender扫描，未检出威胁；[37版](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/cn-2026.10.13-37) 已发布。全部4附件GitHub digest、SHA256清单、扫描来源提交和内嵌脚本哈希本地复核通过，编译脚本旧署名零命中。工作区 `WinUtil-CN.exe` 已更新为37版，文件属性维护者与实际皇冠图标已核对；SHA256 `B19C1CFC570020AFA6F8BBCB629576D82DB034C9F82FE29F3A378ED4BF770DE8`，旧36版备份 `.artifacts/rebrand-20261013/WinUtil-CN-v36.exe`。验证未启动实际WinUtil或修改日用系统设置。
+
+Pages部署 `38340036199` 成功，正式官网7个视图和10项交互通过，图片、布局及浏览器错误均为0。ICO和3张当前截图二进制哈希一致，SVG仅跨平台换行差异、规范化后相同。9份历史桌面Release仅更新原维护署名，已逐份回读确认其余正文/标题/标签/附件/预发布状态不变；31版未添加防护软件说明。证据 `online/final-verification.json`、`release-notes-update.json`、`desktop-integration-verification.json`、`release-verification.json` 和 `local-exe-delivery.json`。
+
+MCP标签构建 `38340057263` 与复用原包的npm可信发布 `38340365926` 均成功；[GitHub MCP0.4.3](https://github.com/yasewang1337-svg/winutil-cn/releases/tag/mcp-v0.4.3) 与 [npm0.4.3](https://www.npmjs.com/package/winutil-cn-mcp/v/0.4.3) 已交付。31个一次性Windows真实修改/恢复场景通过，5个GitHub附件digest全部匹配；npm实际下载包与原包SHA256一致，为 `d15a51e6102d7110d73f549cfce7eb1d35ec8514f1f2903b9c1fa5dfd6c26be0`。registry最新版本0.4.3、作者yesewang1337、README正确，来源证明存在。实际npx入口确认5只读工具、干净源码提交、微信检索，修改调用0次。桌面37仍为GitHub latest。汇总 `mcp-delivery-summary.json`，正式包及证据 `.artifacts/released/mcp-v0.4.3/`。本轮授权范围全部完成，历史已发布二进制、旧npm版本及备份保留原字节，不重写历史产物。
 
 ## 上一阶段：本地36版同步、MCP说明补丁与中文文档上线（已完成）
 
