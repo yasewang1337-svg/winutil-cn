@@ -121,7 +121,7 @@ try {
             if ($scenario -eq 'InventoryReadOnly' -and ($sync.WPFInstallExample.IsChecked -or @($events | Where-Object Kind -eq 'Checkbox').Count -ne 0)) {
                 throw "$scenario changed software selection"
             }
-            if ($scenario -like 'Inventory*' -and (-not $sync.InstallInstalledOnly.IsEnabled -or -not $sync.WPFDetectInstalled.IsEnabled -or $sync.InstallInventoryStatus.Text -notmatch 'WinGet')) {
+            if ($scenario -like 'Inventory*' -and (-not $sync.InstallInstalledOnly.IsEnabled -or -not $sync.WPFDetectInstalled.IsEnabled -or $sync.InstallInventoryStatus.ToolTip -notmatch 'WinGet')) {
                 throw "$scenario did not refresh detection controls on the UI thread"
             }
         }

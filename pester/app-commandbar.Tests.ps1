@@ -15,6 +15,12 @@
         $node.Extent.Text.StartsWith('$sync.keys | ForEach-Object')
     }, $true).Extent.Text
     if (-not $wireButtons) { throw 'Cannot locate production button event registration' }
+    function Set-TestCommandBarWidth([double]$Width) {
+        $hostGrid = $form.FindName('appscategory')
+        $hostGrid.Measure([Windows.Size]::new($Width, [double]::PositiveInfinity))
+        $hostGrid.Arrange([Windows.Rect]::new(0, 0, $Width, $hostGrid.DesiredSize.Height))
+        $hostGrid.UpdateLayout()
+    }
 }
 
 Describe 'Software commands remain usable after moving into a command bar' {
@@ -61,9 +67,11 @@ Describe 'Software commands remain usable after moving into a command bar' {
     It 'shows source, completion time, match count and limitations for a fresh snapshot' {
         $sync.SoftwareInventory = [pscustomobject]@{ Manager='Winget'; CompletedAt=[datetime]'2026-10-12T10:30:00'; MatchedKeys=@('WPFInstallone') }
         Update-WinUtilInventoryUi
-        $sync.InstallInventoryStatus.Text | Should -Match 'WinGet.*10-12 10:30.*目录匹配 1 项.*未识别不代表未安装'
+        $sync.InstallInventoryStatus.Text | Should -Be '已识别 1 项'
+        $sync.InstallInventoryStatus.ToolTip | Should -Match 'WinGet.*10-12 10:30.*目录匹配 1 项.*未识别不代表未安装'
         Invalidate-WinUtilInventory -Reason '已启动软件操作，'
-        $sync.InstallInventoryStatus.Text | Should -Match '历史结果.*已启动软件操作.*重新检测'
+        $sync.InstallInventoryStatus.Text | Should -Be '需重新检测'
+        $sync.InstallInventoryStatus.ToolTip | Should -Match '历史结果.*已启动软件操作.*重新检测'
     }
 
     It 'keeps offline WinGet detection disabled through refresh and enables local Chocolatey' {
@@ -78,6 +86,20 @@ Describe 'Software commands remain usable after moving into a command bar' {
             $sync.WPFDetectInstalled.IsEnabled | Should -BeTrue
             $sync.WPFGetInstalled.IsEnabled | Should -BeTrue
         } finally { $script:PARAM_OFFLINE = $false }
+    }
+
+    It 'keeps scan progress and failure explicit while retaining detailed inventory evidence' {
+        $sync.SoftwareInventory = [pscustomobject]@{ Manager='Winget'; CompletedAt=[datetime]'2026-10-12T10:30:00'; MatchedKeys=@('WPFInstallone') }
+        $sync.InventoryScanRunning = $true
+        Update-WinUtilInventoryUi
+        $sync.InstallInventoryStatus.Text | Should -Be '正在检测…'
+        $sync.InstallInventoryStatus.ToolTip | Should -Match '正在检测 WinGet'
+        $sync.InventoryScanRunning = $false
+        $sync.InventoryOperationError = 'Test inventory error'
+        Update-WinUtilInventoryUi
+        $sync.InstallInventoryStatus.Text | Should -Be '检测失败'
+        $sync.InstallInventoryStatus.ToolTip | Should -Match 'Test inventory error'
+        $sync.InstallInventoryStatus.ToolTip | Should -Match '历史结果.*WinGet.*10-12 10:30'
     }
 
     It 'opening a menu does not execute its child actions' {
@@ -103,14 +125,80 @@ Describe 'Software commands remain usable after moving into a command bar' {
 
     It 'wraps commands within a narrow content area at 150 percent text size' {
         Invoke-WinUtilFontScaling -ScaleFactor 1.5
+        Set-TestCommandBarWidth 620
         $hostGrid = $form.FindName('appscategory')
-        $hostGrid.Measure([Windows.Size]::new(620, [double]::PositiveInfinity))
-        $hostGrid.Arrange([Windows.Rect]::new(0, 0, 620, $hostGrid.DesiredSize.Height))
-        $hostGrid.UpdateLayout()
         foreach ($element in $sync.InstallCommandBar.Children) {
+            if ($element.Visibility -eq 'Collapsed') { continue }
             $point = $element.TranslatePoint([Windows.Point]::new(0, 0), $hostGrid)
             ($point.X + $element.ActualWidth) | Should -BeLessOrEqual 621
             $element.ActualWidth | Should -BeGreaterThan 0
         }
+    }
+
+    It 'moves the existing bundle menu into More at compact width and restores it when wider' {
+        $bundle = $sync.InstallBundlesMenu
+        $entry = $sync.WPFBundlecn_office
+        Invoke-WinUtilFontScaling -ScaleFactor 1.5
+        foreach ($cycle in 1..3) {
+            Set-TestCommandBarWidth 704
+            $sync.InstallBundlesMenuHost.Visibility | Should -Be 'Collapsed'
+            $sync.InstallMoreMenu.Items[0] | Should -Be $bundle
+            $sync.InstallBundlesMenu.Items.Contains($entry) | Should -BeTrue
+            $null = $bundle.ApplyTemplate()
+            $bundle.Role | Should -Be 'SubmenuHeader'
+            $bundle.Template.FindName('PART_Popup', $bundle).Placement | Should -Be 'Right'
+            $primaryHeight = ($sync.InstallCommandBar.Children | Where-Object { $_.Visibility -ne 'Collapsed' } | ForEach-Object { $_.DesiredSize.Height } | Measure-Object -Maximum).Maximum
+            $sync.InstallCommandBar.ActualHeight | Should -BeLessOrEqual ($primaryHeight + 1)
+            Set-TestCommandBarWidth 1100
+            $sync.InstallBundlesMenuHost.Visibility | Should -Be 'Visible'
+            $sync.InstallBundlesMenuHost.Items[0] | Should -Be $bundle
+            $sync.InstallMoreMenu.Items.Contains($bundle) | Should -BeFalse
+            $bundle.Role | Should -Be 'TopLevelHeader'
+            $bundle.Template.FindName('PART_Popup', $bundle).Placement | Should -Be 'Bottom'
+        }
+        $bundle.RaiseEvent([Windows.RoutedEventArgs]::new([Windows.Controls.MenuItem]::ClickEvent))
+        Should -Invoke Invoke-WPFButton -Times 0 -Exactly
+        $entry.RaiseEvent([Windows.RoutedEventArgs]::new([Windows.Controls.MenuItem]::ClickEvent))
+        Should -Invoke Invoke-WPFButton -Times 1 -Exactly -ParameterFilter { $Button -eq 'WPFBundlecn_office' }
+    }
+
+    It 'dispatches a nested bundle exactly once without executing its parent headings' {
+        Invoke-WinUtilFontScaling -ScaleFactor 1.5
+        Set-TestCommandBarWidth 704
+        foreach ($heading in @($sync.InstallMoreMenu, $sync.InstallBundlesMenu)) {
+            $heading.RaiseEvent([Windows.RoutedEventArgs]::new([Windows.Controls.MenuItem]::ClickEvent))
+        }
+        Should -Invoke Invoke-WPFButton -Times 0 -Exactly
+        $sync.WPFBundlecn_office.RaiseEvent([Windows.RoutedEventArgs]::new([Windows.Controls.MenuItem]::ClickEvent))
+        Should -Invoke Invoke-WPFButton -Times 1 -Exactly -ParameterFilter { $Button -eq 'WPFBundlecn_office' }
+        Should -Invoke Invoke-WPFButton -Times 1 -Exactly
+    }
+
+    It 'reflows when only text scaling changes without losing existing control state' {
+        Set-TestCommandBarWidth 704
+        $sync.InstallBundlesMenuHost.Visibility | Should -Be 'Visible'
+        $entry = $sync.WPFBundlecn_office
+        $entry.IsEnabled = $false
+        Invoke-WinUtilFontScaling -ScaleFactor 1.5
+        Set-TestCommandBarWidth 704
+        $sync.InstallBundlesMenuHost.Visibility | Should -Be 'Collapsed'
+        $sync.WPFInstall.FontSize | Should -Be 21
+        $entry.IsEnabled | Should -BeFalse
+        Invoke-WinUtilFontScaling -ScaleFactor 1.0
+        Set-TestCommandBarWidth 704
+        $sync.InstallBundlesMenuHost.Visibility | Should -Be 'Visible'
+        $entry.IsEnabled | Should -BeFalse
+        $sync.InstallBundlesMenu.Items.Contains($entry) | Should -BeTrue
+        Should -Invoke Invoke-WPFButton -Times 0 -Exactly
+    }
+
+    It 'does not leave a global layout callback after closing the command window' {
+        Set-TestCommandBarWidth 704
+        $form.Close()
+        Mock Set-WinUtilAppCommandBarLayout { throw 'Closed command window received an unrelated layout update' }
+        $other = [Windows.Controls.Border]::new()
+        $other.Child = [Windows.Controls.TextBox]::new()
+        { $other.Measure([Windows.Size]::new(320, 180)); $other.Arrange([Windows.Rect]::new(0, 0, 320, 180)); $other.UpdateLayout() } | Should -Not -Throw
+        Should -Invoke Set-WinUtilAppCommandBarLayout -Times 0 -Exactly
     }
 }

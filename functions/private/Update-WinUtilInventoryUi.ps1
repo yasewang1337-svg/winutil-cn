@@ -57,8 +57,18 @@ function Update-WinUtilInventoryUi {
         } else {
             '尚未检测 · 点击“检测已安装”查看 {0} 识别到的软件，不改变勾选。' -f $label
         }
-        $sync.InstallInventoryStatus.Text = $status
-        $sync.InstallInventoryStatus.ToolTip = if ($sync.InventoryOperationError) { [string]$sync.InventoryOperationError } else {
+        $sync.InstallInventoryStatus.Text = if ($sync.InventoryScanRunning) {
+            '正在检测…'
+        } elseif ($sync.InventoryOperationError) {
+            '检测失败'
+        } elseif ($current) {
+            "已识别 $(@($inventory.MatchedKeys).Count) 项"
+        } elseif ($previous) {
+            '需重新检测'
+        } elseif ($offlineWinget) {
+            '离线 · 未检测'
+        } else { '尚未检测' }
+        $sync.InstallInventoryStatus.ToolTip = if ($sync.InventoryOperationError) { "$status`n$($sync.InventoryOperationError)" } else {
             "$status`n来源匹配警告可能造成漏识别，详情可查看控制台日志。"
         }
         [Windows.Automation.AutomationProperties]::SetName($sync.InstallInventoryStatus, $status)

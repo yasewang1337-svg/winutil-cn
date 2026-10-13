@@ -21,6 +21,24 @@
     function Invoke-TestClick($Button) {
         $Button.RaiseEvent([Windows.RoutedEventArgs]::new([Windows.Controls.Primitives.ButtonBase]::ClickEvent))
     }
+    function Initialize-TestLongCatalogue {
+        foreach ($number in 1..40) {
+            $sync.configs.applicationsHashtable[('WPFInstallLong{0:00}' -f $number)] = @{
+                Content = ('Common app {0:00}' -f $number); Description = 'Common purpose'
+                winget = ('Vendor.Common{0:00}' -f $number); Category = 'Long catalogue'
+            }
+        }
+        Initialize-WPFUI -TargetGridName appspanel
+        $script:scrollPanel = $sync.Form.FindName('appspanel')
+        $scrollPanel.Measure([Windows.Size]::new(640, 300))
+        $scrollPanel.Arrange([Windows.Rect]::new(0, 0, 640, 300))
+        $scrollPanel.UpdateLayout()
+    }
+    function Set-TestCatalogueScroll {
+        $sync.InstallAppAreaScrollViewer.ScrollToVerticalOffset(240)
+        $scrollPanel.UpdateLayout()
+        $sync.InstallAppAreaScrollViewer.VerticalOffset | Should -BeGreaterThan 100
+    }
 }
 Describe 'Software search and selected-list experience' {
     It 'keeps idle text sharp after repeated busy overlays' {
@@ -64,7 +82,7 @@ Describe 'Software search and selected-list experience' {
     AfterEach { $sync.selectedAppsPopup.IsOpen = $false; $form.Close() }
 
     It 'shows software and selected counts immediately without hiding the catalogue' {
-        $sync.InstallFilterStatus.Text | Should -Be '显示 3 / 3 项    已选 0 项'
+        $sync.InstallFilterStatus.Text | Should -Be '显示 3 / 3 项'
         $sync.InstallFilterEmpty.Visibility | Should -Be 'Collapsed'
         $sync.InstallClearFilter.IsEnabled | Should -BeFalse
     }
@@ -77,8 +95,69 @@ Describe 'Software search and selected-list experience' {
     ) {
         Find-AppsByNameOrDescription -SearchString $Query
         $sync[$Expected].Parent.Visibility | Should -Be 'Visible'
-        $sync.InstallFilterStatus.Text | Should -Be '显示 1 / 3 项    已选 0 项'
+        $sync.InstallFilterStatus.Text | Should -Be '显示 1 / 3 项'
         $sync.selectedApps.Count | Should -Be 0
+    }
+
+    It 'starts a new search at the first result without changing selection' {
+        Initialize-TestLongCatalogue
+        $sync.WPFInstallLong25.IsChecked = $true
+        Set-TestCatalogueScroll
+        Find-AppsByNameOrDescription -SearchString 'common'
+        $scrollPanel.UpdateLayout()
+        $sync.InstallAppAreaScrollViewer.VerticalOffset | Should -Be 0
+        $sync.WPFInstallLong25.IsChecked | Should -BeTrue
+    }
+
+    It 'keeps the reading position for equivalent queries and selection refreshes' {
+        Initialize-TestLongCatalogue
+        $sync.SearchBar.Text = 'common'
+        Find-AppsByNameOrDescription -SearchString 'common'
+        $scrollPanel.UpdateLayout()
+        Set-TestCatalogueScroll
+        $position = $sync.InstallAppAreaScrollViewer.VerticalOffset
+        Find-AppsByNameOrDescription -SearchString ' COMMON '
+        $scrollPanel.UpdateLayout()
+        $sync.InstallAppAreaScrollViewer.VerticalOffset | Should -Be $position
+        $sync.WPFInstallLong25.IsChecked = $true
+        $scrollPanel.UpdateLayout()
+        $sync.InstallAppAreaScrollViewer.VerticalOffset | Should -Be $position
+    }
+
+    It 'starts a changed selected filter at the top but keeps position when removing a selected row' {
+        Initialize-TestLongCatalogue
+        foreach ($number in 1..40) { $sync[('WPFInstallLong{0:00}' -f $number)].IsChecked = $true }
+        Set-TestCatalogueScroll
+        $sync.InstallSelectedOnly.IsChecked = $true
+        $scrollPanel.UpdateLayout()
+        $sync.InstallAppAreaScrollViewer.VerticalOffset | Should -Be 0
+        Set-TestCatalogueScroll
+        $position = $sync.InstallAppAreaScrollViewer.VerticalOffset
+        $sync.WPFInstallLong25.IsChecked = $false
+        $scrollPanel.UpdateLayout()
+        $sync.InstallAppAreaScrollViewer.VerticalOffset | Should -Be $position
+        $sync.selectedApps.Count | Should -Be 39
+    }
+
+    It 'starts a changed installed filter or source at the first result without losing selections' {
+        Initialize-TestLongCatalogue
+        $sync.WPFInstallLong25.IsChecked = $true
+        $sync.SoftwareInventory = [pscustomobject]@{
+            Manager='Winget'; CompletedAt=[datetime]::Now
+            MatchedKeys=@(1..40 | ForEach-Object { 'WPFInstallLong{0:00}' -f $_ })
+        }
+        Update-WinUtilInventoryUi
+        Set-TestCatalogueScroll
+        $sync.InstallInstalledOnly.IsChecked = $true
+        $scrollPanel.UpdateLayout()
+        $sync.InstallAppAreaScrollViewer.VerticalOffset | Should -Be 0
+        Set-TestCatalogueScroll
+        $sync.preferences.packagemanager = 'Choco'
+        Update-WinUtilInventoryUi
+        $scrollPanel.UpdateLayout()
+        $sync.InstallAppAreaScrollViewer.VerticalOffset | Should -Be 0
+        $sync.InstallInstalledOnly.IsChecked | Should -BeFalse
+        $sync.WPFInstallLong25.IsChecked | Should -BeTrue
     }
 
     It 'starts with installed filtering unavailable and explains how to enable it' {
@@ -96,11 +175,11 @@ Describe 'Software search and selected-list experience' {
         $sync.InstallInstalledOnly.IsChecked = $true
         $sync.InstallSelectedOnly.IsChecked = $true
         $sync.SearchBar.Text = 'Alpha'
-        $sync.InstallFilterStatus.Text | Should -Be '显示 1 / 3 项    已选 2 项'
+        $sync.InstallFilterStatus.Text | Should -Be '显示 1 / 3 项'
         $sync.WPFInstallBeta.IsChecked | Should -BeTrue
         Reset-WinUtilAppFilter
         $sync.InstallInstalledOnly.IsChecked | Should -BeFalse
-        $sync.InstallFilterStatus.Text | Should -Be '显示 3 / 3 项    已选 2 项'
+        $sync.InstallFilterStatus.Text | Should -Be '显示 3 / 3 项'
     }
 
     It 'expires installed filtering after a source switch without removing selections or history' {
@@ -114,7 +193,7 @@ Describe 'Software search and selected-list experience' {
         $sync.SoftwareInventory.IsStale | Should -BeTrue
         $sync.InstallInstalledOnly.IsEnabled | Should -BeFalse
         $sync.InstallInstalledOnly.IsChecked | Should -BeFalse
-        $sync.InstallFilterStatus.Text | Should -Be '显示 3 / 3 项    已选 1 项'
+        $sync.InstallFilterStatus.Text | Should -Be '显示 3 / 3 项'
         $sync.WPFInstallBeta.IsChecked | Should -BeTrue
     }
 
@@ -122,7 +201,7 @@ Describe 'Software search and selected-list experience' {
         $sync.SoftwareInventory = [pscustomobject]@{ Manager='Winget'; CompletedAt=[datetime]::Now; MatchedKeys=@() }
         Update-WinUtilInventoryUi
         $sync.InstallInstalledOnly.IsChecked = $true
-        $sync.InstallFilterStatus.Text | Should -Be '显示 0 / 3 项    已选 0 项'
+        $sync.InstallFilterStatus.Text | Should -Be '显示 0 / 3 项'
         $sync.InstallFilterEmptyText.Text | Should -Match '未识别不代表未安装'
     }
     It 'combines selected-only and keyword filters without changing any selection' {
@@ -130,7 +209,7 @@ Describe 'Software search and selected-list experience' {
         $sync.WPFInstallBeta.IsChecked = $true
         $sync.SearchBar.Text = 'alpha'
         $sync.InstallSelectedOnly.IsChecked = $true
-        $sync.InstallFilterStatus.Text | Should -Be '显示 1 / 3 项    已选 2 项'
+        $sync.InstallFilterStatus.Text | Should -Be '显示 1 / 3 项'
         [Windows.Automation.AutomationProperties]::GetName($sync.WPFselectedAppsButton) | Should -Be '已选应用: 2'
         $sync.WPFInstallBeta.Parent.Visibility | Should -Be 'Collapsed'
         $sync.WPFInstallBeta.IsChecked | Should -BeTrue
@@ -138,9 +217,9 @@ Describe 'Software search and selected-list experience' {
     It 'refreshes the selected-only list after the checkbox selection changes' {
         $sync.InstallSelectedOnly.IsChecked = $true
         $sync.WPFInstallAlpha.IsChecked = $true
-        $sync.InstallFilterStatus.Text | Should -Be '显示 1 / 3 项    已选 1 项'
+        $sync.InstallFilterStatus.Text | Should -Be '显示 1 / 3 项'
         $sync.WPFInstallAlpha.IsChecked = $false
-        $sync.InstallFilterStatus.Text | Should -Be '显示 0 / 3 项    已选 0 项'
+        $sync.InstallFilterStatus.Text | Should -Be '显示 0 / 3 项'
         [Windows.Automation.AutomationProperties]::GetName($sync.WPFselectedAppsButton) | Should -Be '已选应用: 0'
         $sync.InstallFilterEmptyText.Text | Should -Match '还没有选择'
         $sync.SelectedAppsEmptyText.Visibility | Should -Be 'Visible'
@@ -155,7 +234,7 @@ Describe 'Software search and selected-list experience' {
         $sync.SearchBar.Text | Should -Be ''
         $sync.InstallSelectedOnly.IsChecked | Should -BeFalse
         $sync.WPFInstallBeta.IsChecked | Should -BeTrue
-        $sync.InstallFilterStatus.Text | Should -Be '显示 3 / 3 项    已选 1 项'
+        $sync.InstallFilterStatus.Text | Should -Be '显示 3 / 3 项'
         $sync.InstallFilterEmpty.Visibility | Should -Be 'Collapsed'
     }
     It 'restores pre-search collapsed categories after multiple searches and selection refreshes' {
@@ -176,12 +255,12 @@ Describe 'Software search and selected-list experience' {
         Update-WinUtilSelections -flatJson @('WPFInstallBeta')
         Reset-WPFCheckBoxes -doToggles $false
         $sync.InstallSelectedOnly.IsChecked = $true
-        $sync.InstallFilterStatus.Text | Should -Be '显示 1 / 3 项    已选 1 项'
+        $sync.InstallFilterStatus.Text | Should -Be '显示 1 / 3 项'
         Reset-WPFCheckBoxes -doToggles $false
         $sync.selectedAppsstackPanel.Children.Count | Should -Be 1
-        $sync.InstallFilterStatus.Text | Should -Be '显示 1 / 3 项    已选 1 项'
+        $sync.InstallFilterStatus.Text | Should -Be '显示 1 / 3 项'
         Invoke-WPFPresets -preset $null -checkboxfilterpattern 'WPFInstall*'
-        $sync.InstallFilterStatus.Text | Should -Be '显示 0 / 3 项    已选 0 项'
+        $sync.InstallFilterStatus.Text | Should -Be '显示 0 / 3 项'
         $sync.selectedAppsstackPanel.Children.Count | Should -Be 0
         $sync.WPFInstallBeta.IsChecked | Should -BeFalse
     }
@@ -195,7 +274,7 @@ Describe 'Software search and selected-list experience' {
         $sync[$key].IsChecked | Should -BeFalse
         $sync.selectedApps.Count | Should -Be 1
         $sync.selectedAppsstackPanel.Children.Count | Should -Be 1
-        $sync.InstallFilterStatus.Text | Should -Be '显示 1 / 3 项    已选 1 项'
+        $sync.InstallFilterStatus.Text | Should -Be '显示 1 / 3 项'
     }
     It 'keeps thirty selected rows within a scrolling viewport and exposes named remove buttons' {
         $sync.selectedAppsstackPanel.Children.Clear()

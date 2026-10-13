@@ -11,6 +11,13 @@
     $inventoryCurrent = (Test-WinUtilInventoryCurrent -Inventory $sync.SoftwareInventory -Manager $manager) -and
         -not $sync.InventoryScanRunning -and -not $sync.InventoryOperationError
     $onlyInstalled = $inventoryCurrent -and $null -ne $sync.InstallInstalledOnly -and $sync.InstallInstalledOnly.IsChecked -eq $true
+    # A new filter starts at its first result. Selection/status refreshes keep
+    # the reading position, including while the selected-only view is active.
+    $previousFilter = $sync.InstallAppliedFilter
+    $filterChanged = $null -eq $previousFilter -or
+        -not [string]::Equals($previousFilter.Search, $searchTerm, [StringComparison]::OrdinalIgnoreCase) -or
+        $previousFilter.OnlySelected -ne $onlySelected -or
+        $previousFilter.OnlyInstalled -ne $onlyInstalled -or $previousFilter.Manager -ne $manager
     $installedKeys = if ($inventoryCurrent) { @($sync.SoftwareInventory.MatchedKeys) } else { @() }
     $filterActive = $onlySelected -or $onlyInstalled -or $searchTerm.Length -gt 0
     $selected = @($sync.selectedApps)
@@ -68,7 +75,9 @@
         }
     }
     if (-not $filterActive) { $sync.InstallCategoryCollapseState = $null }
-    if ($sync.InstallFilterStatus) { $sync.InstallFilterStatus.Text = "显示 $matchCount / $totalCount 项    已选 $($selected.Count) 项" }
+    $sync.InstallAppliedFilter = @{ Search = $searchTerm; OnlySelected = $onlySelected; OnlyInstalled = $onlyInstalled; Manager = $manager }
+    if ($filterChanged -and $sync.InstallAppAreaScrollViewer) { $sync.InstallAppAreaScrollViewer.ScrollToTop() }
+    if ($sync.InstallFilterStatus) { $sync.InstallFilterStatus.Text = "显示 $matchCount / $totalCount 项" }
     if ($sync.InstallClearFilter) { $sync.InstallClearFilter.IsEnabled = $filterActive }
     if ($sync.InstallFilterEmpty) {
         $sync.InstallFilterEmpty.Visibility = if ($matchCount -eq 0) { 'Visible' } else { 'Collapsed' }

@@ -59,6 +59,7 @@ function Initialize-WinUtilAppCommandBar {
         $null = $menu.Items.Add($heading)
         $null = $commands.Children.Add($menu)
         $sync["Install${group}Menu"] = $heading
+        $sync["Install${group}MenuHost"] = $menu
         $entries = $Configuration.PSObject.Properties | Where-Object {
             $_.Value.Type -eq 'Button' -and $_.Name -notin $primaryNames -and
             (($_.Name -like 'WPFBundle*') -eq ($group -eq 'Bundles'))
@@ -83,7 +84,7 @@ function Initialize-WinUtilAppCommandBar {
     }
 
     $sourceLabel = [Windows.Controls.TextBlock]::new()
-    $sourceLabel.Text = '安装来源'
+    $sourceLabel.Text = '来源'
     $sourceLabel.Margin = '0,4,12,4'
     $sourceLabel.VerticalAlignment = 'Center'
     $sourceLabel.SetResourceReference([Windows.Controls.TextBlock]::ForegroundProperty, 'SecondaryForegroundColor')
@@ -121,12 +122,62 @@ function Initialize-WinUtilAppCommandBar {
     }
 
     $inventoryStatus = [Windows.Controls.TextBlock]::new()
-    $inventoryStatus.Margin = '0,5,0,0'
+    $inventoryStatus.Margin = '12,4,0,4'
+    $inventoryStatus.VerticalAlignment = 'Center'
     $inventoryStatus.TextWrapping = 'Wrap'
     $inventoryStatus.SetResourceReference([Windows.Controls.TextBlock]::ForegroundProperty, 'SecondaryForegroundColor')
     $inventoryStatus.SetResourceReference([Windows.Controls.TextBlock]::FontSizeProperty, 'ButtonFontSize')
     $inventoryStatus.SetResourceReference([Windows.Controls.TextBlock]::FontFamilyProperty, 'FontFamily')
     $sync.InstallInventoryStatus = $inventoryStatus
-    $null = $layout.Children.Add($inventoryStatus)
+    $null = $options.Children.Add($inventoryStatus)
+    $sync.InstallBundlesMenuSeparator = [Windows.Controls.Separator]::new()
+    # Local size events cover window, font and selection-caption changes.
+    # LayoutUpdated is global across WPF windows and must not be used here.
+    $layoutChanged = {
+        param($sender, $eventArgs)
+        if ($sender -eq $sync.InstallCommandBar -or $sender.Parent -eq $sync.InstallCommandBar) {
+            Set-WinUtilAppCommandBarLayout
+        }
+    }
+    $commands.Add_SizeChanged($layoutChanged)
+    foreach ($child in $commands.Children) { $child.Add_SizeChanged($layoutChanged) }
     Update-WinUtilInventoryUi
+}
+
+function Set-WinUtilAppCommandBarLayout {
+    <# .SYNOPSIS Keeps primary commands on one row by moving bundles into More when necessary. #>
+    $commands = $sync.InstallCommandBar
+    $bundles = $sync.InstallBundlesMenu
+    $hostMenu = $sync.InstallBundlesMenuHost
+    $more = $sync.InstallMoreMenu
+    if (-not $commands -or -not $bundles -or -not $hostMenu -or -not $more -or
+        $commands.ActualWidth -le 0 -or $sync.InstallCommandLayoutUpdating) { return }
+    $fontSize = [double]$commands.Children[0].FontSize
+    if ($hostMenu.Visibility -ne 'Collapsed' -and $hostMenu.DesiredSize.Width -gt 0) {
+        $sync.InstallBundlesMenuMeasuredWidth = $hostMenu.DesiredSize.Width
+        $sync.InstallBundlesMenuMeasuredFontSize = $fontSize
+    }
+    if (-not $sync.InstallBundlesMenuMeasuredWidth) { return }
+    $bundleWidth = $sync.InstallBundlesMenuMeasuredWidth * $fontSize / $sync.InstallBundlesMenuMeasuredFontSize
+    $requiredWidth = $bundleWidth
+    foreach ($child in $commands.Children) {
+        if ($child -ne $hostMenu) { $requiredWidth += $child.DesiredSize.Width }
+    }
+    $compact = $requiredWidth -gt ($commands.ActualWidth - 2)
+    if ($compact -eq ($hostMenu.Visibility -eq 'Collapsed')) { return }
+    $sync.InstallCommandLayoutUpdating = $true
+    try {
+        $bundles.IsSubmenuOpen = $false
+        if ($compact) {
+            $hostMenu.Items.Remove($bundles)
+            $more.Items.Insert(0, $bundles)
+            $more.Items.Insert(1, $sync.InstallBundlesMenuSeparator)
+            $hostMenu.Visibility = 'Collapsed'
+        } else {
+            $more.Items.Remove($bundles)
+            $more.Items.Remove($sync.InstallBundlesMenuSeparator)
+            $null = $hostMenu.Items.Add($bundles)
+            $hostMenu.Visibility = 'Visible'
+        }
+    } finally { $sync.InstallCommandLayoutUpdating = $false }
 }

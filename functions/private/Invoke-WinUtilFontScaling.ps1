@@ -46,6 +46,8 @@ function Invoke-WinUtilFontScaling {
         "ConfigUpdateButtonFontSize",
         # Buttons and UI
         "CheckBoxBulletDecoratorSize",
+        "ToggleSwitchWidth",
+        "ToggleSwitchHeight",
         "ButtonWidth",
         "ButtonHeight",
         "TabButtonWidth",
@@ -83,4 +85,8 @@ function Invoke-WinUtilFontScaling {
         $percentage = [math]::Round($ScaleFactor * 100)
         $sync.FontScalingValue.Text = "$percentage%"
     }
+    if (Get-Command Set-WinUtilNavigationLayout -ErrorAction SilentlyContinue) {
+        Set-WinUtilNavigationLayout
+    }
+    if (Get-Command Set-WinUtilConfigLayout -ErrorAction SilentlyContinue) { Set-WinUtilConfigLayout }
 }

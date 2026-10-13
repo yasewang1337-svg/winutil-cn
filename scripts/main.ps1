@@ -309,33 +309,8 @@ $sync.SearchBarClearButton.Add_Click({
 
 # add some shortcuts for people that don't like clicking
 $commonKeyEvents = {
-    # Prevent shortcuts from executing if a process is already running
-    if ($sync.ProcessRunning -eq $true) {
-        return
-    }
-
-    # Handle key presses of single keys
-    switch ($_.Key) {
-        "Escape" { $sync.SearchBar.Text = "" }
-    }
-    # Handle Alt key combinations for navigation
-    if ($_.KeyboardDevice.Modifiers -eq "Alt") {
-        $keyEventArgs = $_
-        switch ($_.SystemKey) {
-            "I" { Invoke-WPFButton "WPFTab1BT"; $keyEventArgs.Handled = $true } # Navigate to Install tab and suppress Windows Warning Sound
-            "T" { Invoke-WPFButton "WPFTab2BT"; $keyEventArgs.Handled = $true } # Navigate to Tweaks tab
-            "C" { Invoke-WPFButton "WPFTab3BT"; $keyEventArgs.Handled = $true } # Navigate to Config tab
-            "U" { Invoke-WPFButton "WPFTab4BT"; $keyEventArgs.Handled = $true } # Navigate to Updates tab
-            "W" { Invoke-WPFButton "WPFTab5BT"; $keyEventArgs.Handled = $true } # Navigate to Windows ISO tab
-        }
-    }
-    # Handle Ctrl key combinations for specific actions
-    if ($_.KeyboardDevice.Modifiers -eq "Ctrl") {
-        switch ($_.Key) {
-            "F" { $sync.SearchBar.Focus() } # Focus on the search bar
-            "Q" { $this.Close() } # Close the application
-        }
-    }
+    param($sender, $eventArgs)
+    Invoke-WinUtilKeyboardShortcut -EventArgs $eventArgs
 }
 $sync["Form"].Add_PreViewKeyDown($commonKeyEvents)
 

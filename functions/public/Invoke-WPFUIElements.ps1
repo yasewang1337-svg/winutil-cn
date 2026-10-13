@@ -49,6 +49,8 @@ function Invoke-WPFUIElements {
 
     # Clear existing ColumnDefinitions and Children
     $targetGrid.ColumnDefinitions.Clear() | Out-Null
+    $targetGrid.RowDefinitions.Clear() | Out-Null
+    $targetGrid.Resources.Remove('WinUtilConfigColumnCount')
     $targetGrid.Children.Clear() | Out-Null
 
     # Add ColumnDefinitions to the target Grid
@@ -137,7 +139,14 @@ function Invoke-WPFUIElements {
         $panelcount++
 
         # Now proceed with adding category labels and entries to $itemsControl
-        foreach ($category in ($organizedData[$panelKey].Keys | Sort-Object)) {
+        $categoryKeys = @($organizedData[$panelKey].Keys | Sort-Object)
+        if ($targetGridName -eq 'tweakspanel') {
+            # z__ is the catalog's existing advanced-category marker. Explicitly
+            # keep it last: alphabetic z sorts before Chinese names in some locales.
+            $categoryKeys = @($categoryKeys | Where-Object { -not $_.StartsWith('z__', [StringComparison]::OrdinalIgnoreCase) }) +
+                @($categoryKeys | Where-Object { $_.StartsWith('z__', [StringComparison]::OrdinalIgnoreCase) })
+        }
+        foreach ($category in $categoryKeys) {
             $count++
 
             $label = New-Object Windows.Controls.Label
@@ -415,5 +424,32 @@ function Invoke-WPFUIElements {
                 }
             }
         }
+    }
+    if ($targetGridName -in @('tweakspanel', 'featurespanel')) {
+        if (-not $targetGrid.Resources['WinUtilConfigResizeRegistered']) {
+            $targetGrid.Add_SizeChanged({ param($sender, $eventArgs) Set-WinUtilConfigLayout -Grid $sender })
+            $targetGrid.Resources['WinUtilConfigResizeRegistered'] = $true
+        }
+        if (-not $targetGrid.Resources['WinUtilConfigViewportRegistered']) {
+            $viewport = [Windows.LogicalTreeHelper]::GetParent($targetGrid)
+            while ($viewport -and $viewport -isnot [Windows.Controls.ScrollViewer]) {
+                $viewport = [Windows.LogicalTreeHelper]::GetParent($viewport)
+            }
+            if ($viewport) {
+                $viewport.Resources['WinUtilConfigGrid'] = $targetGrid
+                # Grid.SizeChanged can see the previous viewport width during
+                # an arrange pass. ScrollChanged reports the settled new width.
+                $viewport.Add_ScrollChanged({
+                    param($sender, $eventArgs)
+                    $layoutGrid = $sender.Resources['WinUtilConfigGrid']
+                    if ($eventArgs.ViewportWidthChange -ne 0 -and $sync.Form -and
+                        $sync.Form.FindName($layoutGrid.Name) -eq $layoutGrid) {
+                        Set-WinUtilConfigLayout -Grid $layoutGrid -AvailableWidth $sender.ViewportWidth
+                    }
+                })
+                $targetGrid.Resources['WinUtilConfigViewportRegistered'] = $true
+            }
+        }
+        Set-WinUtilConfigLayout -Grid $targetGrid
     }
 }
